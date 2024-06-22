@@ -38,6 +38,10 @@ const AllGlobalStyle = createGlobalStyle`
     font-family: 'Pretendard-Medium';
     src: url('/font/Pretendard-Medium.ttf') format('truetype');
   }
+  @font-face {
+    font-family: 'alagambe';
+    src: url('/font/alagambe.otf') format('opentype');
+  }
  `;
 
 

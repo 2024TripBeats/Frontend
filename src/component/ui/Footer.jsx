@@ -10,13 +10,14 @@ const FooterContainer = styled.div`
   width: 100%;
   max-width: 500px; /* AppContainer의 max-width와 동일하게 설정 */
   height: 50px;
-  background-color: #ffffff;
+  background-color: #3869E0;
   color: white;
   display: flex;
   justify-content: space-around;
   align-items: center;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
+  box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.1);
 `;
 
 const StyledLink = styled(Link)`
@@ -30,7 +31,7 @@ const StyledLink = styled(Link)`
   font-family: "Pretendard-ExtraBold";
   box-sizing: border-box;
   gap: 5px;
-  color: black;
+  color: #FAFAFA;
 
   &:hover {
     text-decoration: underline;

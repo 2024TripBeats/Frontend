@@ -6,17 +6,17 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding-top: 15%;
+    padding-top: 5%;
     padding-left: 20px;
     padding-right: 20px;
-    background-color: #D3E8F7;
+    background-color: #FAFAFA;
     box-sizing: border-box;
 `;
 
 const Title = styled.div`
   font-size: 25px;
   font-family: "Pretendard-ExtraBold";
-  color: #252A2F;
+  color: #252a2f;
 `;
 
 const ImgPicker = styled.div`
