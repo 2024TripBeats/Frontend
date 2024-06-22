@@ -36,7 +36,7 @@ const AdContainer = styled.div`
   align-items: center;
   background-color: white;
   box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.1);
-  width: 85%;
+  width: 350px;
   height: 220px;
   border-radius: 10px;
   box-sizing: border-box;
@@ -114,6 +114,7 @@ const Overlay = styled.div`
 
 const Modal = styled.div`
   background-color: white;
+  width: 80%;
   padding: 20px;
   border-radius: 15px;
   box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.2);
@@ -123,7 +124,7 @@ const Modal = styled.div`
 `;
 
 const ModalText = styled.div`
-  font-size: 16px;
+  font-size: 1.9dvh;
   font-family: "Pretendard-Bold";
   color: #252A2F;
   margin: 10px;
@@ -163,7 +164,7 @@ const Home = () => {
 
   const handleNavigate = () => {
     setModalOpen(false);
-    navigate("/usersurvey");
+    navigate("/usersurvey1");
   };
 
   const handleDotClick = (index) => {
@@ -175,12 +176,13 @@ const Home = () => {
       <LogoContainer>
         <LogoMessage style={{marginBottom:"4%"}}>당신을 위한 사운드 트립 큐레이션 서비스</LogoMessage>
         <img style={{width: "55%"}} 
-          src={process.env.PUBLIC_URL + `asset/logo/logo8.png`}/>
+          src={process.env.PUBLIC_URL + `asset/logo/logo.png`}
+          alt='logo'/>
       </LogoContainer>
       <AdContainer>
         <ImageContainer index={currentImageIndex}>
+          <Image src={process.env.PUBLIC_URL + `asset/ad/gbg.png`} />
           <Image src={process.env.PUBLIC_URL + `asset/ad/myeongdong.png`} />
-          <Image src={process.env.PUBLIC_URL + `asset/ad/chuncheon.png`} />
         </ImageContainer>
         <DotsContainer>
           <Dot active={currentImageIndex === 0} onClick={() => handleDotClick(0)} />
@@ -194,7 +196,7 @@ const Home = () => {
           <Modal>
             <CloseButton onClick={handleCloseModal}>X</CloseButton>
             <ModalText style={{fontSize: "60px", marginBottom: '8%'}}>🎉</ModalText>
-            <ModalText>가입을 축하드립니다!</ModalText>
+            <ModalText>환영합니다!</ModalText>
             <ModalText>서비스를 이용하기 전, 여러분들의 취향을 파악하고 있어요</ModalText>
             <ModalText style={{marginBottom: '8%'}}>해당 설문은 가입 시 1회만 진행됩니다</ModalText>
             <Button onClick={handleNavigate}>설문하러 가기</Button>
