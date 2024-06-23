@@ -8,7 +8,9 @@ export const TravelSurveyProvider = ({ children }) => {
     period: '',
     intensity: [],
     accomodation: [],
-    restaurant: []
+    restaurant: [],
+    stopwords: '',
+    requirewords: '',
   });
 
   const updatePeriod = (newPeriod) => {

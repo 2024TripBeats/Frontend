@@ -5,11 +5,15 @@ import styled from "styled-components";
 import { UserSurveyProvider } from './component/page/UserSurvey/UsContext';
 import { TravelSurveyProvider } from './component/page/TravelSurvey/TsContext';
 
+
+// 초기 화면 및 로그인 핸들러 페이지
+import InitialPage from './component/page/InitialPage';
+import LoginHandeler from './component/page/LoginHandeler';
+
+// 메인 페이지 및 마이페이지
 import Home from './component/page/Home';
 import MyPage from './component/page/MyPage';
 import Footer from './component/ui/Footer';
-import InitialPage from './component/page/InitialPage';
-import LoginHandeler from './component/page/LoginHandeler';
 
 // 유저 설문 조사 페이지
 import UsStep1 from './component/page/UserSurvey/UsStep1';
@@ -26,6 +30,10 @@ import TsStep4 from './component/page/TravelSurvey/TsStep4';
 import TsStep5 from './component/page/TravelSurvey/TsStep5';
 import TsEnd from './component/page/TravelSurvey/TsEnd';
 import TsSummary from './component/page/TravelSurvey/TsSummary'; //임시 정보 확인 페이지
+
+// 추천 페이지
+import RouteRecommend from './component/page/RouteRecommend';
+import DetailPage from './component/page/DetailPage';
 
 const AllGlobalStyle = createGlobalStyle`
   @font-face {
@@ -120,6 +128,8 @@ const App = () => {
                   <Route path="/travelsurvey5" element={<TsStep5 />} />
                   <Route path="/travelsurveyend" element={<TsEnd />} />
                   <Route path="/ts-summary" element={<TsSummary />} />
+                  <Route path="/recommend" element={<RouteRecommend />} />
+                  <Route path="/detail/:id" element={<DetailPage />} />
                   <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
                 </Routes>
               </Content>

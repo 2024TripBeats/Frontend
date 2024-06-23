@@ -114,7 +114,7 @@ const Overlay = styled.div`
 
 const Modal = styled.div`
   background-color: white;
-  width: 80%;
+  width: 400px;
   padding: 20px;
   border-radius: 15px;
   box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.2);
