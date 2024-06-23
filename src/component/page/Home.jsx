@@ -155,7 +155,7 @@ const Home = () => {
   }, []);
 
   const handleButtonClick = () => {
-    navigate("/tastesurvey")
+    navigate("/travelsurvey1")
   };
 
   const handleCloseModal = () => {

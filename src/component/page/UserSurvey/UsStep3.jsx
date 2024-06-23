@@ -119,7 +119,9 @@ const UsStep3 = () => {
     setIsButtonActive(allSurveysSelected && selectedLikert !== 0); 
   }, [selectedSurveyButtons, selectedLikert]);
 
-  const handleButtonClick = () => { // 임시 결과 확인 페이지 이동
+
+  {/* 임시 코드 */}
+  const handleButtonClick = () => {
     setUserSurveyData(prevData => ({
       ...prevData,
       prevtrips: selectedSurveyButtons,
@@ -128,6 +130,8 @@ const UsStep3 = () => {
     navigate(`/usersurveyend`);
   }
   
+
+  {/* 서버로 데이터 전송 */}
   // const handleButtonClick = async () => {
   //   if (isButtonActive) {
   //     setUserSurveyData(prevData => ({
@@ -135,8 +139,7 @@ const UsStep3 = () => {
   //       prevtrips: selectedSurveyButtons,
   //       openness: selectedLikert,
   //     }));
-      
-  //     // 서버로 데이터 전송
+
   //     try {
   //       const response = await fetch('http://localhost:8000/UserInfoSurvey', {
   //         method: 'POST',

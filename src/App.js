@@ -2,15 +2,14 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { createGlobalStyle } from "styled-components";
 import styled from "styled-components";
-import { UserSurveyProvider } from './component/page/UserSurvey/UsContext'; // 수정된 SurveyContext import
+import { UserSurveyProvider } from './component/page/UserSurvey/UsContext';
+import { TravelSurveyProvider } from './component/page/TravelSurvey/TsContext';
 
 import Home from './component/page/Home';
 import MyPage from './component/page/MyPage';
 import Footer from './component/ui/Footer';
 import InitialPage from './component/page/InitialPage';
 import LoginHandeler from './component/page/LoginHandeler';
-import RegionSelection from './component/page/RegionSelection';
-import MapSelection from './component/page/MapSelection';
 
 // 유저 설문 조사 페이지
 import UsStep1 from './component/page/UserSurvey/UsStep1';
@@ -18,6 +17,15 @@ import UsStep2 from './component/page/UserSurvey/UsStep2';
 import UsStep3 from './component/page/UserSurvey/UsStep3';
 import UsEnd from './component/page/UserSurvey/UsEnd';
 import SurveySummary from './component/page/UserSurvey/SurveySummary'; //임시 정보 확인 페이지
+
+// 여행 설문 조사 페이지
+import TsStep1 from './component/page/TravelSurvey/TsStep1';
+import TsStep2 from './component/page/TravelSurvey/TsStep2';
+import TsStep3 from './component/page/TravelSurvey/TsStep3';
+import TsStep4 from './component/page/TravelSurvey/TsStep4';
+import TsStep5 from './component/page/TravelSurvey/TsStep5';
+import TsEnd from './component/page/TravelSurvey/TsEnd';
+import TsSummary from './component/page/TravelSurvey/TsSummary'; //임시 정보 확인 페이지
 
 const AllGlobalStyle = createGlobalStyle`
   @font-face {
@@ -48,11 +56,11 @@ const AllGlobalStyle = createGlobalStyle`
     font-family: 'alagambe';
     src: url('/font/alagambe.otf') format('opentype');
   }
- `;
+`;
 
 const WebContainer = styled.div`
   display: flex;
-  background-color: #fafafa;
+  background-color: #FAFAFA;
 `;
 
 const AppContainer = styled.div`
@@ -60,7 +68,7 @@ const AppContainer = styled.div`
   flex-direction: column;
   max-width: 500px;
   margin: 0 auto;
-  background-color: #f8f8f8;
+  background-color: #fafafa;
   min-height: 100vh;
 `;
 
@@ -91,42 +99,35 @@ const App = () => {
   return (
     <Router>
       <AllGlobalStyle />
-      <WebContainer>
-        <AppContainer>
-          <Content>
-            <Routes>
-              <Route path="/" element={<InitialPage />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/mypage" element={<MyPage />} />
-              <Route path="/usersurvey1" element={
-                <UserSurveyProvider>
-                  <UsStep1 />
-                </UserSurveyProvider>
-              } />
-              <Route path="/usersurvey2" element={
-                <UserSurveyProvider>
-                  <UsStep2 />
-                </UserSurveyProvider>
-              } />
-              <Route path="/usersurvey3" element={
-                <UserSurveyProvider>
-                  <UsStep3 />
-                </UserSurveyProvider>
-              } />
-              <Route path="/survey-summary" element={
-                <UserSurveyProvider>
-                  <SurveySummary />
-                </UserSurveyProvider>
-              } />
-              <Route path="/usersurveyend" element={<UsEnd />} />
-              <Route path="/regionselection" element={<RegionSelection />} />
-              <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
-              <Route path="/mapselection" element={<MapSelection />} />
-            </Routes>
-          </Content>
-          <FooterWithCondition />
-        </AppContainer>
-      </WebContainer>
+      <UserSurveyProvider>
+        <TravelSurveyProvider>
+          <WebContainer>
+            <AppContainer>
+              <Content>
+                <Routes>
+                  <Route path="/" element={<InitialPage />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/mypage" element={<MyPage />} />
+                  <Route path="/usersurvey1" element={<UsStep1 />} />
+                  <Route path="/usersurvey2" element={<UsStep2 />} />
+                  <Route path="/usersurvey3" element={<UsStep3 />} />
+                  <Route path="/us-summary" element={<SurveySummary />} />
+                  <Route path="/usersurveyend" element={<UsEnd />} />
+                  <Route path="/travelsurvey1" element={<TsStep1 />} />
+                  <Route path="/travelsurvey2" element={<TsStep2 />} />
+                  <Route path="/travelsurvey3" element={<TsStep3 />} />
+                  <Route path="/travelsurvey4" element={<TsStep4 />} />
+                  <Route path="/travelsurvey5" element={<TsStep5 />} />
+                  <Route path="/travelsurveyend" element={<TsEnd />} />
+                  <Route path="/ts-summary" element={<TsSummary />} />
+                  <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
+                </Routes>
+              </Content>
+              <FooterWithCondition />
+            </AppContainer>
+          </WebContainer>
+        </TravelSurveyProvider>
+      </UserSurveyProvider>
     </Router>
   );
 };
