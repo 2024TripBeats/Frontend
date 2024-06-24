@@ -46,6 +46,7 @@ const SurveySummary = () => {
         <DataItem><strong>Desranks:</strong> {usersurveyData.desranks.join(', ')}</DataItem>
         <DataItem><strong>PrevTrips:</strong> {usersurveyData.prevtrips.join(', ')}</DataItem>
         <DataItem><strong>Openness:</strong> {usersurveyData.openness}</DataItem>
+        <DataItem><strong>musictaste</strong> {usersurveyData.musictaste}</DataItem>
       </DataContainer>
     </Container>
   );

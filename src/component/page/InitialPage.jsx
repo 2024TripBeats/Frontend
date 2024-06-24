@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from "styled-components";
 
+
+
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -20,7 +22,14 @@ const Message = styled.div`
 `;
 
 const InitialPage = () => {
-    const KAKAO_AUTH_URL = "/home" // 임시 경로, 이후 수정 필요
+
+    const CLIENT_ID = ``; //클라이언트 id
+    const REDIRECT_URI = `http://localhost:3000/login/oauth2/callback/kakao`;
+    
+    console.log('CLIENT_ID:', CLIENT_ID);
+    console.log('REDIRECT_URI:', REDIRECT_URI);    
+
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
     return (
         <Container>
