@@ -12,6 +12,7 @@ export const UserSurveyProvider = ({ children }) => {
     desranks: Array(5).fill(null),
     prevtrips: Array(3).fill(null),
     openness: '',
+    musictaste: []
   });
 
   return (

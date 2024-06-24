@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import response from './dummy.json';
 
 const Container = styled.div`
@@ -10,8 +10,7 @@ const Container = styled.div`
   background-color: #FAFAFA;
   box-sizing: border-box;
   align-items: center;
-  max-width: 100%;
-  margin: 0 auto;
+  max-width: 500px;
   box-sizing: border-box;
 `;
 
@@ -29,7 +28,7 @@ const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 5%;
+  padding: 0 7%;
   box-sizing: border-box;
 `;
 
@@ -99,11 +98,21 @@ const RouteBox = styled.div`
   width: 100%;
 `;
 
+const RouteContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  max-width: 375px;
+  gap: 2px;
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
   gap: 15px;
+  margin-bottom: 20px;
 `;
 
 const FixButton = styled.button`
@@ -136,7 +145,7 @@ const TravelPathContainer = styled.div`
   width: 100%;
   height: 95px;
   max-width: 375px;
-  margin: 20px 0;
+  margin: 9px 0;
   white-space: nowrap;
   background-color: #FAFAFA;
   border-radius: 20px;
@@ -150,6 +159,13 @@ const PathLine = styled.div`
   display: inline-flex;
   align-items: center;
   width: max-content;
+`;
+
+const Day = styled.div`
+  font-family: "Pretendard-Bold";
+  font-size: 16px;
+  color: #252a2f;
+  margin-right: 10px;
 `;
 
 const Circle = styled.div`
@@ -183,8 +199,10 @@ const RouteRecommend = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTravelDestinations(response);
-    setSelectedDestination(response[0]);
+    setTravelDestinations(response.data);
+    if (response.data.length > 0 && response.data[0].day1.length > 0) {
+      setSelectedDestination(response.data[0].day1[0]);
+    }
   }, []);
 
   const handleCircleClick = (destination) => {
@@ -195,6 +213,10 @@ const RouteRecommend = () => {
     navigate(`/detail/${selectedDestination.id}`);
   };
 
+  const handleFixRouteClick = () => {
+    navigate('/routefix', { state: { travelDestinations}});
+  };
+
   return (
     <Container>
       <LogoContainer>
@@ -203,39 +225,50 @@ const RouteRecommend = () => {
           alt='logo' />
       </LogoContainer>
       <ContentContainer>
-      <ImageContainer>
-        {selectedDestination && (
-          <>
-            <Image src={selectedDestination.image_url} />
-            <DetailsContainer>
-              <DestName>{selectedDestination.name}</DestName>
-              <DestDetails>{selectedDestination.details}</DestDetails>
-              <DetailButton onClick={handleDetailClick}>자세히 보기</DetailButton>
-            </DetailsContainer>
-          </>
-        )}
-      </ImageContainer>
-      <RouteBox>
-        <TravelPathContainer>
-          <PathLine>
-            {travelDestinations.map((destination, index) => (
-              <React.Fragment key={destination.id}>
-                <Circle 
-                  onClick={() => handleCircleClick(destination)}
-                  isSelected={selectedDestination && selectedDestination.id === destination.id}
-                >
-                  {destination.name}
-                </Circle>
-                {index < travelDestinations.length - 1 && <Line />}
-              </React.Fragment>
-            ))}
-          </PathLine>
-        </TravelPathContainer>
-        <ButtonContainer>
-          <FixButton>이 루트로 여행 갈래요!</FixButton>
-          <EditButton>코스를 수정할래요</EditButton>
-        </ButtonContainer>
-      </RouteBox>
+        <ImageContainer>
+          {selectedDestination && (
+            <>
+              <Image src={selectedDestination.image_url} />
+              <DetailsContainer>
+                <DestName>{selectedDestination.name}</DestName>
+                <DestDetails>{selectedDestination.details}</DestDetails>
+                <DetailButton onClick={handleDetailClick}>자세히 보기</DetailButton>
+              </DetailsContainer>
+            </>
+          )}
+        </ImageContainer>
+        <RouteBox>
+          {travelDestinations.map((day, dayIndex) => (
+            <React.Fragment key={dayIndex}>
+              {Object.keys(day).map((dayKey) => (
+                <React.Fragment key={dayKey}>
+                  <RouteContainer>
+                  <Day>{dayKey}</Day>
+                  <TravelPathContainer>
+                    <PathLine>
+                      {day[dayKey].map((destination, index) => (
+                          <React.Fragment key={destination.id}>
+                            <Circle 
+                              onClick={() => handleCircleClick(destination)}
+                              isSelected={selectedDestination && selectedDestination.id === destination.id}
+                            >
+                              {destination.name}
+                            </Circle>
+                            {index < day[dayKey].length - 1 && <Line />}
+                          </React.Fragment>
+                        ))}
+                      </PathLine>
+                    </TravelPathContainer>
+                  </RouteContainer>
+                </React.Fragment>
+              ))}
+            </React.Fragment>
+          ))}
+          <ButtonContainer>
+            <FixButton onClick={handleFixRouteClick}>이 루트로 여행 갈래요!</FixButton>
+            <EditButton>다시 추천받을래요</EditButton>
+          </ButtonContainer>
+        </RouteBox>
       </ContentContainer>
     </Container>
   );

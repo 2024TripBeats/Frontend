@@ -19,6 +19,7 @@ import Footer from './component/ui/Footer';
 import UsStep1 from './component/page/UserSurvey/UsStep1';
 import UsStep2 from './component/page/UserSurvey/UsStep2';
 import UsStep3 from './component/page/UserSurvey/UsStep3';
+import UsStep4 from './component/page/UserSurvey/UsStep4';
 import UsEnd from './component/page/UserSurvey/UsEnd';
 import SurveySummary from './component/page/UserSurvey/SurveySummary'; //임시 정보 확인 페이지
 
@@ -34,6 +35,7 @@ import TsSummary from './component/page/TravelSurvey/TsSummary'; //임시 정보
 // 추천 페이지
 import RouteRecommend from './component/page/RouteRecommend';
 import DetailPage from './component/page/DetailPage';
+import RouteFix from './component/page/RouteFix';
 
 const AllGlobalStyle = createGlobalStyle`
   @font-face {
@@ -119,6 +121,7 @@ const App = () => {
                   <Route path="/usersurvey1" element={<UsStep1 />} />
                   <Route path="/usersurvey2" element={<UsStep2 />} />
                   <Route path="/usersurvey3" element={<UsStep3 />} />
+                  <Route path="/usersurvey4" element={<UsStep4 />} />
                   <Route path="/us-summary" element={<SurveySummary />} />
                   <Route path="/usersurveyend" element={<UsEnd />} />
                   <Route path="/travelsurvey1" element={<TsStep1 />} />
@@ -129,6 +132,7 @@ const App = () => {
                   <Route path="/travelsurveyend" element={<TsEnd />} />
                   <Route path="/ts-summary" element={<TsSummary />} />
                   <Route path="/recommend" element={<RouteRecommend />} />
+                  <Route path="/routefix" element={<RouteFix />} />
                   <Route path="/detail/:id" element={<DetailPage />} />
                   <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
                 </Routes>

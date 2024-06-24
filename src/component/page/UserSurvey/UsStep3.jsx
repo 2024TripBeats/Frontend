@@ -127,7 +127,7 @@ const UsStep3 = () => {
       prevtrips: selectedSurveyButtons,
       openness: selectedLikert,
     }));
-    navigate(`/usersurveyend`);
+    navigate(`/usersurvey4`);
   }
   
 
