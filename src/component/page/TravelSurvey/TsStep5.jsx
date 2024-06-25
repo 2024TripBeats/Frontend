@@ -80,7 +80,7 @@ const ButtonContainer = styled.div`
 
 const Button = styled.button`
   padding: 10px 40px;
-  background-color: #3869E0;
+  background-color: #FF8A1D;
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
@@ -137,7 +137,7 @@ const TsStep5 = () => {
 //     }));
 
 //     try {
-//       const response = await fetch('http://localhost:8000/RouteRecommend', {
+//       const response = await fetch('http://localhost:8888/RouteRecommend', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ const TsStep5 = () => {
           alt='logo' />
       </LogoContainer>
       <Question style={{ marginTop: "5%" }}>이번 여행에서</Question>
-      <Question style={{color:'#3869E0'}}>이것만큼은 꼭 지켜야 한다고</Question>
+      <Question style={{color:'#FF8A1D'}}>이것만큼은 꼭 지켜야 한다고</Question>
       <Question>생각되는 희망사항을</Question>
       <Question>자유롭게 작성해주세요</Question>
       <SurveyContainer>

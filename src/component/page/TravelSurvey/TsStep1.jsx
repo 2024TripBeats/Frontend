@@ -45,7 +45,7 @@ const ImgContainer = styled.div`
   width: 90%;
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
   border-radius: 15px;
-  background-color: ${props => (props.selected ? '#3869E0' : '#FAFAFA')};
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
   cursor: pointer;
   overflow: hidden; /* 이미지가 컨테이너를 벗어나지 않도록 함 */
 `;
@@ -86,7 +86,7 @@ const Button = styled.button`
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 60px;
-  background-color: ${props => (props.active ? '#3869E0' : '#848484')};
+  background-color: ${props => (props.active ? '#FF8A1D' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;

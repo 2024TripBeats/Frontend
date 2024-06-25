@@ -38,13 +38,15 @@ const SurveyContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 10%;
-  margin-top: 5%;
+  gap: 5%;
+  margin-top: 4%;
+  margin-left: 7%;
+  margin-right: 7%;
 `;
 
 const SurveyButton = styled.button`
-  background-color: ${props => (props.selected ? '#3869E0' : '#FAFAFA')};
-  color: ${props => (props.selected ? 'white' : '#252A2F')};
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
+  color: ${props => (props.selected ? '#FAFAFA' : '#252A2F')};
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
   border: none;
   border-radius: 10px;
@@ -65,7 +67,7 @@ const LikertContainer = styled.div`
 `;
 
 const LikertButton = styled.button`
-  background-color: ${props => (props.selected ? '#3869E0' : '#FAFAFA')};
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
   width: 15px;  
   height: 15px;  
   border-radius: 50%;  
@@ -87,7 +89,7 @@ const Button = styled.button`
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 60px;
-  background-color: ${props => (props.active ? '#3869E0' : '#848484')};
+  background-color: ${props => (props.active ? '#ff8a1d' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
@@ -103,24 +105,23 @@ const UsStep3 = () => {
   const [selectedSurveyButtons, setSelectedSurveyButtons] = useState(usersurveyData.prevtrips);
   const [selectedLikert, setSelectedLikert] = useState(usersurveyData.openness);
   const [isButtonActive, setIsButtonActive] = useState(false);
-  
+
   const handleSurveyClick = (groupIndex, buttonIndex) => {
     const newSelectedButtons = [...selectedSurveyButtons]; 
-    newSelectedButtons[groupIndex] = buttonIndex + 1; // 1 또는 2로 저장
+    newSelectedButtons[groupIndex] = buttonIndex + 1; // 1, 2, or 3로 저장
     setSelectedSurveyButtons(newSelectedButtons);
   };
-  
+
   const handleLikertClick = (index) => {
     setSelectedLikert(index); 
   };
-  
+
   useEffect(() => {
     const allSurveysSelected = selectedSurveyButtons.every(selection => selection !== null); 
-    setIsButtonActive(allSurveysSelected && selectedLikert !== 0); 
+    const likertSelected = selectedLikert !== null;
+    setIsButtonActive(allSurveysSelected && likertSelected); 
   }, [selectedSurveyButtons, selectedLikert]);
 
-
-  {/* 임시 코드 */}
   const handleButtonClick = () => {
     setUserSurveyData(prevData => ({
       ...prevData,
@@ -129,44 +130,7 @@ const UsStep3 = () => {
     }));
     navigate(`/usersurvey4`);
   }
-  
 
-  {/* 서버로 데이터 전송 */}
-  // const handleButtonClick = async () => {
-  //   if (isButtonActive) {
-  //     setUserSurveyData(prevData => ({
-  //       ...prevData,
-  //       prevtrips: selectedSurveyButtons,
-  //       openness: selectedLikert,
-  //     }));
-
-  //     try {
-  //       const response = await fetch('http://localhost:8000/UserInfoSurvey', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({
-  //           ...usersurveyData,
-  //           prevtrips: selectedSurveyButtons,
-  //           openness: selectedLikert,
-  //         }),
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-
-  //       const result = await response.json();
-  //       console.log('Success:', result);
-
-  //       navigate(`/usersurveyend`);
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //     }
-  //   }
-  // };
-  
   return (
     <Container>
       <LogoContainer>
@@ -174,7 +138,7 @@ const UsStep3 = () => {
           src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
           alt='logo' />
       </LogoContainer>
-      <Question style={{marginTop: "5%", marginBottom: "3%"}}>어떤 여행을 주로 다니셨나요?</Question>
+      <Question style={{marginTop: "5%", marginBottom: "3%"}}>어떤 여행을 주로 선호하셨나요?</Question>
       <SurveyContainer>
         <SurveyButton
           selected={selectedSurveyButtons[0] === 1}
@@ -187,6 +151,12 @@ const UsStep3 = () => {
           onClick={() => handleSurveyClick(0, 1)}
         >
           원거리
+        </SurveyButton>
+        <SurveyButton
+          selected={selectedSurveyButtons[0] === 3}
+          onClick={() => handleSurveyClick(0, 2)}
+        >
+          상관없음
         </SurveyButton>
       </SurveyContainer>
       <SurveyContainer>
@@ -202,6 +172,12 @@ const UsStep3 = () => {
         >
           활동형
         </SurveyButton>
+        <SurveyButton
+          selected={selectedSurveyButtons[1] === 3}
+          onClick={() => handleSurveyClick(1, 2)}
+        >
+          상관없음
+        </SurveyButton>
       </SurveyContainer>
       <SurveyContainer style={{marginBottom:"15%"}}>
         <SurveyButton
@@ -215,6 +191,12 @@ const UsStep3 = () => {
           onClick={() => handleSurveyClick(2, 1)}
         >
           도심
+        </SurveyButton>
+        <SurveyButton
+          selected={selectedSurveyButtons[2] === 3}
+          onClick={() => handleSurveyClick(2, 2)}
+        >
+          상관없음
         </SurveyButton>
       </SurveyContainer>
       <Question>취향과 거리가 있는</Question>
@@ -234,7 +216,7 @@ const UsStep3 = () => {
         ))}
       </LikertContainer>
       <Button active={isButtonActive} onClick={handleButtonClick}>
-        설문 완료
+        다음으로
       </Button>
     </Container>
   );

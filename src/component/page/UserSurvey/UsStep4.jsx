@@ -39,8 +39,8 @@ const SurveyContainer = styled.div`
 `;
 
 const SurveyButton = styled.button`
-  background-color: ${props => (props.selected ? '#3869E0' : '#FAFAFA')};
-  color: ${props => (props.selected ? 'white' : '#252A2F')};
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
+  color: ${props => (props.selected ? '#FAFAFA' : '#252A2F')};
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
   border: none;
   border-radius: 10px;
@@ -57,7 +57,7 @@ const Button = styled.button`
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 60px;
-  background-color: ${props => (props.active ? '#3869E0' : '#848484')};
+  background-color: ${props => (props.active ? '#ff8a1d' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
@@ -92,7 +92,7 @@ const UsStep4 = () => {
 
   const handleButtonClick = () => {
     if (isButtonActive) {
-      navigate(`/home`);
+      navigate(`/usersurveyend`);
     }
   };
 
@@ -103,7 +103,7 @@ const UsStep4 = () => {
           src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
           alt='logo' />
       </LogoContainer>
-      <Question style={{marginTop: "5%", marginBottom: "3%"}}>어떤 여행을 주로 다니셨나요?</Question>
+      <Question style={{marginTop: "5%", marginBottom: "3%"}}>어떤 음악을 주로 들으시나요?</Question>
       {musicCategories.reduce((rows, category, index) => {
         if (index % 3 === 0) rows.push([]);
         rows[rows.length - 1].push(category);

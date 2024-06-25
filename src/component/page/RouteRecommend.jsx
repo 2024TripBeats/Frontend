@@ -14,6 +14,13 @@ const Container = styled.div`
   box-sizing: border-box;
 `;
 
+const Message = styled.div`
+  font-size: 18px;
+  font-family: "Pretendard-ExtraBold";
+  color: #252a2f;
+  text-align: center;
+`;
+
 const LogoContainer = styled.div`
   margin-top: 8%;
   margin-bottom: 5%;
@@ -43,6 +50,7 @@ const ImageContainer = styled.div`
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  margin-bottom: 20px;
 `;
 
 const Image = styled.img`
@@ -95,6 +103,7 @@ const RouteBox = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-bottom: 20px;
   width: 100%;
 `;
 
@@ -107,17 +116,22 @@ const RouteContainer = styled.div`
   gap: 2px;
 `;
 
+const HighLightName = styled.div`
+  font-family: "Pretendard-ExtraBold";
+  color: #FF8A1D;
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 `;
 
 const FixButton = styled.button`
   padding: 10px 60px;
-  background-color: #3869E0;
+  background-color: #FF8A1D;
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
@@ -163,16 +177,43 @@ const PathLine = styled.div`
 
 const Day = styled.div`
   font-family: "Pretendard-Bold";
-  font-size: 16px;
+  font-size: 12px;
   color: #252a2f;
   margin-right: 10px;
+  white-space: nowrap;
+`;
+
+const MusicContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+  gap: 5%;
+`;
+
+const MusicBox = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const MusicTitle = styled.div`
+  font-family: "Pretendard-Bold";
+  font-size: 12px;
+  color: #252a2f;
+`;
+const MusicSinger = styled.div`
+  font-family: "Pretendard-Medium";
+  font-size: 12px;
+  color: #252a2f;
 `;
 
 const Circle = styled.div`
+  display: flex;
+  flex-direction: column;
   min-width: 60px;
   min-height: 60px;
   border-radius: 50%;
-  background-color: ${props => (props.isSelected ? '#3869E0' : '#e7e7e7')};
+  background-color: ${props => (props.isSelected ? '#252a2f' : '#e7e7e7')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -184,13 +225,27 @@ const Circle = styled.div`
   padding: 10px;
   box-sizing: border-box;
   cursor: pointer;
+  text-align: center;
+`;
+
+const VisitTime = styled.div`
+  font-family: "Pretendard-SemiBold";
+  font-size: 10px;
+  color: ${props => (props.isSelected ? '#FF8A1D' : '#252a2f')};
+  margin-bottom: 3px;
 `;
 
 const Line = styled.div`
-  min-width: 40px;
+  min-width: 20px;
   height: 8px;
   background-color: #e7e7e7;
-  flex-shrink: 0;
+  font-family: "Pretendard-Regular";
+  font-size: 9px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  color: #575757;
+  padding: 2px 9px;
 `;
 
 const RouteRecommend = () => {
@@ -198,12 +253,32 @@ const RouteRecommend = () => {
   const [selectedDestination, setSelectedDestination] = useState(null);
   const navigate = useNavigate();
 
+  const [name, setName] = useState("");
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("name");
+    const storedId = localStorage.getItem("id");
+
+    if (storedName && storedId) {
+      setName(storedName);
+      setId(storedId);
+    } else {
+      // Handle case where data is not found in localStorage
+      console.error("No user data found in localStorage");
+    }
+  }, []);
+
   useEffect(() => {
     setTravelDestinations(response.data);
     if (response.data.length > 0 && response.data[0].day1.length > 0) {
       setSelectedDestination(response.data[0].day1[0]);
     }
   }, []);
+
+  const convertDayKeyToKorean = (dayKey) => {
+    return `${parseInt(dayKey.replace('day', ''))}일차`;
+  };
 
   const handleCircleClick = (destination) => {
     setSelectedDestination(destination);
@@ -225,6 +300,8 @@ const RouteRecommend = () => {
           alt='logo' />
       </LogoContainer>
       <ContentContainer>
+        <Message>{name}님의 취향을 바탕으로</Message>
+        <Message style={{marginBottom:"10px"}}>여행 루트와 음악을 추천해봤어요!</Message>
         <ImageContainer>
           {selectedDestination && (
             <>
@@ -233,6 +310,14 @@ const RouteRecommend = () => {
                 <DestName>{selectedDestination.name}</DestName>
                 <DestDetails>{selectedDestination.details}</DestDetails>
                 <DetailButton onClick={handleDetailClick}>자세히 보기</DetailButton>
+                <MusicContainer>
+                  <img style={{ width: "20px" }}
+                  src = {process.env.PUBLIC_URL + '/asset/musicplay.png'} />
+                  <MusicBox>
+                    <MusicTitle>{selectedDestination.musictitle}</MusicTitle>
+                    <MusicSinger>{selectedDestination.musicsinger}</MusicSinger>
+                  </MusicBox>
+                </MusicContainer>
               </DetailsContainer>
             </>
           )}
@@ -243,7 +328,7 @@ const RouteRecommend = () => {
               {Object.keys(day).map((dayKey) => (
                 <React.Fragment key={dayKey}>
                   <RouteContainer>
-                  <Day>{dayKey}</Day>
+                  <Day>{convertDayKeyToKorean(dayKey)}</Day>
                   <TravelPathContainer>
                     <PathLine>
                       {day[dayKey].map((destination, index) => (
@@ -252,9 +337,19 @@ const RouteRecommend = () => {
                               onClick={() => handleCircleClick(destination)}
                               isSelected={selectedDestination && selectedDestination.id === destination.id}
                             >
-                              {destination.name}
+                              <VisitTime
+                                onClick={() => handleCircleClick(destination)}
+                                isSelected={selectedDestination && selectedDestination.id === destination.id}
+                              >
+                                {destination.visittime}
+                              </VisitTime>
+                              <div>{destination.name}</div>
                             </Circle>
-                            {index < day[dayKey].length - 1 && <Line />}
+                            {index < day[dayKey].length - 1 &&
+                              <Line>
+                                {destination.distance}m
+                              </Line>
+                            }
                           </React.Fragment>
                         ))}
                       </PathLine>
@@ -264,11 +359,11 @@ const RouteRecommend = () => {
               ))}
             </React.Fragment>
           ))}
-          <ButtonContainer>
+        </RouteBox>
+        <ButtonContainer>
             <FixButton onClick={handleFixRouteClick}>이 루트로 여행 갈래요!</FixButton>
             <EditButton>다시 추천받을래요</EditButton>
-          </ButtonContainer>
-        </RouteBox>
+        </ButtonContainer>
       </ContentContainer>
     </Container>
   );

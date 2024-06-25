@@ -71,8 +71,8 @@ const GenderButtonContainer = styled.div`
 const GenderButton = styled.button`
   flex: 1;
   margin: 0 5px;
-  background-color: ${props => (props.selected ? '#3869E0' : '#FAFAFA')};
-  color: ${props => (props.selected ? 'white' : '#252A2F')};
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
+  color: ${props => (props.selected ? '#FAFAFA' : '#252A2F')};
   border: none;
   border-radius: 10px;
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
@@ -102,7 +102,7 @@ const Button = styled.button`
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 60px;
-  background-color: ${props => (props.active ? '#3869E0' : '#848484')};
+  background-color: ${props => (props.active ? '#ff8a1d' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;

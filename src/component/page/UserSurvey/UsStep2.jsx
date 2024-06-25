@@ -63,7 +63,7 @@ const RankBadge = styled.div`
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: #3869E0;
+  background-color: #252a2f;
   color: #FAFAFA;
   border-radius: 4px;
   width: 20px;
@@ -82,7 +82,7 @@ const Button = styled.button`
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 60px;
-  background-color: ${props => (props.active ? '#3869E0' : '#848484')};
+  background-color: ${props => (props.active ? '#ff8a1d' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;

@@ -72,7 +72,7 @@ const ButtonContainer = styled.div`
 
 const Button = styled.button`
   padding: 10px 40px;
-  background-color: ${props => (props.active ? '#3869E0' : props.left ? '#FAFAFA' : '#848484')};
+  background-color: ${props => (props.active ? '#FF8A1D' : props.left ? '#FAFAFA' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
@@ -143,12 +143,12 @@ const CustomRadioButton = styled.label`
   border-radius: 50%;
   border: none;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
-  background-color: ${props => (props.checked ? '#3869E0' : 'transparent')};
+  background-color: ${props => (props.checked ? '#252a2f' : 'transparent')};
   cursor: pointer;
   transition: background-color 0.2s;
 
   ${HiddenRadioButton}:checked + & {
-    background-color: #3869E0;
+    background-color: #252a2f;
   }
 `;
 

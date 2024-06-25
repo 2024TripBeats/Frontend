@@ -2,33 +2,38 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
-const LoginHandeler = (props) => {
+const LoginHandler = (props) => {
   const navigate = useNavigate();
   const code = new URL(window.location.href).searchParams.get("code");
-  const REDIRECT_URI = `http://localhost:8888/login/oauth2/callback/kakao`;;
+  const KAKAO_AUTH_BACK = `http://localhost:8888/login/oauth2/callback/kakao`;
 
   useEffect(() => {
     const kakaoLogin = async () => {
-      await axios({
-        method: "GET",
-        url: `${REDIRECT_URI}?code=${code}`,
-        headers: {
-          "Content-Type": "application/json;charset=utf-8", //json형태로 데이터를 보내겠다는뜻
-          "Access-Control-Allow-Origin": "*", //이건 cors 에러때문에 넣어둔것. 당신의 프로젝트에 맞게 지워도됨
-        },
-      }).then((res) => { //백에서 완료후 우리사이트 전용 토큰 넘겨주는게 성공했다면
+      try {
+        const res = await axios({
+          method: "GET",
+          url: `${KAKAO_AUTH_BACK}?code=${code}`,
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
+
         console.log(res);
-        //계속 쓸 정보들( ex: 이름) 등은 localStorage에 저장해두자
-        localStorage.setItem("name", res.data.account.kakaoName);
-        //로그인이 성공하면 이동할 페이지
+        const { kakaoName, kakaoId } = res.data.account;
+        localStorage.setItem("name", kakaoName);
+        localStorage.setItem("id", kakaoId);
         navigate("/home");
-      });
+      } catch (error) {
+        console.error("Login failed", error);
+        // Handle the error accordingly
+      }
     };
     kakaoLogin();
-  }, [props.history]);
+  }, [code, navigate]);
 
   return (
-    <div className="LoginHandeler">
+    <div className="LoginHandler">
       <div className="notice">
         <p>로그인 중입니다.</p>
         <p>잠시만 기다려주세요.</p>
@@ -38,4 +43,4 @@ const LoginHandeler = (props) => {
   );
 };
 
-export default LoginHandeler;
+export default LoginHandler;

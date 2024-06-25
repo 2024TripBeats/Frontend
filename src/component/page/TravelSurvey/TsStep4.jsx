@@ -30,7 +30,7 @@ const Question = styled.div`
 const Message = styled.div`
   font-size: 11px;
   font-family: "Pretendard-Regular";
-  color: #3869E0;
+  color: #FF8A1D;
   text-align: center;
   margin-top: 1%;
   margin-bottom: 5%;
@@ -66,7 +66,7 @@ const ImgContainer = styled.div`
   width: 45%; /* 두 개씩 배치되도록 조정 */
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
   border-radius: 15px;
-  background-color: ${props => (props.selected ? '#3869E0' : '#FAFAFA')};
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
   cursor: pointer;
   overflow: hidden; /* 이미지가 컨테이너를 벗어나지 않도록 함 */
 `;
@@ -95,7 +95,7 @@ const Category = styled.div`
 
 const Button = styled.button`
   padding: 10px 40px;
-  background-color: ${props => (props.active ? '#3869E0' : props.left ? '#FAFAFA' : '#848484')};
+  background-color: ${props => (props.active ? '#FF8A1D' : props.left ? '#FAFAFA' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;

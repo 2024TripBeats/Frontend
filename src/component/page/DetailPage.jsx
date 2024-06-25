@@ -37,7 +37,7 @@ const BackButton = styled.button`
   border: none;
   font-size: 16px;
   cursor: pointer;
-  color: #3869E0;
+  color: #252a2f;
   margin-bottom: 20px;
 `;
 
@@ -68,7 +68,7 @@ const InfoText = styled.div`
 `;
 
 const Link = styled.div`
-  color: #3869E0;
+  color: #FF8A1D;
   text-decoration: none;
   font-family: "Pretendard-Medium";
 `;

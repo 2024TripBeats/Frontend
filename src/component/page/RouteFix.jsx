@@ -10,7 +10,7 @@ const Container = styled.div`
   background-color: #FAFAFA;
   box-sizing: border-box;
   align-items: center;
-  max-width: 500px;
+  width: 500px;
   box-sizing: border-box;
 `;
 
@@ -29,6 +29,7 @@ const ContentContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 0 7%;
+  width: 100%;
   box-sizing: border-box;
 `;
 
@@ -44,9 +45,10 @@ const TravelItemContainer = styled.div`
 const Day = styled.div`
   font-family: "Pretendard-Bold";
   font-size: 16px;
-  color: #FAFAFA;
+  color: #252a2f;
   margin-right: 10px;
-  background-color: #3869E0;
+  background-color: #FF8A1D;
+  text-align: center;
   border-radius: 5px;
   padding: 5px 20px;  
   margin-bottom: 30px;
@@ -54,16 +56,17 @@ const Day = styled.div`
 
 const DayContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
   flex-direction: column;
+  width: 100%;
 `;
 
 const Circle = styled.div`
   min-width: 60px;
   min-height: 60px;
   border-radius: 50%;
-  background-color: ${props => (props.isSelected ? '#3869E0' : '#e7e7e7')};
+  background-color: #e7e7e7;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,11 +79,26 @@ const Circle = styled.div`
   box-sizing: border-box;
 `;
 
-const Line = styled.div`
-  width: 2px;
-  height: 50px;
-  background-color: #e7e7e7;
-  flex-shrink: 0;
+const MusicContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+`;
+
+const MusicTitle = styled.div`
+  font-family: "Pretendard-Bold";
+  font-size: 12px;
+  color: #252a2f;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+const MusicSinger = styled.div`
+  font-family: "Pretendard-Medium";
+  font-size: 12px;
+  color: #252a2f;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const TravelDetails = styled.div`
@@ -88,6 +106,7 @@ const TravelDetails = styled.div`
   flex-direction: column;
   justify-content: center;
   padding-left: 10px;
+  gap: 5px;
   cursor: pointer;
 `;
 
@@ -97,11 +116,6 @@ const DestName = styled.div`
   color: #252a2f;
 `;
 
-const DestDetails = styled.div`
-  font-family: "Pretendard-Medium";
-  font-size: 12px;
-  color: #252a2f;
-`;
 
 const FloatingButton = styled.button.attrs({
     className: 'no-capture'
@@ -110,7 +124,7 @@ const FloatingButton = styled.button.attrs({
     bottom: 20px;
     right: 20px;
     padding: 10px 20px;
-    background-color: #3869E0;
+    background-color: #252a2f;
     border: none;
     border-radius: 5px;
     color: white;
@@ -163,12 +177,16 @@ const RouteFix = ({ }) => {
                     {day[dayKey].map((destination, index) => (
                     <TravelItemContainer key={destination.id}>
                         <Circle isSelected={false}>
-                        {`여행지${index + 1}`}
+                        {destination.visittime}
                         </Circle>
-                        <Line />
                         <TravelDetails onClick={() => handleDetailClick(destination.id)}>
-                        <DestName>{destination.name}</DestName>
-                        <DestDetails>{destination.details}</DestDetails>
+                          <DestName>{destination.name}</DestName>
+                          <MusicContainer>
+                            <img style={{ width: "14px" }}
+                            src = {process.env.PUBLIC_URL + '/asset/musicplay.png'} />
+                              <MusicTitle>{destination.musictitle}</MusicTitle>
+                              <MusicSinger>{destination.musicsinger}</MusicSinger>
+                          </MusicContainer>
                         </TravelDetails>
                     </TravelItemContainer>
                     ))}
@@ -178,7 +196,7 @@ const RouteFix = ({ }) => {
           </React.Fragment>
         ))}
       </ContentContainer>
-      <FloatingButton onClick={handleSaveImageClick}>이미지로 저장</FloatingButton>
+      <FloatingButton onClick={handleSaveImageClick}>💾 저장</FloatingButton>
     </Container>
   );
 };

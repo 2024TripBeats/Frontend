@@ -6,25 +6,41 @@
           "id": 1,
           "image_url": "https://media.istockphoto.com/id/1323776356/ko/%EC%82%AC%EC%A7%84/%EC%84%9C%EC%9A%B8%ED%9D%A5%EC%A7%80%EB%AC%B8.jpg?s=612x612&w=0&k=20&c=UEBogMv-XHbUUH9Gh9uBtd2wv3mLH1U2lnr0jSOQatg=",
           "name": "경복궁",
-          "details": "조선 왕조의 궁궐로, 한국의 역사와 문화를 느낄 수 있는 곳입니다."
+          "details": "조선 왕조의 궁궐로, 한국의 역사와 문화를 느낄 수 있는 곳입니다.",
+          "musictitle": "Viva La Vida",
+          "musicsinger": "Coldplay",
+          "visittime": "09:00",
+          "distance": 1000
         },
         {
           "id": 2,
           "image_url": "https://cdn.pixabay.com/photo/2022/10/15/16/44/night-view-7523474_1280.jpg",
           "name": "남산서울타워",
-          "details": "서울의 전경을 한눈에 볼 수 있는 전망대입니다."
+          "details": "서울의 전경을 한눈에 볼 수 있는 전망대입니다.",
+          "musictitle": "City of Stars",
+          "musicsinger": "Ryan Gosling & Emma Stone",
+          "visittime": "11:00",
+          "distance": 2000
         },
         {
           "id": 3,
           "image_url": "https://mediahub.seoul.go.kr/wp-content/uploads/editor/images/000558/%EC%8C%88%EC%A7%80%EA%B8%B8_%EC%A4%91%EC%A0%95_DSC03517.jpg",
           "name": "인사동",
-          "details": "전통과 현대가 조화를 이루는 예술과 문화의 거리입니다."
+          "details": "전통과 현대가 조화를 이루는 예술과 문화의 거리입니다.",
+          "musictitle": "Cool With You",
+          "musicsinger": "NewJeans",
+          "visittime": "13:00",
+          "distance": 1500
         },
         {
           "id": 4,
           "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Bukchon_Hanok_Village_%EB%B6%81%EC%B4%8C_%ED%95%9C%EC%98%A5%EB%A7%88%EC%9D%84_October_1_2020_15.jpg",
           "name": "북촌한옥마을",
-          "details": "전통 한옥이 밀집한 마을로, 한국의 전통 건축을 체험할 수 있습니다."
+          "details": "전통 한옥이 밀집한 마을로, 한국의 전통 건축을 체험할 수 있습니다.",
+          "musictitle": "Yesterday",
+          "musicsinger": "The Beatles",
+          "visittime": "15:00",
+          "distance": null
         }
       ],
       "day2": [
@@ -32,51 +48,83 @@
           "id": 5,
           "image_url": "https://i.namu.wiki/i/izM4IwnpFt6avd7mhBgEIZ2oG4cVVQVQC5gGxSQ8AabY7KaVU0fzWEobp0SkPZD8JTjPrJiUMcSuItzcazvSHA.webp",
           "name": "명동",
-          "details": "쇼핑과 맛집이 많은 서울의 대표적인 번화가입니다."
+          "details": "쇼핑과 맛집이 많은 서울의 대표적인 번화가입니다.",
+          "musictitle": "Uptown Funk",
+          "musicsinger": "Mark Ronson ft. Bruno Mars",
+          "visittime": "10:00",
+          "distance": 800
         },
         {
           "id": 6,
           "image_url": "https://sampartners-website-resources.s3.ap-northeast-2.amazonaws.com/images/aart_3a27463009074aa6a4c19013bd661831.jpg",
           "name": "동대문디자인플라자",
-          "details": "미래지향적인 디자인과 전시가 있는 복합 문화 공간입니다."
+          "details": "미래지향적인 디자인과 전시가 있는 복합 문화 공간입니다.",
+          "musictitle": "슝(feat. LISA of BLACKPINK)",
+          "musicsinger": "태양",
+          "visittime": "12:00",
+          "distance": 1200
         },
         {
           "id": 7,
           "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Hangang_Park_in_Yeouido_Seoul.jpg",
           "name": "한강공원",
-          "details": "서울을 가로지르는 한강을 따라 조성된 공원으로, 산책과 자전거 타기 좋은 곳입니다."
+          "details": "서울을 가로지르는 한강을 따라 조성된 공원으로, 산책과 자전거 타기 좋은 곳입니다.",
+          "musictitle": "River Flows in You",
+          "musicsinger": "Yiruma",
+          "visittime": "14:00",
+          "distance": 3000
         },
         {
           "id": 8,
           "image_url": "https://cdn.pixabay.com/photo/2020/11/01/21/27/changdeokgung-palace-5705726_1280.jpg",
           "name": "창덕궁",
-          "details": "유네스코 세계유산으로 지정된 아름다운 궁궐입니다."
+          "details": "유네스코 세계유산으로 지정된 아름다운 궁궐입니다.",
+          "musictitle": "Clair de Lune",
+          "musicsinger": "Claude Debussy",
+          "visittime": "16:00",
+          "distance": 500
         },
         {
           "id": 9,
           "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/76/National_Museum_of_Korea.jpg",
           "name": "국립중앙박물관",
-          "details": "한국의 역사와 문화를 전시한 박물관으로, 다양한 유물이 있습니다."
+          "details": "한국의 역사와 문화를 전시한 박물관으로, 다양한 유물이 있습니다.",
+          "musictitle": "Bohemian Rhapsody",
+          "musicsinger": "Queen",
+          "visittime": "18:00",
+          "distance": null
         }
       ],
       "day3": [
         {
           "id": 10,
-          "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Lotte_World_Tower_2017.jpg",
+          "image_url": "https://i.namu.wiki/i/Jvvw-ykN0duT7SbML188jyr6JMASSkCnlaPMEx6EwQsWaUys5yKkWeEbheELtYCQKUj2XazRPc5Sh0EpVGJEkw.webp",
           "name": "롯데월드타워",
-          "details": "서울의 스카이라인을 대표하는 초고층 빌딩으로, 다양한 상업시설과 전망대를 갖추고 있습니다."
+          "details": "서울의 스카이라인을 대표하는 초고층 빌딩으로, 다양한 상업시설과 전망대를 갖추고 있습니다.",
+          "musictitle": "ETA",
+          "musicsinger": "NewJeans",
+          "visittime": "09:00",
+          "distance": 4000
         },
         {
           "id": 11,
           "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Namsangol_Hanok_Village_3.jpg",
           "name": "남산골한옥마을",
-          "details": "서울의 옛 모습을 재현한 한옥 마을로, 전통 체험 프로그램이 다양합니다."
+          "details": "서울의 옛 모습을 재현한 한옥 마을로, 전통 체험 프로그램이 다양합니다.",
+          "musictitle": "Arirang",
+          "musicsinger": "Korean Traditional",
+          "visittime": "11:00",
+          "distance": 2500
         },
         {
           "id": 12,
           "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Cheonggyecheon_2012.jpg",
           "name": "청계천",
-          "details": "서울 도심을 가로지르는 하천으로, 산책과 휴식을 즐기기 좋은 곳입니다."
+          "details": "서울 도심을 가로지르는 하천으로, 산책과 휴식을 즐기기 좋은 곳입니다.",
+          "musictitle": "Empire State of Mind",
+          "musicsinger": "Jay-Z ft. Alicia Keys",
+          "visittime": "13:00",
+          "distance": null
         }
       ]
     }
