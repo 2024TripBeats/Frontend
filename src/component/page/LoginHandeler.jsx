@@ -19,10 +19,18 @@ const LoginHandler = (props) => {
           },
         });
 
-        console.log(res);
+        console.log('Response:', res); // Log the entire response object
+        console.log('Response Data:', res.data); // Log the response data
+        console.log('Account Data:', res.data.account); // Log the account data
+
         const { kakaoName, kakaoId } = res.data.account;
+
+        console.log('kakaoName:', kakaoName); // Log the kakaoName
+        console.log('kakaoId:', kakaoId); // Log the kakaoId
+
         localStorage.setItem("name", kakaoName);
         localStorage.setItem("id", kakaoId);
+
         navigate("/home");
       } catch (error) {
         console.error("Login failed", error);

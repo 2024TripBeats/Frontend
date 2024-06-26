@@ -95,10 +95,17 @@ const Button = styled.button`
 const UsStep2 = () => {
   const navigate = useNavigate();
   const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
-  const [desranks, setDesranks] = useState(usersurveyData.desranks);
+  const [desranks, setDesranks] = useState([null, null, null, null, null]);
 
   useEffect(() => {
-    setUserSurveyData(prevData => ({ ...prevData, desranks }));
+    setUserSurveyData(prevData => ({
+      ...prevData,
+      firstSpot: desranks[0],
+      secondSpot: desranks[1],
+      thirdSpot: desranks[2],
+      fourthSpot: desranks[3],
+      fifthSpot: desranks[4]
+    }));
   }, [desranks, setUserSurveyData]);
 
   const handleButtonClick = () => {

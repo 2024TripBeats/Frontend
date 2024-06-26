@@ -21,13 +21,13 @@ import UsStep2 from './component/page/UserSurvey/UsStep2';
 import UsStep3 from './component/page/UserSurvey/UsStep3';
 import UsStep4 from './component/page/UserSurvey/UsStep4';
 import UsEnd from './component/page/UserSurvey/UsEnd';
-import SurveySummary from './component/page/UserSurvey/SurveySummary'; //임시 정보 확인 페이지
+import UsSummary from './component/page/UserSurvey/UsSummary'; //임시 정보 확인 페이지
 
 // 여행 설문 조사 페이지
 import TsStep1 from './component/page/TravelSurvey/TsStep1';
 import TsStep2 from './component/page/TravelSurvey/TsStep2';
-import TsStep3 from './component/page/TravelSurvey/TsStep3';
-import TsStep4 from './component/page/TravelSurvey/TsStep4';
+// import TsStep3 from './component/page/TravelSurvey/TsStep3';
+// import TsStep4 from './component/page/TravelSurvey/TsStep4';
 import TsStep5 from './component/page/TravelSurvey/TsStep5';
 import TsEnd from './component/page/TravelSurvey/TsEnd';
 import TsSummary from './component/page/TravelSurvey/TsSummary'; //임시 정보 확인 페이지
@@ -122,12 +122,12 @@ const App = () => {
                   <Route path="/usersurvey2" element={<UsStep2 />} />
                   <Route path="/usersurvey3" element={<UsStep3 />} />
                   <Route path="/usersurvey4" element={<UsStep4 />} />
-                  <Route path="/us-summary" element={<SurveySummary />} />
+                  <Route path="/us-summary" element={<UsSummary />} />
                   <Route path="/usersurveyend" element={<UsEnd />} />
                   <Route path="/travelsurvey1" element={<TsStep1 />} />
                   <Route path="/travelsurvey2" element={<TsStep2 />} />
-                  <Route path="/travelsurvey3" element={<TsStep3 />} />
-                  <Route path="/travelsurvey4" element={<TsStep4 />} />
+                  {/* <Route path="/travelsurvey3" element={<TsStep3 />} />
+                  <Route path="/travelsurvey4" element={<TsStep4 />} /> */}
                   <Route path="/travelsurvey5" element={<TsStep5 />} />
                   <Route path="/travelsurveyend" element={<TsEnd />} />
                   <Route path="/ts-summary" element={<TsSummary />} />

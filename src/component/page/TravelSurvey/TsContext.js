@@ -7,8 +7,8 @@ export const TravelSurveyProvider = ({ children }) => {
     destination: '',
     period: '',
     intensity: [],
-    accomodation: [],
-    restaurant: [],
+    // accomodation: [],
+    // restaurant: [],
     stopwords: '',
     requirewords: '',
   });

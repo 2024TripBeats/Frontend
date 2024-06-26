@@ -102,34 +102,38 @@ const Button = styled.button`
 const UsStep3 = () => {
   const navigate = useNavigate();
   const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
-  const [selectedSurveyButtons, setSelectedSurveyButtons] = useState(usersurveyData.prevtrips);
+  const [selectedSurveyButtons, setSelectedSurveyButtons] = useState({
+    distance: usersurveyData.distance || null,
+    activityLevel: usersurveyData.activityLevel || null,
+    Scene: usersurveyData.Scene || null,
+  });
   const [selectedLikert, setSelectedLikert] = useState(usersurveyData.openness);
   const [isButtonActive, setIsButtonActive] = useState(false);
 
-  const handleSurveyClick = (groupIndex, buttonIndex) => {
-    const newSelectedButtons = [...selectedSurveyButtons]; 
-    newSelectedButtons[groupIndex] = buttonIndex + 1; // 1, 2, or 3로 저장
-    setSelectedSurveyButtons(newSelectedButtons);
+  const handleSurveyClick = (key, value) => {
+    setSelectedSurveyButtons(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleLikertClick = (index) => {
-    setSelectedLikert(index); 
+  const handleLikertClick = (value) => {
+    setSelectedLikert(value);
   };
 
   useEffect(() => {
-    const allSurveysSelected = selectedSurveyButtons.every(selection => selection !== null); 
+    const allSurveysSelected = Object.values(selectedSurveyButtons).every(selection => selection !== null); 
     const likertSelected = selectedLikert !== null;
-    setIsButtonActive(allSurveysSelected && likertSelected); 
+    setIsButtonActive(allSurveysSelected && likertSelected);
   }, [selectedSurveyButtons, selectedLikert]);
 
   const handleButtonClick = () => {
     setUserSurveyData(prevData => ({
       ...prevData,
-      prevtrips: selectedSurveyButtons,
+      distance: selectedSurveyButtons.distance,
+      activityLevel: selectedSurveyButtons.activityLevel,
+      Scene: selectedSurveyButtons.Scene,
       openness: selectedLikert,
     }));
     navigate(`/usersurvey4`);
-  }
+  };
 
   return (
     <Container>
@@ -141,60 +145,60 @@ const UsStep3 = () => {
       <Question style={{marginTop: "5%", marginBottom: "3%"}}>어떤 여행을 주로 선호하셨나요?</Question>
       <SurveyContainer>
         <SurveyButton
-          selected={selectedSurveyButtons[0] === 1}
-          onClick={() => handleSurveyClick(0, 0)}
+          selected={selectedSurveyButtons.distance === 1}
+          onClick={() => handleSurveyClick('distance', 1)}
         >
           단거리
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons[0] === 2}
-          onClick={() => handleSurveyClick(0, 1)}
+          selected={selectedSurveyButtons.distance === 2}
+          onClick={() => handleSurveyClick('distance', 2)}
         >
           원거리
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons[0] === 3}
-          onClick={() => handleSurveyClick(0, 2)}
+          selected={selectedSurveyButtons.distance === 3}
+          onClick={() => handleSurveyClick('distance', 3)}
         >
           상관없음
         </SurveyButton>
       </SurveyContainer>
       <SurveyContainer>
         <SurveyButton
-          selected={selectedSurveyButtons[1] === 1}
-          onClick={() => handleSurveyClick(1, 0)}
+          selected={selectedSurveyButtons.activityLevel === 1}
+          onClick={() => handleSurveyClick('activityLevel', 1)}
         >
           휴식
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons[1] === 2}
-          onClick={() => handleSurveyClick(1, 1)}
+          selected={selectedSurveyButtons.activityLevel === 2}
+          onClick={() => handleSurveyClick('activityLevel', 2)}
         >
           활동형
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons[1] === 3}
-          onClick={() => handleSurveyClick(1, 2)}
+          selected={selectedSurveyButtons.activityLevel === 3}
+          onClick={() => handleSurveyClick('activityLevel', 3)}
         >
           상관없음
         </SurveyButton>
       </SurveyContainer>
       <SurveyContainer style={{marginBottom:"15%"}}>
         <SurveyButton
-          selected={selectedSurveyButtons[2] === 1}
-          onClick={() => handleSurveyClick(2, 0)}
+          selected={selectedSurveyButtons.Scene === 1}
+          onClick={() => handleSurveyClick('Scene', 1)}
         >
           자연
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons[2] === 2}
-          onClick={() => handleSurveyClick(2, 1)}
+          selected={selectedSurveyButtons.Scene === 2}
+          onClick={() => handleSurveyClick('Scene', 2)}
         >
           도심
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons[2] === 3}
-          onClick={() => handleSurveyClick(2, 2)}
+          selected={selectedSurveyButtons.Scene === 3}
+          onClick={() => handleSurveyClick('Scene', 3)}
         >
           상관없음
         </SurveyButton>

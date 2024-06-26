@@ -134,8 +134,8 @@ const UsStep1 = () => {
   const phone3Ref = useRef(null);
 
   const isFormComplete = () => {
-    const { name, email, gender, age, phone } = usersurveyData;
-    return name && email && gender && age && phone;
+    const { email, gender, age, phoneNumber } = usersurveyData;
+    return email && gender && age && phoneNumber;
   };
 
   const handleInputChange = (e) => {
@@ -151,7 +151,7 @@ const UsStep1 = () => {
       setPhoneParts(prevParts => {
         const newParts = { ...prevParts, [name]: value };
         const combinedPhone = `${newParts.phone1}${newParts.phone2}${newParts.phone3}`;
-        setUserSurveyData(prevData => ({ ...prevData, phone: combinedPhone }));
+        setUserSurveyData(prevData => ({ ...prevData, phoneNumber: combinedPhone }));
 
         if (name === 'phone1' && value.length === 3) {
           phone2Ref.current.focus();
@@ -183,17 +183,6 @@ const UsStep1 = () => {
           alt='logo' />
       </LogoContainer>
       <SurveyContainer>
-        <VitalContainer>
-          <Question>이름</Question>
-          <VitalSign>*</VitalSign>
-        </VitalContainer>
-        <TextInput 
-          type="text" 
-          name="name"
-          placeholder="이름을 입력해주세요" 
-          value={usersurveyData.name}
-          onChange={handleInputChange}
-        />
         <VitalContainer>
           <Question>이메일 주소</Question>
           <VitalSign>*</VitalSign>

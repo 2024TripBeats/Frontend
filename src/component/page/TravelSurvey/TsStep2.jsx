@@ -230,7 +230,7 @@ const TsStep2 = () => {
         </BeforeButton>
         <Button 
           active={isButtonActive}
-          onClick={() => isButtonActive && navigate('/travelsurvey3')}
+          onClick={() => isButtonActive && navigate('/travelsurvey5')}
         >
           다음으로
         </Button>

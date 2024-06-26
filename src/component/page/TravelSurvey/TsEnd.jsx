@@ -56,20 +56,6 @@ const Emoji = styled.div`
   animation: ${fadeInOut} 4s linear infinite;
 `;
 
-const Button = styled.button`
-  display: flex;
-  align-items: center;
-  padding: 25px 60px;
-  background-color: #3869E0;
-  border-radius: 20px;
-  font-family: "Pretendard-ExtraBold";
-  border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-  font-size: 13px;
-  color: #FAFAFA;
-  margin-top: 100px;
-`;
-
 const emojis = ['✈️', '🚞', '🗽', '🚙', '🚀', '⛳️', '⛰️', '⛴️', '🚏', '🏝️', '🏔️', '🛥️'];
 
 const TsEnd = () => {
@@ -83,6 +69,13 @@ const TsEnd = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  // 3초 후에 추천결과로 이동
+  useEffect(() => {
+    setTimeout(() => {
+      navigate('/recommend');
+    }, 3000);
+  }, [navigate]);
 
   return (
     <Container>

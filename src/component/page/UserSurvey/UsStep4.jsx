@@ -70,7 +70,7 @@ const Button = styled.button`
 const UsStep4 = () => {
   const navigate = useNavigate();
   const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
-  const [selectedMusicTastes, setSelectedMusicTastes] = useState(usersurveyData.musictaste || []);
+  const [selectedMusicGenres, setSelectedMusicGenres] = useState(usersurveyData.musicGenre || []);
   const [isButtonActive, setIsButtonActive] = useState(false);
 
   const musicCategories = [
@@ -79,20 +79,20 @@ const UsStep4 = () => {
   ];
 
   useEffect(() => {
-    setIsButtonActive(selectedMusicTastes.length > 0);
-  }, [selectedMusicTastes]);
+    setIsButtonActive(selectedMusicGenres.length > 0);
+  }, [selectedMusicGenres]);
 
-  const toggleMusicTaste = (taste) => {
-    const updatedMusicTastes = selectedMusicTastes.includes(taste)
-      ? selectedMusicTastes.filter(item => item !== taste)
-      : [...selectedMusicTastes, taste];
-    setSelectedMusicTastes(updatedMusicTastes);
-    setUserSurveyData({ ...usersurveyData, musictaste: updatedMusicTastes });
+  const toggleMusicGenre = (genre) => {
+    const updatedMusicGenres = selectedMusicGenres.includes(genre)
+      ? selectedMusicGenres.filter(item => item !== genre)
+      : [...selectedMusicGenres, genre];
+    setSelectedMusicGenres(updatedMusicGenres);
+    setUserSurveyData({ ...usersurveyData, musicGenre: updatedMusicGenres });
   };
 
   const handleButtonClick = () => {
     if (isButtonActive) {
-      navigate(`/usersurveyend`);
+      navigate(`/us-summary`);
     }
   };
 
@@ -110,13 +110,13 @@ const UsStep4 = () => {
         return rows;
       }, []).map((row, rowIndex) => (
         <SurveyContainer key={rowIndex}>
-          {row.map(taste => (
+          {row.map(genre => (
             <SurveyButton
-              key={taste}
-              selected={selectedMusicTastes.includes(taste)}
-              onClick={() => toggleMusicTaste(taste)}
+              key={genre}
+              selected={selectedMusicGenres.includes(genre)}
+              onClick={() => toggleMusicGenre(genre)}
             >
-              {taste}
+              {genre}
             </SurveyButton>
           ))}
         </SurveyContainer>
