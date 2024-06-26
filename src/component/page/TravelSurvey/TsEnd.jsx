@@ -70,11 +70,20 @@ const TsEnd = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // 3초 후에 추천결과로 이동
   useEffect(() => {
-    setTimeout(() => {
-      navigate('/recommend');
-    }, 3000);
+    const checkResponseReceived = () => {
+      const responseReceived = localStorage.getItem('surveyResponseReceived') === 'true';
+
+      if (responseReceived) {
+        localStorage.removeItem('surveyResponseReceived'); // Clean up the flag
+        navigate('/recommend');
+      } else {
+        setTimeout(checkResponseReceived, 1000); // Check again after 1 second
+      }
+    };
+
+    checkResponseReceived(); // Initial check
+
   }, [navigate]);
 
   return (

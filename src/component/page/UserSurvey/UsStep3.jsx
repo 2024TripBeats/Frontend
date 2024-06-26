@@ -3,136 +3,6 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { UserSurveyContext } from './UsContext';
 
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #FAFAFA;
-    box-sizing: border-box;
-`;
-
-const LogoContainer = styled.div`
-  margin-top: 8%;
-  margin-bottom: 5%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-`;
-
-const Question = styled.div`
-  font-size: 18px;
-  font-family: "Pretendard-ExtraBold";
-  color: #252a2f;
-  text-align: center;
-`;
-
-const Message = styled.div`
-  font-size: 13px;
-  font-family: "Pretendard-Medium";
-  color: #252A2F;
-`;
-
-const SurveyContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5%;
-  margin-top: 4%;
-  margin-left: 7%;
-  margin-right: 7%;
-`;
-
-const SurveyButton = styled.button`
-  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
-  color: ${props => (props.selected ? '#FAFAFA' : '#252A2F')};
-  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
-  border: none;
-  border-radius: 10px;
-  width: 35%;
-  height: 50px;
-  font-size: 16px;
-  font-family: "Pretendard-ExtraBold";
-`;
-
-const LikertContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-top: 5%;
-  gap: 7%;
-  padding: 0 7%;
-`;
-
-const LikertButton = styled.button`
-  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
-  width: 15px;  
-  height: 15px;  
-  border-radius: 50%;  
-  box-shadow: 0 0 1.5px rgba(0, 0, 0, 0.6);
-  border: none;
-  cursor: pointer;
-`;
-
-const Divider = styled.hr`
-  border: none;
-  height: 0.5px;
-  background-color: #252a2f;
-  width: 100%;
-`;
-
-const Button = styled.button`
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 60px;
-  background-color: ${props => (props.active ? '#ff8a1d' : '#848484')};
-  border-radius: 20px;
-  font-family: "Pretendard-ExtraBold";
-  border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
-  font-size: 13px;
-  color: #FAFAFA;
-  cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
-`;
-
-const ProgressContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
-  gap: 10px;
-`;
-
-const ProgressBarContainer = styled.div`
-  width: 80%;
-  height: 10px;
-  background-color: #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-`;
-
-const Progress = styled.div`
-  width: ${props => props.width}%;
-  height: 100%;
-  background-color: #ff8a1d;
-  border-radius: 10px;
-  transition: width 0.3s ease-in-out;
-`;
-
-const StepText = styled.div`
-  font-size: 12px;
-  font-family: "Pretendard-Regular";
-  color: #252A2F;
-  text-align: center;
-  margin-bottom: 10px;
-`;
-
-
 const UsStep3 = () => {
   const navigate = useNavigate();
   const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
@@ -267,3 +137,132 @@ const UsStep3 = () => {
 };
 
 export default UsStep3;
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #FAFAFA;
+    box-sizing: border-box;
+`;
+
+const LogoContainer = styled.div`
+  margin-top: 8%;
+  margin-bottom: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const Question = styled.div`
+  font-size: 18px;
+  font-family: "Pretendard-ExtraBold";
+  color: #252a2f;
+  text-align: center;
+`;
+
+const Message = styled.div`
+  font-size: 13px;
+  font-family: "Pretendard-Medium";
+  color: #252A2F;
+`;
+
+const SurveyContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5%;
+  margin-top: 4%;
+  margin-left: 7%;
+  margin-right: 7%;
+`;
+
+const SurveyButton = styled.button`
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
+  color: ${props => (props.selected ? '#FAFAFA' : '#252A2F')};
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 10px;
+  width: 35%;
+  height: 50px;
+  font-size: 16px;
+  font-family: "Pretendard-ExtraBold";
+`;
+
+const LikertContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5%;
+  gap: 7%;
+  padding: 0 7%;
+`;
+
+const LikertButton = styled.button`
+  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
+  width: 15px;  
+  height: 15px;  
+  border-radius: 50%;  
+  box-shadow: 0 0 1.5px rgba(0, 0, 0, 0.6);
+  border: none;
+  cursor: pointer;
+`;
+
+const Divider = styled.hr`
+  border: none;
+  height: 0.5px;
+  background-color: #252a2f;
+  width: 100%;
+`;
+
+const Button = styled.button`
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 60px;
+  background-color: ${props => (props.active ? '#ff8a1d' : '#848484')};
+  border-radius: 20px;
+  font-family: "Pretendard-ExtraBold";
+  border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+  font-size: 13px;
+  color: #FAFAFA;
+  cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
+`;
+
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
+
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
+`;

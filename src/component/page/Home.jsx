@@ -146,15 +146,12 @@ const Home = () => {
   const [isModalOpen, setModalOpen] = useState(true); // 모달 기본 열림 상태로 설정
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // 초기 이미지 인덱스 상태
   const [name, setName] = useState("");
-  const [id, setId] = useState("");
 
   useEffect(() => {
     const storedName = localStorage.getItem("name");
-    const storedId = localStorage.getItem("id");
 
-    if (storedName && storedId) {
+    if (storedName) {
       setName(storedName);
-      setId(storedId);
     } else {
       // Handle case where data is not found in localStorage
       console.error("No user data found in localStorage");

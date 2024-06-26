@@ -1,7 +1,118 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
+
+const TsStep5 = () => {
+  const navigate = useNavigate();
+  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
+  const [mandatoryText, setMandatoryText] = useState('');
+  const [stopwordsText, setStopwordsText] = useState('');
+  const [name, setName] = useState("");
+
+  // 로컬스토리지에서 이름 가져오기
+  useEffect(() => {
+      const storedName = localStorage.getItem("name");
+
+      if (storedName) {
+          setName(storedName);
+      } else {
+          // 로컬스토리지에 데이터가 없는 경우 처리
+          console.error("No user data found in localStorage");
+      }
+  }, []);
+
+  const handleMandatoryChange = (e) => {
+    if (e.target.value.length <= 500) {
+      setMandatoryText(e.target.value);
+    }
+  };
+
+  const handleStopwordsChange = (e) => {
+    if (e.target.value.length <= 500) {
+      setStopwordsText(e.target.value);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const surveyDataWithName = { ...travelsurveyData, requirewords: mandatoryText, stopwords: stopwordsText, name };
+    setTravelSurveyData(surveyDataWithName);
+
+    navigate('/travelsurveyend'); // Navigate to /travelsurveyend
+
+    try {
+      const response = await fetch('http://localhost:8888/routerecommend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(surveyDataWithName),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      console.log('Success:', result);
+
+      localStorage.setItem('surveyResponseReceived', 'true'); // Store flag in localStorage
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img style={{ width: "30%" }} 
+          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          alt='logo' />
+      </LogoContainer>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={100} />
+        </ProgressBarContainer>
+        <StepText>2/2 단계</StepText>
+      </ProgressContainer>
+      <Question>이번 여행에서</Question>
+      <Question style={{color:'#FF8A1D'}}>이것만큼은 꼭 지켜야 한다고</Question>
+      <Question>생각되는 희망사항을</Question>
+      <Question>자유롭게 작성해주세요</Question>
+      <SurveyContainer>
+        <Message>반드시 포함될 요소</Message>
+        <TextArea 
+            name="mandatory"
+            placeholder="예) 롯데월드는 꼭 갈래요"
+            value={mandatoryText}
+            onChange={handleMandatoryChange}
+        />
+        <WordCount>{mandatoryText.length}/500</WordCount>
+      </SurveyContainer>
+      <SurveyContainer style={{marginBottom:"20px"}}>
+        <Message>포함되지 말아야 할 요소</Message>
+        <TextArea 
+            name="stopwords"
+            placeholder="예) 클럽같은 시끄러운 곳은 싫어요"
+            value={stopwordsText}
+            onChange={handleStopwordsChange}
+        />
+        <WordCount>{stopwordsText.length}/500</WordCount>
+      </SurveyContainer>
+      <ButtonContainer>
+        <BeforeButton onClick={() => navigate('/travelsurvey3')}>
+          이전으로
+        </BeforeButton>
+        <Button onClick={handleSubmit}>
+          여행루트 추천받기
+        </Button>
+      </ButtonContainer>
+    </Container>
+  );
+};
+
+export default TsStep5;
 
 const Container = styled.div`
   display: flex;
@@ -102,7 +213,6 @@ const BeforeButton = styled.button`
   cursor: pointer;
 `;
 
-
 const ProgressContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -135,114 +245,3 @@ const StepText = styled.div`
   text-align: center;
   margin-bottom: 10px;
 `;
-
-const TsStep5 = () => {
-  const navigate = useNavigate();
-  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
-  const [mandatoryText, setMandatoryText] = useState('');
-  const [stopwordsText, setStopwordsText] = useState('');
-
-  const handleMandatoryChange = (e) => {
-    if (e.target.value.length <= 500) {
-      setMandatoryText(e.target.value);
-    }
-  };
-
-  const handleStopwordsChange = (e) => {
-    if (e.target.value.length <= 500) {
-      setStopwordsText(e.target.value);
-    }
-  };
-
-  const handleSubmit = () => {
-    setTravelSurveyData((prevData) => ({
-      ...prevData,
-      requirewords: mandatoryText,
-      stopwords: stopwordsText,
-    }));
-    navigate('/travelsurveyend');
-  };
-
-//   const handleSubmit = async () => {
-//     setTravelSurveyData((prevData) => ({
-//       ...prevData,
-//       requirewords: mandatoryText,
-//       stopwords: stopwordsText,
-//     }));
-
-//     try {
-//       const response = await fetch('http://localhost:8888/RouteRecommend', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           ...travelsurveyData,
-//           requirewords: mandatoryText,
-//           stopwords: stopwordsText,
-//         }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error('Network response was not ok');
-//       }
-
-//       const result = await response.json();
-//       console.log('Success:', result);
-
-//       navigate('/travelsurveyend');
-//     } catch (error) {
-//       console.error('Error:', error);
-//     }
-//   };
-
-  return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
-          alt='logo' />
-      </LogoContainer>
-      <ProgressContainer>
-        <ProgressBarContainer>
-          <Progress width={100} />
-        </ProgressBarContainer>
-        <StepText>2/2 단계</StepText>
-      </ProgressContainer>
-      <Question>이번 여행에서</Question>
-      <Question style={{color:'#FF8A1D'}}>이것만큼은 꼭 지켜야 한다고</Question>
-      <Question>생각되는 희망사항을</Question>
-      <Question>자유롭게 작성해주세요</Question>
-      <SurveyContainer>
-        <Message>반드시 포함될 요소</Message>
-        <TextArea 
-            name="mandatory"
-            placeholder="예) 롯데월드는 꼭 갈래요"
-            value={mandatoryText}
-            onChange={handleMandatoryChange}
-        />
-        <WordCount>{mandatoryText.length}/500</WordCount>
-      </SurveyContainer>
-      <SurveyContainer style={{marginBottom:"20px"}}>
-        <Message>포함되지 말아야 할 요소</Message>
-        <TextArea 
-            name="stopwords"
-            placeholder="예) 클럽같은 시끄러운 곳은 싫어요"
-            value={stopwordsText}
-            onChange={handleStopwordsChange}
-        />
-        <WordCount>{stopwordsText.length}/500</WordCount>
-      </SurveyContainer>
-      <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey3')}>
-          이전으로
-        </BeforeButton>
-        <Button onClick={handleSubmit}>
-          여행루트 추천받기
-        </Button>
-      </ButtonContainer>
-    </Container>
-  );
-};
-
-export default TsStep5;

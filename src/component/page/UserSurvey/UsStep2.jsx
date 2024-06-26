@@ -3,6 +3,108 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { UserSurveyContext } from './UsContext';
 
+const UsStep2 = () => {
+  const navigate = useNavigate();
+  const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
+  const [desranks, setDesranks] = useState([null, null, null, null, null]);
+
+  useEffect(() => {
+    setUserSurveyData(prevData => ({
+      ...prevData,
+      firstSpot: desranks[0],
+      secondSpot: desranks[1],
+      thirdSpot: desranks[2],
+      fourthSpot: desranks[3],
+      fifthSpot: desranks[4]
+    }));
+  }, [desranks, setUserSurveyData]);
+
+  const handleButtonClick = () => {
+    if (desranks.every(rank => rank !== null)) {
+      navigate('/usersurvey3');
+    }
+  };
+
+  const handleClick = (index) => {
+    setDesranks((prevRanks) => {
+      const newRanks = [...prevRanks];
+      const currentRank = newRanks[index];
+
+      if (currentRank !== null) {
+        // Remove rank and adjust others
+        newRanks[index] = null;
+        for (let i = 0; i < newRanks.length; i++) {
+          if (newRanks[i] !== null && newRanks[i] > currentRank) {
+            newRanks[i]--;
+          }
+        }
+      } else {
+        // Assign next available rank
+        const nextRank = newRanks.filter(rank => rank !== null).length + 1;
+        newRanks[index] = nextRank;
+      }
+      
+      return newRanks;
+    });
+  };
+
+  const allSelected = desranks.every(rank => rank !== null);
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img style={{ width: "30%" }} 
+          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          alt='logo' />
+      </LogoContainer>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={40} />
+        </ProgressBarContainer>
+        <StepText>2/5 단계</StepText>
+      </ProgressContainer>
+      <Question>가고 싶은 순으로</Question>
+      <Question style={{ marginBottom: "3%" }}>여행지를 골라주세요</Question>
+      <PickerContainer>
+        <ImgContainer>
+          <ImgPicker onClick={() => handleClick(0)}>
+            <Img src={process.env.PUBLIC_URL + `/asset/survey/img1.png`} />
+            {desranks[0] && <RankBadge>{desranks[0]}</RankBadge>}
+          </ImgPicker>
+          <ImgPicker onClick={() => handleClick(1)}>
+            <Img src={process.env.PUBLIC_URL + `/asset/survey/img2.png`} />
+            {desranks[1] && <RankBadge>{desranks[1]}</RankBadge>}
+          </ImgPicker>
+        </ImgContainer>
+        <ImgContainer>
+          <ImgPicker onClick={() => handleClick(2)}>
+            <Img src={process.env.PUBLIC_URL + `/asset/survey/img3.png`} />
+            {desranks[2] && <RankBadge>{desranks[2]}</RankBadge>}
+          </ImgPicker>
+          <ImgPicker onClick={() => handleClick(3)}>
+            <Img src={process.env.PUBLIC_URL + `/asset/survey/img4.png`} />
+            {desranks[3] && <RankBadge>{desranks[3]}</RankBadge>}
+          </ImgPicker>
+        </ImgContainer>
+        <ImgContainer>
+          <ImgPicker onClick={() => handleClick(4)}>
+            <Img src={process.env.PUBLIC_URL + `/asset/survey/img5.png`} />
+            {desranks[4] && <RankBadge>{desranks[4]}</RankBadge>}
+          </ImgPicker>
+          <ImgPicker style={{ visibility: "hidden" }}>
+            <Img src={process.env.PUBLIC_URL + `/asset/survey/img1.png`} />
+          </ImgPicker>
+        </ImgContainer>
+      </PickerContainer>
+      <Button active={allSelected} onClick={handleButtonClick}>
+        다음으로
+      </Button>
+    </Container>
+  );
+};
+
+export default UsStep2;
+
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -125,105 +227,3 @@ const StepText = styled.div`
   text-align: center;
   margin-bottom: 10px;
 `;
-
-const UsStep2 = () => {
-  const navigate = useNavigate();
-  const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
-  const [desranks, setDesranks] = useState([null, null, null, null, null]);
-
-  useEffect(() => {
-    setUserSurveyData(prevData => ({
-      ...prevData,
-      firstSpot: desranks[0],
-      secondSpot: desranks[1],
-      thirdSpot: desranks[2],
-      fourthSpot: desranks[3],
-      fifthSpot: desranks[4]
-    }));
-  }, [desranks, setUserSurveyData]);
-
-  const handleButtonClick = () => {
-    if (desranks.every(rank => rank !== null)) {
-      navigate('/usersurvey3');
-    }
-  };
-
-  const handleClick = (index) => {
-    setDesranks((prevRanks) => {
-      const newRanks = [...prevRanks];
-      const currentRank = newRanks[index];
-
-      if (currentRank !== null) {
-        // Remove rank and adjust others
-        newRanks[index] = null;
-        for (let i = 0; i < newRanks.length; i++) {
-          if (newRanks[i] !== null && newRanks[i] > currentRank) {
-            newRanks[i]--;
-          }
-        }
-      } else {
-        // Assign next available rank
-        const nextRank = newRanks.filter(rank => rank !== null).length + 1;
-        newRanks[index] = nextRank;
-      }
-      
-      return newRanks;
-    });
-  };
-
-  const allSelected = desranks.every(rank => rank !== null);
-
-  return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
-          alt='logo' />
-      </LogoContainer>
-      <ProgressContainer>
-        <ProgressBarContainer>
-          <Progress width={40} />
-        </ProgressBarContainer>
-        <StepText>2/5 단계</StepText>
-      </ProgressContainer>
-      <Question>가고 싶은 순으로</Question>
-      <Question style={{ marginBottom: "3%" }}>여행지를 골라주세요</Question>
-      <PickerContainer>
-        <ImgContainer>
-          <ImgPicker onClick={() => handleClick(0)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img1.png`} />
-            {desranks[0] && <RankBadge>{desranks[0]}</RankBadge>}
-          </ImgPicker>
-          <ImgPicker onClick={() => handleClick(1)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img2.png`} />
-            {desranks[1] && <RankBadge>{desranks[1]}</RankBadge>}
-          </ImgPicker>
-        </ImgContainer>
-        <ImgContainer>
-          <ImgPicker onClick={() => handleClick(2)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img3.png`} />
-            {desranks[2] && <RankBadge>{desranks[2]}</RankBadge>}
-          </ImgPicker>
-          <ImgPicker onClick={() => handleClick(3)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img4.png`} />
-            {desranks[3] && <RankBadge>{desranks[3]}</RankBadge>}
-          </ImgPicker>
-        </ImgContainer>
-        <ImgContainer>
-          <ImgPicker onClick={() => handleClick(4)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img5.png`} />
-            {desranks[4] && <RankBadge>{desranks[4]}</RankBadge>}
-          </ImgPicker>
-          <ImgPicker style={{ visibility: "hidden" }}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img1.png`} />
-          </ImgPicker>
-        </ImgContainer>
-      </PickerContainer>
-      <Button active={allSelected} onClick={handleButtonClick}>
-        다음으로
-      </Button>
-    </Container>
-  );
-};
-
-export default UsStep2;

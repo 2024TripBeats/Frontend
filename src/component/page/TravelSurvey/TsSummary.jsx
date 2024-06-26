@@ -59,8 +59,6 @@ const TsSummary = () => {
         <DataItem><strong>Destination:</strong> {travelsurveyData.destination}</DataItem>
         <DataItem><strong>Period:</strong> {travelsurveyData.period}</DataItem>
         <DataItem><strong>Intensity:</strong> {travelsurveyData.intensity.join(', ')}</DataItem>
-        <DataItem><strong>Accommodation:</strong> {travelsurveyData.accomodation.join(', ')}</DataItem>
-        <DataItem><strong>Restaurant:</strong> {travelsurveyData.restaurant.join(', ')}</DataItem>
         <DataItem><strong>Mandatory:</strong> {travelsurveyData.requirewords}</DataItem>
         <DataItem><strong>Stopwords:</strong> {travelsurveyData.stopwords}</DataItem>
       </DataContainer>
