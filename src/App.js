@@ -20,6 +20,7 @@ import UsStep1 from './component/page/UserSurvey/UsStep1';
 import UsStep2 from './component/page/UserSurvey/UsStep2';
 import UsStep3 from './component/page/UserSurvey/UsStep3';
 import UsStep4 from './component/page/UserSurvey/UsStep4';
+import UsStep5 from './component/page/UserSurvey/UsStep5';
 import UsEnd from './component/page/UserSurvey/UsEnd';
 import UsSummary from './component/page/UserSurvey/UsSummary'; //임시 정보 확인 페이지
 
@@ -122,6 +123,7 @@ const App = () => {
                   <Route path="/usersurvey2" element={<UsStep2 />} />
                   <Route path="/usersurvey3" element={<UsStep3 />} />
                   <Route path="/usersurvey4" element={<UsStep4 />} />
+                  <Route path="/usersurvey5" element={<UsStep5 />} />
                   <Route path="/us-summary" element={<UsSummary />} />
                   <Route path="/usersurveyend" element={<UsEnd />} />
                   <Route path="/travelsurvey1" element={<TsStep1 />} />

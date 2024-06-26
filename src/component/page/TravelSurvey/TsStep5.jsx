@@ -38,7 +38,7 @@ const SurveyContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 10%;
+  margin-top: 7%;
   padding: 0 7%;
 `;
 
@@ -100,6 +100,40 @@ const BeforeButton = styled.button`
   font-size: 13px;
   color: #252a2f;
   cursor: pointer;
+`;
+
+
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
+
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
 `;
 
 const TsStep5 = () => {
@@ -169,7 +203,13 @@ const TsStep5 = () => {
           src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
           alt='logo' />
       </LogoContainer>
-      <Question style={{ marginTop: "5%" }}>이번 여행에서</Question>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={100} />
+        </ProgressBarContainer>
+        <StepText>2/2 단계</StepText>
+      </ProgressContainer>
+      <Question>이번 여행에서</Question>
       <Question style={{color:'#FF8A1D'}}>이것만큼은 꼭 지켜야 한다고</Question>
       <Question>생각되는 희망사항을</Question>
       <Question>자유롭게 작성해주세요</Question>
@@ -183,7 +223,7 @@ const TsStep5 = () => {
         />
         <WordCount>{mandatoryText.length}/500</WordCount>
       </SurveyContainer>
-      <SurveyContainer>
+      <SurveyContainer style={{marginBottom:"20px"}}>
         <Message>포함되지 말아야 할 요소</Message>
         <TextArea 
             name="stopwords"

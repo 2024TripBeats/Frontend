@@ -26,6 +26,7 @@ const PickerContainer = styled.div`
   align-items: center;
   justify-content: center;
   padding: 0 7%;
+  margin-bottom: 10%;
 `;
 
 const Question = styled.div`
@@ -92,6 +93,39 @@ const Button = styled.button`
   cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
 `;
 
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
+
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
 const UsStep2 = () => {
   const navigate = useNavigate();
   const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
@@ -146,7 +180,13 @@ const UsStep2 = () => {
           src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
           alt='logo' />
       </LogoContainer>
-      <Question style={{ marginTop: "5%" }}>가고 싶은 순으로</Question>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={40} />
+        </ProgressBarContainer>
+        <StepText>2/5 단계</StepText>
+      </ProgressContainer>
+      <Question>가고 싶은 순으로</Question>
       <Question style={{ marginBottom: "3%" }}>여행지를 골라주세요</Question>
       <PickerContainer>
         <ImgContainer>

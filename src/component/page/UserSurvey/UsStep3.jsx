@@ -99,6 +99,40 @@ const Button = styled.button`
   cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
 `;
 
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
+
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+
 const UsStep3 = () => {
   const navigate = useNavigate();
   const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
@@ -142,7 +176,13 @@ const UsStep3 = () => {
           src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
           alt='logo' />
       </LogoContainer>
-      <Question style={{marginTop: "5%", marginBottom: "3%"}}>어떤 여행을 주로 선호하셨나요?</Question>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={60} />
+        </ProgressBarContainer>
+        <StepText>3/5 단계</StepText>
+      </ProgressContainer>
+      <Question style={{marginBottom: "3%"}}>어떤 여행을 주로 선호하셨나요?</Question>
       <SurveyContainer>
         <SurveyButton
           selected={selectedSurveyButtons.distance === 1}
@@ -183,7 +223,7 @@ const UsStep3 = () => {
           상관없음
         </SurveyButton>
       </SurveyContainer>
-      <SurveyContainer style={{marginBottom:"15%"}}>
+      <SurveyContainer style={{marginBottom:"5%"}}>
         <SurveyButton
           selected={selectedSurveyButtons.Scene === 1}
           onClick={() => handleSurveyClick('Scene', 1)}

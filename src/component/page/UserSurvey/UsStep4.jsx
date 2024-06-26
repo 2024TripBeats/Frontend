@@ -3,6 +3,99 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { UserSurveyContext } from './UsContext';
 
+const UsStep4 = () => {
+  const navigate = useNavigate();
+  const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
+  const [selectedMusicGenres, setSelectedMusicGenres] = useState(usersurveyData.musicGenre || []);
+  const [isButtonActive, setIsButtonActive] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [genreOpenness, setGenreOpenness] = useState(usersurveyData.genreOpenness || 1);
+
+  const musicCategories = [
+    '발라드', '힙합', '인디', '댄스', '뉴에이지', '알앤비', '재즈', '클래식', '록',
+    '팝', 'OST', 'EDM', 'CCM', 'JPOP', '트로트', '월드뮤직', '블루스', '컨트리'
+  ];
+
+  useEffect(() => {
+    setIsButtonActive(selectedMusicGenres.length > 0);
+  }, [selectedMusicGenres]);
+
+  const toggleMusicGenre = (genre) => {
+    const updatedMusicGenres = selectedMusicGenres.includes(genre)
+      ? selectedMusicGenres.filter(item => item !== genre)
+      : [...selectedMusicGenres, genre];
+    setSelectedMusicGenres(updatedMusicGenres);
+    setUserSurveyData({ ...usersurveyData, musicGenre: updatedMusicGenres });
+  };
+
+  const handleButtonClick = () => {
+    setUserSurveyData({ ...usersurveyData, genreOpenness });
+    if (isButtonActive) {
+      navigate(`/usersurvey5`);
+    }
+  };
+
+  const handleShowMore = () => {
+    setShowMore(!showMore);
+  };
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img style={{ width: "30%" }} 
+          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          alt='logo' />
+      </LogoContainer>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={80} />
+        </ProgressBarContainer>
+        <StepText>4/5 단계</StepText>
+      </ProgressContainer>
+      <Question style={{marginBottom: "3%"}}>어떤 음악을 주로 들으시나요?</Question>
+      {musicCategories.reduce((rows, category, index) => {
+        if (index % 4 === 0) rows.push([]);
+        rows[rows.length - 1].push(category);
+        return rows;
+      }, []).map((row, rowIndex) => (
+        <SurveyContainer key={rowIndex} style={{ display: showMore || rowIndex < 2 ? 'flex' : 'none' }}>
+          {row.map(genre => (
+            <SurveyButton
+              key={genre}
+              selected={selectedMusicGenres.includes(genre)}
+              onClick={() => toggleMusicGenre(genre)}
+            >
+              {genre}
+            </SurveyButton>
+          ))}
+        </SurveyContainer>
+      ))}
+      <ShowMoreButton onClick={handleShowMore}>
+        {showMore ? '▲ 접기' : '▼ 더보기'}
+      </ShowMoreButton>
+      <SliderContainer>
+        <Question>장르 취향과 거리가 있는 음악을 듣고싶으신가요?</Question>
+        <SliderWrapper>
+          <SliderLabel>아니오</SliderLabel>
+          <Slider 
+            type="range" 
+            min="1" 
+            max="5" 
+            value={genreOpenness} 
+            onChange={(e) => setGenreOpenness(e.target.value)} 
+          />
+          <SliderLabel>네</SliderLabel>
+        </SliderWrapper>
+      </SliderContainer>
+      <Button active={isButtonActive} onClick={handleButtonClick}>
+        다음으로
+      </Button>
+    </Container>
+  );
+};
+
+export default UsStep4;
+
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -32,7 +125,7 @@ const SurveyContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 10%;
+  gap: 5%;
   margin-top: 5%;
   margin-left: 7%;
   margin-right: 7%;
@@ -67,65 +160,148 @@ const Button = styled.button`
   cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
 `;
 
-const UsStep4 = () => {
-  const navigate = useNavigate();
-  const { usersurveyData, setUserSurveyData } = useContext(UserSurveyContext);
-  const [selectedMusicGenres, setSelectedMusicGenres] = useState(usersurveyData.musicGenre || []);
-  const [isButtonActive, setIsButtonActive] = useState(false);
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
 
-  const musicCategories = [
-    '발라드', '힙합', '인디', '댄스', '뉴에이지', '알앤비', '재즈', '클래식', '록',
-    '팝', 'OST', 'EDM', 'CCM', 'JPOP', '트로트', '월드뮤직', '블루스', '컨트리'
-  ];
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
 
-  useEffect(() => {
-    setIsButtonActive(selectedMusicGenres.length > 0);
-  }, [selectedMusicGenres]);
+const Progress = styled.div`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
 
-  const toggleMusicGenre = (genre) => {
-    const updatedMusicGenres = selectedMusicGenres.includes(genre)
-      ? selectedMusicGenres.filter(item => item !== genre)
-      : [...selectedMusicGenres, genre];
-    setSelectedMusicGenres(updatedMusicGenres);
-    setUserSurveyData({ ...usersurveyData, musicGenre: updatedMusicGenres });
-  };
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
+`;
 
-  const handleButtonClick = () => {
-    if (isButtonActive) {
-      navigate(`/us-summary`);
-    }
-  };
+const ShowMoreButton = styled.button`
+  background-color: #FaFAFA;
+  color: #c4c4c4;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 10px;
+  font-family: "Pretendard-Medium";
+  cursor: pointer;
+  margin-top: 10px;
+`;
 
-  return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
-          alt='logo' />
-      </LogoContainer>
-      <Question style={{marginTop: "5%", marginBottom: "3%"}}>어떤 음악을 주로 들으시나요?</Question>
-      {musicCategories.reduce((rows, category, index) => {
-        if (index % 3 === 0) rows.push([]);
-        rows[rows.length - 1].push(category);
-        return rows;
-      }, []).map((row, rowIndex) => (
-        <SurveyContainer key={rowIndex}>
-          {row.map(genre => (
-            <SurveyButton
-              key={genre}
-              selected={selectedMusicGenres.includes(genre)}
-              onClick={() => toggleMusicGenre(genre)}
-            >
-              {genre}
-            </SurveyButton>
-          ))}
-        </SurveyContainer>
-      ))}
-      <Button active={isButtonActive} onClick={handleButtonClick}>
-        설문 완료
-      </Button>
-    </Container>
-  );
-};
+const SliderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 100px;
+`;
 
-export default UsStep4;
+const SliderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  margin-top: 4%;
+`;
+
+const SliderLabel = styled.div`
+  font-size: 14px;
+  font-family: "Pretendard-Medium";
+  color: #252a2f;
+`;
+
+const Slider = styled.input`
+  -webkit-appearance: none;
+  /* appearance: none; */
+  width: 70%; /* Full-width */
+  height: 7px; /* Specified height */
+  background: #d5d5d5;
+  /* outline: none; */
+  transition: background .2s; /* Transition for the background */
+  border-radius: 4px; /* Rounded corners */
+
+  &:hover {
+    background: #d5d5d5; /* Slightly darker orange when hovered */
+  }
+
+  /* Chrome, Safari, and Opera */
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 14px; /* Specified thumb width */
+    height: 14px; /* Specified thumb height */
+    background: #252a2f; /* Orange background for the thumb */
+    cursor: pointer; /* Cursor on hover */
+    border-radius: 50%; /* Rounded corners */
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
+    margin-top: -2.5px; /* Center the thumb */
+  }
+
+  /* Firefox */
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #ff8a1d;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  }
+
+  /* IE */
+  &::-ms-thumb {
+    width: 20px;
+    height: 20px;
+    background: #ff8a1d;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    margin-top: 0; /* Reset any margin */
+  }
+
+  /* Slider track styling for WebKit */
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 7px;
+    cursor: pointer;
+    background: #dedede; /* Light orange background for the track */
+    border-radius: 4px;
+  }
+
+  /* Slider track styling for Firefox */
+  &::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #ffd1a6;
+    border-radius: 4px;
+  }
+
+  /* Slider track styling for IE */
+  &::-ms-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #ffd1a6;
+    border-radius: 4px;
+    border-color: transparent;
+    color: transparent;
+  }
+`;

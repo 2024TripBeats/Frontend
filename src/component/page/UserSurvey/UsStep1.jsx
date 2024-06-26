@@ -4,11 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { UserSurveyContext } from './UsContext';
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #FAFAFA;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #FAFAFA;
+  box-sizing: border-box;
+`;
+
+const Message = styled.div`
+  font-size: 18px;
+  font-family: "Pretendard-ExtraBold";
+  color: #252a2f;
+  text-align: center;
 `;
 
 const LogoContainer = styled.div`
@@ -68,6 +75,14 @@ const GenderButtonContainer = styled.div`
   margin-bottom: 15px;
 `;
 
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
 const GenderButton = styled.button`
   flex: 1;
   margin: 0 5px;
@@ -122,6 +137,31 @@ const VitalSign = styled.div`
   font-size: 10px;
   font-family: "Pretendard-ExtraBold";
   color: #d50f0f;
+`;
+
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
 `;
 
 const UsStep1 = () => {
@@ -182,6 +222,13 @@ const UsStep1 = () => {
           src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
           alt='logo' />
       </LogoContainer>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={20} />
+        </ProgressBarContainer>
+        <StepText>1/5 단계</StepText>
+      </ProgressContainer>
+      <Message>기본 정보를 입력해주세요</Message>
       <SurveyContainer>
         <VitalContainer>
           <Question>이메일 주소</Question>

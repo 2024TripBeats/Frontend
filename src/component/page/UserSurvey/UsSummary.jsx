@@ -48,22 +48,24 @@ const UsSummary = () => {
     <Container>
       <Title>Survey Summary</Title>
       <DataContainer>
-        <DataItem>{userName}</DataItem>
-        <DataItem>{userId}</DataItem>
-        <DataItem>{usersurveyData.email}</DataItem>
-        <DataItem>{usersurveyData.phoneNumber}</DataItem>
-        <DataItem>{usersurveyData.gender}</DataItem>
-        <DataItem>{usersurveyData.age}</DataItem>
-        <DataItem>{usersurveyData.firstSpot}</DataItem>
-        <DataItem>{usersurveyData.secondSpot}</DataItem>
-        <DataItem>{usersurveyData.thirdSpot}</DataItem>
-        <DataItem>{usersurveyData.fourthSpot}</DataItem>
-        <DataItem>{usersurveyData.fifthSpot}</DataItem>
-        <DataItem>{usersurveyData.distance}</DataItem>
+        <DataItem>이름: {userName}</DataItem>
+        <DataItem>이메일: {usersurveyData.email}</DataItem>
+        <DataItem>전화번호: {usersurveyData.phoneNumber}</DataItem>
+        <DataItem>성별: {usersurveyData.gender}</DataItem>
+        <DataItem>연령대: {usersurveyData.age}</DataItem>
+        <DataItem>장소1 {usersurveyData.firstSpot}</DataItem>
+        <DataItem>장소2 {usersurveyData.secondSpot}</DataItem>
+        <DataItem>장소3 {usersurveyData.thirdSpot}</DataItem>
+        <DataItem>장소4 {usersurveyData.fourthSpot}</DataItem>
+        <DataItem>장소5 {usersurveyData.fifthSpot}</DataItem>
+        <DataItem>장소개방도{usersurveyData.distance}</DataItem>
         <DataItem>{usersurveyData.activityLevel}</DataItem>
         <DataItem>{usersurveyData.Scene}</DataItem>
         <DataItem>{usersurveyData.openness}</DataItem>
-        <DataItem>{usersurveyData.musicGenre}</DataItem>
+        <DataItem>음악장르: {usersurveyData.musicGenre}</DataItem>
+        <DataItem>장르개방도: {usersurveyData.genreOpenness}</DataItem>
+        <DataItem>음악태그: {usersurveyData.musicTags}</DataItem>
+        <DataItem>태그개방도: {usersurveyData.tagOpenness}</DataItem>
       </DataContainer>
     </Container>
   );

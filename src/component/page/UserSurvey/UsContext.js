@@ -25,7 +25,12 @@ export const UserSurveyProvider = ({ children }) => {
     openness: '', // 취향과 거리가 먼 여행지 (1~5)
 
     /* Step4 Data */
-    musicGenre: [] // 음악 취향
+    musicGenre: [], // 음악 취향
+    genreOpenness: '', // 음악 취향에 대한 열린 정도 (1~5)
+
+    /* Step5 Data */
+    musicTags: [], // 음악 해시태그
+    tagOpenness: '', // 음악 해시태그에 대한 열린 정도 (1~5)
   });
 
   return (

@@ -3,6 +3,101 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
 
+const TsStep2 = () => {
+  const navigate = useNavigate();
+  const { travelsurveyData, setTravelSurveyData, updatePeriod } = useContext(TravelSurveyContext);
+  const [selectedPeriod, setSelectedPeriod] = useState('');
+  const [intensity, setIntensity] = useState([]);
+
+  const handleSelect = (event) => {
+    const period = event.target.value;
+    setSelectedPeriod(period);
+    updatePeriod(period); // Update the context state
+    setIntensity(Array(Number(period)).fill('')); // Reset intensity based on the selected period
+  };
+
+  const handleIntensityChange = (day, value) => {
+    const newIntensity = [...intensity];
+    newIntensity[day - 1] = value;
+    setIntensity(newIntensity);
+    setTravelSurveyData({ ...travelsurveyData, intensity: newIntensity });
+  };
+
+  const isButtonActive = !!selectedPeriod && intensity.length === Number(selectedPeriod) && intensity.every(val => val !== '');
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img style={{ width: "30%" }} 
+          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          alt='logo' />
+      </LogoContainer>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={50} />
+        </ProgressBarContainer>
+        <StepText>1/2 단계</StepText>
+      </ProgressContainer>
+      <Question>며칠간의 여행인가요?</Question>
+      <SelectContainer>
+        <Message>여행 기간은 총</Message>
+        <Select value={selectedPeriod} onChange={handleSelect}>
+            <Option value=""></Option>
+            {[...Array(7)].map((_, i) => (
+            <Option key={i + 1} value={i + 1}>{i + 1}</Option>
+            ))}
+        </Select>
+        <Message>일 이에요</Message>
+      </SelectContainer>
+      {selectedPeriod && (
+        <div>
+          <Question style={{ marginTop: "5%" }}>여행 강도를 선택해주세요</Question>
+          <LabelsContainer>
+            <Message>여유로운</Message>
+            <Divider />
+            <Message>활동적인</Message>
+          </LabelsContainer>
+          {[...Array(Number(selectedPeriod))].map((_, i) => (
+            <DayContainer key={i}>
+              <DayLabel>{i + 1}일차</DayLabel>
+              <RadioGroup>
+                {[...Array(5)].map((_, j) => (
+                  <React.Fragment key={j}>
+                    <HiddenRadioButton
+                      id={`day${i + 1}_intensity${j + 1}`}
+                      name={`day${i + 1}`}
+                      value={j + 1}
+                      checked={intensity[i] === j + 1}
+                      onChange={() => handleIntensityChange(i + 1, j + 1)}
+                    />
+                    <CustomRadioButton
+                      htmlFor={`day${i + 1}_intensity${j + 1}`}
+                      checked={intensity[i] === j + 1}
+                    />
+                  </React.Fragment>
+                ))}
+              </RadioGroup>
+            </DayContainer>
+          ))}
+        </div>
+      )}
+      <ButtonContainer>
+        <BeforeButton onClick={() => navigate('/travelsurvey1')}>
+          이전으로
+        </BeforeButton>
+        <Button 
+          active={isButtonActive}
+          onClick={() => isButtonActive && navigate('/travelsurvey5')}
+        >
+          다음으로
+        </Button>
+      </ButtonContainer>
+    </Container>
+  );
+};
+
+export default TsStep2;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -152,91 +247,36 @@ const CustomRadioButton = styled.label`
   }
 `;
 
-const TsStep2 = () => {
-  const navigate = useNavigate();
-  const { travelsurveyData, setTravelSurveyData, updatePeriod } = useContext(TravelSurveyContext);
-  const [selectedPeriod, setSelectedPeriod] = useState('');
-  const [intensity, setIntensity] = useState([]);
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
 
-  const handleSelect = (event) => {
-    const period = event.target.value;
-    setSelectedPeriod(period);
-    updatePeriod(period); // Update the context state
-    setIntensity(Array(Number(period)).fill('')); // Reset intensity based on the selected period
-  };
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
 
-  const handleIntensityChange = (day, value) => {
-    const newIntensity = [...intensity];
-    newIntensity[day - 1] = value;
-    setIntensity(newIntensity);
-    setTravelSurveyData({ ...travelsurveyData, intensity: newIntensity });
-  };
+const Progress = styled.div`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
 
-  const isButtonActive = !!selectedPeriod && intensity.length === Number(selectedPeriod) && intensity.every(val => val !== '');
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
+`;
 
-  return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
-          alt='logo' />
-      </LogoContainer>
-      <Question style={{ marginTop: "5%" }}>며칠간의 여행인가요?</Question>
-      <SelectContainer>
-        <Message>여행 기간은 총</Message>
-        <Select value={selectedPeriod} onChange={handleSelect}>
-            <Option value=""></Option>
-            {[...Array(7)].map((_, i) => (
-            <Option key={i + 1} value={i + 1}>{i + 1}</Option>
-            ))}
-        </Select>
-        <Message>일 이에요</Message>
-      </SelectContainer>
-      <Question style={{ marginTop: "5%" }}>여행 강도를 선택해주세요</Question>
-      {selectedPeriod && (
-        <div>
-          <LabelsContainer>
-            <Message>여유로운</Message>
-            <Divider />
-            <Message>활동적인</Message>
-          </LabelsContainer>
-          {[...Array(Number(selectedPeriod))].map((_, i) => (
-            <DayContainer key={i}>
-              <DayLabel>{i + 1}일차</DayLabel>
-              <RadioGroup>
-                {[...Array(5)].map((_, j) => (
-                  <React.Fragment key={j}>
-                    <HiddenRadioButton
-                      id={`day${i + 1}_intensity${j + 1}`}
-                      name={`day${i + 1}`}
-                      value={j + 1}
-                      checked={intensity[i] === j + 1}
-                      onChange={() => handleIntensityChange(i + 1, j + 1)}
-                    />
-                    <CustomRadioButton
-                      htmlFor={`day${i + 1}_intensity${j + 1}`}
-                      checked={intensity[i] === j + 1}
-                    />
-                  </React.Fragment>
-                ))}
-              </RadioGroup>
-            </DayContainer>
-          ))}
-        </div>
-      )}
-      <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey1')}>
-          이전으로
-        </BeforeButton>
-        <Button 
-          active={isButtonActive}
-          onClick={() => isButtonActive && navigate('/travelsurvey5')}
-        >
-          다음으로
-        </Button>
-      </ButtonContainer>
-    </Container>
-  );
-};
-
-export default TsStep2;
