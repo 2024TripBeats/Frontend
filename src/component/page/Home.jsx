@@ -2,6 +2,104 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+
+const Home = () => {
+  const navigate = useNavigate();
+  const [isModalOpen, setModalOpen] = useState(false); // 모달 기본 닫힘 상태로 설정
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // 초기 이미지 인덱스 상태
+  const [name, setName] = useState("");
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("name");
+    const storedId = localStorage.getItem("id");
+
+    if (storedName && storedId) {
+      setName(storedName);
+      setId(storedId);
+    } else {
+      // Handle case where data is not found in localStorage
+      console.error("No user data found in localStorage");
+    }
+  }, []);
+
+  // 초기 설문 진행 여부에 따라 모달 열림 상태 변경
+  useEffect(() => {
+    if (id) {
+      fetch(`http://localhost:8888/accounts/${id}/doneSurvey`)
+        .then(response => response.json())
+        .then(data => {
+          if (!data.doneSurvey) {
+            setModalOpen(true);
+          }
+        })
+        .catch(error => console.error("Error fetching survey status:", error));
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prevIndex => (prevIndex + 1) % 2); // 이미지 갯수에 따라 변경
+    }, 2000);
+
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
+  }, []);
+
+  const handleButtonClick = () => {
+    navigate("/travelsurvey1");
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleNavigate = () => {
+    setModalOpen(false);
+    navigate("/usersurvey1");
+  };
+
+  const handleDotClick = (index) => {
+    setCurrentImageIndex(index);
+  };
+
+  return (
+    <Container>
+      <LogoContainer>
+        <LogoMessage style={{marginBottom:"4%"}}>당신을 위한 사운드 트립 큐레이션 서비스</LogoMessage>
+        <img style={{width: "55%"}} 
+          src={process.env.PUBLIC_URL + `asset/logo/logo.png`}
+          alt='logo'/>
+      </LogoContainer>
+      <AdContainer>
+        <ImageContainer index={currentImageIndex}>
+          <Image src={process.env.PUBLIC_URL + `asset/ad/gbg.png`} />
+          <Image src={process.env.PUBLIC_URL + `asset/ad/myeongdong.png`} />
+        </ImageContainer>
+        <DotsContainer>
+          <Dot active={currentImageIndex === 0} onClick={() => handleDotClick(0)} />
+          <Dot active={currentImageIndex === 1} onClick={() => handleDotClick(1)} />
+        </DotsContainer>
+      </AdContainer>
+      <Message>{name}님, 여행을 시작해볼까요?</Message>
+      <Button onClick={handleButtonClick}>여행 루트 추천받기 🚞</Button>
+      {isModalOpen && (
+        <Overlay>
+          <Modal>
+            <CloseButton onClick={handleCloseModal}>X</CloseButton>
+            <ModalText style={{fontSize: "60px", marginBottom: '8%', textShadow:"0 0 2px rgb"}}>🎉</ModalText>
+            <ModalText>환영합니다!</ModalText>
+            <ModalText>서비스를 이용하기 전, 여러분들의 취향을 파악하고 있어요</ModalText>
+            <ModalText style={{marginBottom: '8%'}}>해당 설문은 가입 시 1회만 진행됩니다</ModalText>
+            <Button style={{backgroundColor: "#252a2f"}} onClick={handleNavigate}>설문하러 가기</Button>
+          </Modal>
+        </Overlay>
+      )}
+    </Container>
+  );
+};
+
+export default Home;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -140,83 +238,3 @@ const CloseButton = styled.button`
   cursor: pointer;
   color: #858585;
 `;
-
-const Home = () => {
-  const navigate = useNavigate();
-  const [isModalOpen, setModalOpen] = useState(true); // 모달 기본 열림 상태로 설정
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // 초기 이미지 인덱스 상태
-  const [name, setName] = useState("");
-
-  useEffect(() => {
-    const storedName = localStorage.getItem("name");
-
-    if (storedName) {
-      setName(storedName);
-    } else {
-      // Handle case where data is not found in localStorage
-      console.error("No user data found in localStorage");
-    }
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex(prevIndex => (prevIndex + 1) % 2); // 이미지 갯수에 따라 변경
-    }, 2000);
-
-    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
-  }, []);
-
-  const handleButtonClick = () => {
-    navigate("/travelsurvey1")
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
-
-  const handleNavigate = () => {
-    setModalOpen(false);
-    navigate("/usersurvey1");
-  };
-
-  const handleDotClick = (index) => {
-    setCurrentImageIndex(index);
-  };
-
-  return (
-    <Container>
-      <LogoContainer>
-        <LogoMessage style={{marginBottom:"4%"}}>당신을 위한 사운드 트립 큐레이션 서비스</LogoMessage>
-        <img style={{width: "55%"}} 
-          src={process.env.PUBLIC_URL + `asset/logo/logo.png`}
-          alt='logo'/>
-      </LogoContainer>
-      <AdContainer>
-        <ImageContainer index={currentImageIndex}>
-          <Image src={process.env.PUBLIC_URL + `asset/ad/gbg.png`} />
-          <Image src={process.env.PUBLIC_URL + `asset/ad/myeongdong.png`} />
-        </ImageContainer>
-        <DotsContainer>
-          <Dot active={currentImageIndex === 0} onClick={() => handleDotClick(0)} />
-          <Dot active={currentImageIndex === 1} onClick={() => handleDotClick(1)} />
-        </DotsContainer>
-      </AdContainer>
-      <Message>{name}님, 여행을 시작해볼까요?</Message>
-      <Button onClick={handleButtonClick}>여행 루트 추천받기 🚞</Button>
-      {isModalOpen && (
-        <Overlay>
-          <Modal>
-            <CloseButton onClick={handleCloseModal}>X</CloseButton>
-            <ModalText style={{fontSize: "60px", marginBottom: '8%', textShadow:"0 0 2px rgb"}}>🎉</ModalText>
-            <ModalText>환영합니다!</ModalText>
-            <ModalText>서비스를 이용하기 전, 여러분들의 취향을 파악하고 있어요</ModalText>
-            <ModalText style={{marginBottom: '8%'}}>해당 설문은 가입 시 1회만 진행됩니다</ModalText>
-            <Button style={{backgroundColor: "#252a2f"}} onClick={handleNavigate}>설문하러 가기</Button>
-          </Modal>
-        </Overlay>
-      )}
-    </Container>
-  );
-};
-
-export default Home;

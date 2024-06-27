@@ -9,13 +9,17 @@ const UsStep2 = () => {
   const [desranks, setDesranks] = useState([null, null, null, null, null]);
 
   useEffect(() => {
+    // Convert desranks to an array of travel spots
+    const travelSpots = Array(desranks.length).fill(null);
+    desranks.forEach((rank, index) => {
+      if (rank !== null) {
+        travelSpots[rank - 1] = index + 1;
+      }
+    });
+
     setUserSurveyData(prevData => ({
       ...prevData,
-      firstSpot: desranks[0],
-      secondSpot: desranks[1],
-      thirdSpot: desranks[2],
-      fourthSpot: desranks[3],
-      fifthSpot: desranks[4]
+      travelSpots: travelSpots.filter(spot => spot !== null)
     }));
   }, [desranks, setUserSurveyData]);
 
@@ -43,7 +47,7 @@ const UsStep2 = () => {
         const nextRank = newRanks.filter(rank => rank !== null).length + 1;
         newRanks[index] = nextRank;
       }
-      
+
       return newRanks;
     });
   };

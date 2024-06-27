@@ -9,15 +9,17 @@ const TsStep5 = () => {
   const [mandatoryText, setMandatoryText] = useState('');
   const [stopwordsText, setStopwordsText] = useState('');
   const [name, setName] = useState("");
+  const [id, setId] = useState("");
 
-  // 로컬스토리지에서 이름 가져오기
   useEffect(() => {
       const storedName = localStorage.getItem("name");
-
-      if (storedName) {
+      const storedId = localStorage.getItem("id");
+  
+      if (storedName && storedId) {
           setName(storedName);
+          setId(storedId);
       } else {
-          // 로컬스토리지에 데이터가 없는 경우 처리
+          // Handle case where data is not found in localStorage
           console.error("No user data found in localStorage");
       }
   }, []);
@@ -35,10 +37,17 @@ const TsStep5 = () => {
   };
 
   const handleSubmit = async () => {
-    const surveyDataWithName = { ...travelsurveyData, requirewords: mandatoryText, stopwords: stopwordsText, name };
-    setTravelSurveyData(surveyDataWithName);
+    const surveyDataWithId = {
+      accountId: id,
+      destination: travelsurveyData.destination,
+      period: travelsurveyData.period,
+      intensity: travelsurveyData.intensity,
+      stopwords: stopwordsText,
+      requirewords: mandatoryText,
+    };
 
-    navigate('/travelsurveyend'); // Navigate to /travelsurveyend
+    setTravelSurveyData(surveyDataWithId);
+    console.log(surveyDataWithId);
 
     try {
       const response = await fetch('http://localhost:8888/routerecommend', {
@@ -46,7 +55,7 @@ const TsStep5 = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(surveyDataWithName),
+        body: JSON.stringify(surveyDataWithId),
       });
 
       if (!response.ok) {
@@ -56,13 +65,13 @@ const TsStep5 = () => {
       const result = await response.json();
       console.log('Success:', result);
 
-      localStorage.setItem('surveyResponseReceived', 'true'); // Store flag in localStorage
+      localStorage.setItem('surveyResponseReceived', 'true');
 
+      navigate('/travelsurveyend');
     } catch (error) {
       console.error('Error:', error);
     }
   };
-
   return (
     <Container>
       <LogoContainer>

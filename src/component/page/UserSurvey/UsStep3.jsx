@@ -61,14 +61,14 @@ const UsStep3 = () => {
           단거리
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons.distance === 2}
-          onClick={() => handleSurveyClick('distance', 2)}
+          selected={selectedSurveyButtons.distance === 3}  // 2에서 3으로 변경
+          onClick={() => handleSurveyClick('distance', 3)} // 2에서 3으로 변경
         >
           원거리
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons.distance === 3}
-          onClick={() => handleSurveyClick('distance', 3)}
+          selected={selectedSurveyButtons.distance === 2}  // 3에서 2로 변경
+          onClick={() => handleSurveyClick('distance', 2)} // 3에서 2로 변경
         >
           상관없음
         </SurveyButton>
@@ -81,14 +81,14 @@ const UsStep3 = () => {
           휴식
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons.activityLevel === 2}
-          onClick={() => handleSurveyClick('activityLevel', 2)}
+          selected={selectedSurveyButtons.activityLevel === 3}  // 2에서 3으로 변경
+          onClick={() => handleSurveyClick('activityLevel', 3)} // 2에서 3으로 변경
         >
           활동형
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons.activityLevel === 3}
-          onClick={() => handleSurveyClick('activityLevel', 3)}
+          selected={selectedSurveyButtons.activityLevel === 2}  // 3에서 2로 변경
+          onClick={() => handleSurveyClick('activityLevel', 2)} // 3에서 2로 변경
         >
           상관없음
         </SurveyButton>
@@ -101,14 +101,14 @@ const UsStep3 = () => {
           자연
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons.Scene === 2}
-          onClick={() => handleSurveyClick('Scene', 2)}
+          selected={selectedSurveyButtons.Scene === 3}  // 2에서 3으로 변경
+          onClick={() => handleSurveyClick('Scene', 3)} // 2에서 3으로 변경
         >
           도심
         </SurveyButton>
         <SurveyButton
-          selected={selectedSurveyButtons.Scene === 3}
-          onClick={() => handleSurveyClick('Scene', 3)}
+          selected={selectedSurveyButtons.Scene === 2}  // 3에서 2로 변경
+          onClick={() => handleSurveyClick('Scene', 2)} // 3에서 2로 변경
         >
           상관없음
         </SurveyButton>

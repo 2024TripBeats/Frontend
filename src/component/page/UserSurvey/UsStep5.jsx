@@ -10,97 +10,139 @@ const UsStep5 = () => {
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [showMore, setShowMore] = useState(false);
     const [tagOpenness, setTagOpenness] = useState(usersurveyData.tagOpenness || 1);
-  
     const [name, setName] = useState("");
-
-    useEffect(() => {
-      const storedName = localStorage.getItem("name");
+    const [id, setId] = useState("");
   
-      if (storedName && storedId) {
-        setName(storedName);
-      } else {
-        // Handle case where data is not found in localStorage
-        console.error("No user data found in localStorage");
-      }
+    useEffect(() => {
+        const storedName = localStorage.getItem("name");
+        const storedId = localStorage.getItem("id");
+    
+        if (storedName && storedId) {
+            setName(storedName);
+            setId(storedId);
+        } else {
+            // Handle case where data is not found in localStorage
+            console.error("No user data found in localStorage");
+        }
     }, []);
-
+  
+    // 임시 해시태그 데이터
     const hashtags = [
-        '#젊음의기억', '#미래와희망', '#성장과변화', '#나를찾아가는여정', '#순수한감성', '#따뜻함',
-        '#잔잔한위로', '#평온한시간', '#감성적인', '#희망찬', '#아련한추억', '#감동적인', 
-        '#언제나함께', '#포근한기억', '#내면의여행'
+        '젊음의기억', '미래와희망', '성장과변화', '#를찾아가는여정', '순수한감성', '따뜻함',
+        '잔잔한위로', '평온한시간', '감성적인', '희망찬', '아련한추억', '감동적인', 
+        '언제나함께', '포근한기억', '내면의여행'
     ];
   
+    // 선택된 태그가 변경될 때마다 버튼 활성화 여부 업데이트
     useEffect(() => {
-      setIsButtonActive(selectedTags.length > 0);
+        setIsButtonActive(selectedTags.length > 0);
     }, [selectedTags]);
   
+    // 선택된 태그 토글
     const toggleTag = (tag) => {
-      const updatedTags = selectedTags.includes(tag)
-        ? selectedTags.filter(item => item !== tag)
-        : [...selectedTags, tag];
-      setSelectedTags(updatedTags);
-      setUserSurveyData({ ...usersurveyData, musicTags: updatedTags });
+        const updatedTags = selectedTags.includes(tag)
+            ? selectedTags.filter(item => item !== tag)
+            : [...selectedTags, tag];
+        setSelectedTags(updatedTags);
+        setUserSurveyData({ ...usersurveyData, musicTags: updatedTags });
     };
   
-    const handleButtonClick = () => {
-      setUserSurveyData({ ...usersurveyData, tagOpenness });
-      if (isButtonActive) {
-        navigate(`/usersurveyend`);
-      }
+    // 설문 완료 버튼 클릭 시 서버에 데이터 전송
+    const handleButtonClick = async () => {
+        const surveyDataWithId = {
+            accountId: id,
+            email: usersurveyData.email,
+            phoneNumber: usersurveyData.phoneNumber,
+            gender: usersurveyData.gender,
+            age: usersurveyData.age,
+            travelSpots: usersurveyData.travelSpots, // 여행지
+            distance: usersurveyData.distance,
+            activityLevel: usersurveyData.activityLevel,
+            scene: usersurveyData.Scene,
+            openness: usersurveyData.openness,
+            musicGenres: usersurveyData.musicGenre,
+            genreOpenness: usersurveyData.genreOpenness,
+            musicTags: selectedTags,
+            tagOpenness: tagOpenness,
+        };
+
+        console.log(surveyDataWithId);
+        setUserSurveyData(surveyDataWithId);
+
+        if (isButtonActive) {
+            try {
+                const response = await fetch('http://localhost:8888/surveys', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(surveyDataWithId)
+                });
+
+                if (response.ok) {
+                    navigate(`/usersurveyend`);
+                } else {
+                    console.error('Failed to submit survey data:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error submitting survey data:', error);
+            }
+        }
     };
-  
+
+    // 더보기 버튼 클릭 시 해시태그 목록 더보기
     const handleShowMore = () => {
-      setShowMore(!showMore);
+        setShowMore(!showMore);
     };
   
     return (
-      <Container>
-        <LogoContainer>
-          <img 
-            style={{ width: "30%" }} 
-            src={process.env.PUBLIC_URL + '/asset/logo/simplelogo.png'}
-            alt='logo' 
-          />
-        </LogoContainer>
-        <ProgressContainer>
-          <ProgressBarContainer>
-            <Progress width={100} />
-          </ProgressBarContainer>
-          <StepText>5/5 단계</StepText>
-        </ProgressContainer>
-        <Question style={{ marginBottom: "3%" }}>어떤 해시태그의 음악을 주로 들으시나요?</Question>
-        <SurveyContainer showMore={showMore}>
-          {hashtags.map(tag => (
-            <SurveyButton
-              key={tag}
-              selected={selectedTags.includes(tag)}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </SurveyButton>
-          ))}
-        </SurveyContainer>
-        <ShowMoreButton onClick={handleShowMore}>
-          {showMore ? '▲ 접기' : '▼ 더보기'}
-        </ShowMoreButton>
-        <SliderContainer>
-          <Question>해시태그 취향과 거리가 있는 음악을 듣고싶으신가요?</Question>
-          <SliderWrapper>
-            <SliderLabel>아니오</SliderLabel>
-            <Slider 
-              type="range" 
-              min="1" 
-              max="5" 
-              value={tagOpenness} 
-              onChange={(e) => setTagOpenness(e.target.value)} 
-            />
-            <SliderLabel>네</SliderLabel>
-          </SliderWrapper>
-        </SliderContainer>
-        <Button active={isButtonActive} onClick={handleButtonClick}>
-          설문 완료
-        </Button>
-      </Container>
+        <Container>
+            <LogoContainer>
+                <img 
+                    style={{ width: "30%" }} 
+                    src={process.env.PUBLIC_URL + '/asset/logo/simplelogo.png'}
+                    alt='logo' 
+                />
+            </LogoContainer>
+            <ProgressContainer>
+                <ProgressBarContainer>
+                    <Progress width={100} />
+                </ProgressBarContainer>
+                <StepText>5/5 단계</StepText>
+            </ProgressContainer>
+            <Question style={{ marginBottom: "3%" }}>어떤 해시태그의 음악을 주로 들으시나요?</Question>
+            <SurveyContainer showMore={showMore}>
+                {hashtags.map(tag => (
+                    <SurveyButton
+                        key={tag}
+                        selected={selectedTags.includes(tag)}
+                        onClick={() => toggleTag(tag)}
+                    >
+                      # {tag}
+                    </SurveyButton>
+                ))}
+            </SurveyContainer>
+            <ShowMoreButton onClick={handleShowMore}>
+                {showMore ? '▲ 접기' : '▼ 더보기'}
+            </ShowMoreButton>
+            <SliderContainer>
+                <Question>해시태그 취향과 거리가 있는 음악을 듣고싶으신가요?</Question>
+                <SliderWrapper>
+                    <SliderLabel>아니오</SliderLabel>
+                    <Slider 
+                        type="range" 
+                        min="1" 
+                        max="5" 
+                        value={tagOpenness} 
+                        onChange={(e) => setTagOpenness(e.target.value)} 
+                    />
+                    <SliderLabel>네</SliderLabel>
+                </SliderWrapper>
+            </SliderContainer>
+            <Button active={isButtonActive} onClick={handleButtonClick}>
+                설문 완료
+            </Button>
+        </Container>
     );
 };
 
@@ -261,51 +303,4 @@ const Slider = styled.input`
     cursor: pointer;
     border-radius: 50%;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    margin-top: -2.5px;
-  }
-
-  &::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #ff8a1d;
-    cursor: pointer;
-    border-radius: 50%;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-  }
-
-  &::-ms-thumb {
-    width: 20px;
-    height: 20px;
-    background: #ff8a1d;
-    cursor: pointer;
-    border-radius: 50%;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    margin-top: 0;
-  }
-
-  &::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 7px;
-    cursor: pointer;
-    background: #dedede;
-    border-radius: 4px;
-  }
-
-  &::-moz-range-track {
-    width: 100%;
-    height: 8px;
-    cursor: pointer;
-    background: #ffd1a6;
-    border-radius: 4px;
-  }
-
-  &::-ms-track {
-    width: 100%;
-    height: 8px;
-    cursor: pointer;
-    background: #ffd1a6;
-    border-radius: 4px;
-    border-color: transparent;
-    color: transparent;
-  }
-`;
+    }`;

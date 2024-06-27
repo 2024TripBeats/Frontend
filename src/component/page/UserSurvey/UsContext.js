@@ -12,11 +12,7 @@ export const UserSurveyProvider = ({ children }) => {
     age: '', // 연령대
 
     /* Step2 Data */
-    firstSpot: '',
-    secondSpot: '',
-    thirdSpot: '',
-    fourthSpot: '',
-    fifthSpot: '',
+    travelSpots: [], // 여행지 순위
 
     /* Step3 Data */
     distance: '',

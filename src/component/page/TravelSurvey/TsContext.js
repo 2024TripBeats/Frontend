@@ -4,8 +4,8 @@ export const TravelSurveyContext = createContext();
 
 export const TravelSurveyProvider = ({ children }) => {
   const [travelsurveyData, setTravelSurveyData] = useState({
-    destination: '',
-    period: '',
+    destination: '', // 여행지
+    period: '', // 여행 기간 (일)
     intensity: [],
     // accomodation: [],
     // restaurant: [],

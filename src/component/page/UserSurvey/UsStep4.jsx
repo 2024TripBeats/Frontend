@@ -12,8 +12,26 @@ const UsStep4 = () => {
   const [genreOpenness, setGenreOpenness] = useState(usersurveyData.genreOpenness || 1);
 
   const musicCategories = [
-    '발라드', '힙합', '인디', '댄스', '뉴에이지', '알앤비', '재즈', '클래식', '록',
-    '팝', 'OST', 'EDM', 'CCM', 'JPOP', '트로트', '월드뮤직', '블루스', '컨트리'
+    'POP', 
+    '댄스',
+    '랩/힙합',
+    '일렉트로니카',
+    '발라드',
+    'R&B/Soul',
+    '록/메탈',
+    '인디음악',
+    '성인가요/트로트',
+    '포크/블루스',
+    '재즈',
+    '국내드라마',
+    'J-POP',
+    '애니메이션/웹툰',
+    '국외영화',
+    '보컬재즈',
+    '애시드/퓨전/팝',
+    '뉴에이지',
+    '컨트리',
+    '-'
   ];
 
   useEffect(() => {
@@ -65,7 +83,7 @@ const UsStep4 = () => {
               selected={selectedMusicGenres.includes(genre)}
               onClick={() => toggleMusicGenre(genre)}
             >
-              {genre}
+              {genre === '-' ? '그 외' : genre}
             </SurveyButton>
           ))}
         </SurveyContainer>
@@ -139,7 +157,7 @@ const SurveyButton = styled.button`
   border-radius: 10px;
   width: 30%;
   height: 50px;
-  font-size: 16px;
+  font-size: 13px;
   font-family: "Pretendard-ExtraBold";
   cursor: pointer;
 `;

@@ -138,12 +138,12 @@ const UsStep1 = () => {
           onChange={handleInputChange}
         >
           <option value="">연령대를 선택해주세요</option>
-          <option value="10대">10대</option>
-          <option value="20대">20대</option>
-          <option value="30대">30대</option>
-          <option value="40대">40대</option>
-          <option value="50대">50대</option>
-          <option value="그 이상">그 이상</option>
+          <option value="10">10대</option>
+          <option value="20">20대</option>
+          <option value="30">30대</option>
+          <option value="40">40대</option>
+          <option value="50">50대</option>
+          <option value="60+">그 이상</option>
         </Select>
       </SurveyContainer>
       <Button 
