@@ -34,30 +34,32 @@ const DataItem = styled.div`
 const UsSummary = () => {
   const { usersurveyData } = useContext(UserSurveyContext);
   const [userName, setUserName] = useState("");
-  const [userId, setUserId] = useState("");
+  const [name, setName] = useState("");
+  const [id, setId] = useState("");
 
   useEffect(() => {
-    const name = localStorage.getItem("name");
-    const id = localStorage.getItem("id");
+    const storedName = localStorage.getItem("name");
+    const storedId = localStorage.getItem("id");
 
-    if (name) setUserName(name);
-    if (id) setUserId(id);
+    if (storedName && storedId) {
+      setName(storedName);
+      setId(storedId);
+    } else {
+      // Handle case where data is not found in localStorage
+      console.error("No user data found in localStorage");
+    }
   }, []);
 
   return (
     <Container>
       <Title>Survey Summary</Title>
       <DataContainer>
-        <DataItem>이름: {userName}</DataItem>
+        <DataItem>userid: {id}</DataItem>
         <DataItem>이메일: {usersurveyData.email}</DataItem>
         <DataItem>전화번호: {usersurveyData.phoneNumber}</DataItem>
         <DataItem>성별: {usersurveyData.gender}</DataItem>
         <DataItem>연령대: {usersurveyData.age}</DataItem>
-        <DataItem>장소1 {usersurveyData.firstSpot}</DataItem>
-        <DataItem>장소2 {usersurveyData.secondSpot}</DataItem>
-        <DataItem>장소3 {usersurveyData.thirdSpot}</DataItem>
-        <DataItem>장소4 {usersurveyData.fourthSpot}</DataItem>
-        <DataItem>장소5 {usersurveyData.fifthSpot}</DataItem>
+        <DataItem>travelSpots: {usersurveyData.travelSpots}</DataItem>
         <DataItem>장소개방도{usersurveyData.distance}</DataItem>
         <DataItem>{usersurveyData.activityLevel}</DataItem>
         <DataItem>{usersurveyData.Scene}</DataItem>
