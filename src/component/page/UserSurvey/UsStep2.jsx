@@ -58,7 +58,7 @@ const UsStep2 = () => {
     <Container>
       <LogoContainer>
         <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          src={process.env.PUBLIC_URL + `asset/logo/logo.png`}
           alt='logo' />
       </LogoContainer>
       <ProgressContainer>

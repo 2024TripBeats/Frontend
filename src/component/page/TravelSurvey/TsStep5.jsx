@@ -50,7 +50,7 @@ const TsStep5 = () => {
     console.log(surveyDataWithId);
 
     try {
-      const response = await fetch('http://localhost:8888/routerecommend', {
+      const response = await fetch('http://localhost:8888/trips', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
