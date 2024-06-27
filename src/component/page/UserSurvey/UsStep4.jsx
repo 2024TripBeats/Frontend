@@ -100,7 +100,7 @@ const UsStep4 = () => {
             min="1" 
             max="5" 
             value={genreOpenness} 
-            onChange={(e) => setGenreOpenness(e.target.value)} 
+            onChange={(e) => setGenreOpenness(Number(e.target.value))} 
           />
           <SliderLabel>네</SliderLabel>
         </SliderWrapper>

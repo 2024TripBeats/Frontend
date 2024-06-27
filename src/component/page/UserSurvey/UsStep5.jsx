@@ -10,15 +10,12 @@ const UsStep5 = () => {
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [showMore, setShowMore] = useState(false);
     const [tagOpenness, setTagOpenness] = useState(usersurveyData.tagOpenness || 1);
-    const [name, setName] = useState("");
     const [id, setId] = useState("");
   
     useEffect(() => {
-        const storedName = localStorage.getItem("name");
         const storedId = localStorage.getItem("id");
     
-        if (storedName && storedId) {
-            setName(storedName);
+        if (storedId) {
             setId(storedId);
         } else {
             // Handle case where data is not found in localStorage
@@ -134,7 +131,7 @@ const UsStep5 = () => {
                         min="1" 
                         max="5" 
                         value={tagOpenness} 
-                        onChange={(e) => setTagOpenness(e.target.value)} 
+                        onChange={(e) => setTagOpenness(Number(e.target.value))} 
                     />
                     <SliderLabel>네</SliderLabel>
                 </SliderWrapper>

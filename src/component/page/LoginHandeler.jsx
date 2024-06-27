@@ -19,8 +19,6 @@ const LoginHandler = (props) => {
           },
         });
 
-        console.log('Account Data:', res.data.account); // Log the account data
-
         const { kakaoName, id } = res.data.account;
 
         console.log('kakaoName:', kakaoName); // Log the kakaoName

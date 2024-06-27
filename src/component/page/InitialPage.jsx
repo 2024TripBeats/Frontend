@@ -23,8 +23,8 @@ const Message = styled.div`
 
 const InitialPage = () => {
 
-    const CLIENT_ID = `2e1641f789854797077c809ce56a7ecc`; //클라이언트 id
-    const REDIRECT_URI = `http://localhost:3000/login/oauth2/callback/kakao`;
+    const CLIENT_ID = process.env.REACT_APP_KAKAO_CLIENT_ID;
+    const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
     
     console.log('CLIENT_ID:', CLIENT_ID);
     console.log('REDIRECT_URI:', REDIRECT_URI);    

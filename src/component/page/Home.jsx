@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-
 const Home = () => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false); // 모달 기본 닫힘 상태로 설정
@@ -29,8 +28,10 @@ const Home = () => {
       fetch(`http://localhost:8888/accounts/${id}/doneSurvey`)
         .then(response => response.json())
         .then(data => {
-          if (!data.doneSurvey) {
+          if (data === false) { // doneSurvey가 false이면 모달 열기
             setModalOpen(true);
+          } else {
+            setModalOpen(false); // doneSurvey가 true이면 모달 닫기
           }
         })
         .catch(error => console.error("Error fetching survey status:", error));
@@ -47,10 +48,6 @@ const Home = () => {
 
   const handleButtonClick = () => {
     navigate("/travelsurvey1");
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
   };
 
   const handleNavigate = () => {
@@ -85,7 +82,6 @@ const Home = () => {
       {isModalOpen && (
         <Overlay>
           <Modal>
-            <CloseButton onClick={handleCloseModal}>X</CloseButton>
             <ModalText style={{fontSize: "60px", marginBottom: '8%', textShadow:"0 0 2px rgb"}}>🎉</ModalText>
             <ModalText>환영합니다!</ModalText>
             <ModalText>서비스를 이용하기 전, 여러분들의 취향을 파악하고 있어요</ModalText>
@@ -226,15 +222,4 @@ const ModalText = styled.div`
   font-family: "Pretendard-Bold";
   color: #252A2F;
   margin: 10px;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  color: #858585;
 `;
