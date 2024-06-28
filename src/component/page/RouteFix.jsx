@@ -203,7 +203,7 @@ const RouteFix = () => {
                   <div style={{ display: 'flex', justifyContent: 'left', width: '100%', alignItems: 'center', marginLeft: '27px' }}>
                     <div style={{ height: '20px', width: '7px', backgroundColor: '#e7e7e7' }}></div>
                     <div style={{ marginLeft: '10px', fontFamily: 'Pretendard-Regular', fontSize: '10px', color: '#575757', justifyItems: 'center' }}>
-                      {day.travelSegments[index].distance}m
+                      {day.travelSegments[index].distance.toFixed(2)}km
                     </div>
                   </div>
                 )}

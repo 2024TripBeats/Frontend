@@ -385,7 +385,7 @@ const RouteRecommend = () => {
                         </Circle>
                         {index < day.candidates[currentCandidateIndex].itinerary.length - 1 &&
                           <Line>
-                            {day.candidates[currentCandidateIndex].travelSegments[index].distance}m
+                            {day.candidates[currentCandidateIndex].travelSegments[index].distance.toFixed(2)}km
                           </Line>
                         }
                       </React.Fragment>
