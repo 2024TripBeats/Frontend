@@ -86,6 +86,10 @@ const DetailPage = () => {
 
   const getAccessibilityText = (value) => (value ? '가능' : '불가능');
 
+  const handleImageError = (e) => {
+    e.target.src = `${process.env.PUBLIC_URL}/asset/noimage.png`;
+  };
+
   return (
     <Container>
       <LogoContainer>
@@ -95,7 +99,7 @@ const DetailPage = () => {
       </LogoContainer>
       <ContentContainer>
         <BackButton onClick={() => navigate(-1)}>⬅️</BackButton>
-        <Image src={destination.imageUrl} alt={destination.name} />
+        <Image src={destination.imageUrl} alt={destination.name} onError={handleImageError} />
         <InfoContainer>
           <InfoTitle>{destination.visitAreaNm}</InfoTitle>
           <InfoText style={{marginBottom: '20px'}}>{destination.description}</InfoText>

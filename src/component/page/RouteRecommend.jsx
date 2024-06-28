@@ -329,6 +329,10 @@ const RouteRecommend = () => {
     setSelectedDestination(travelDestinations[0].candidates[nextCandidateIndex].itinerary[0]);
   };
 
+  const handleImageError = (e) => {
+    e.target.src = `${process.env.PUBLIC_URL}/asset/noimage.png`;
+  };
+
   return (
     <Container>
       <LogoContainer>
@@ -342,7 +346,7 @@ const RouteRecommend = () => {
         <ImageContainer>
           {selectedDestination && (
             <>
-              <Image src={imageUrl} alt={selectedDestination.placeName} />
+              <Image src={imageUrl} alt={selectedDestination.placeName} onError={handleImageError} />
               <DetailsContainer>
                 <DestName>{selectedDestination.placeName}</DestName>
                 <DetailButton onClick={handleDetailClick}>자세히 보기</DetailButton>
