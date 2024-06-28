@@ -37,7 +37,7 @@ const TravelItemContainer = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   gap: 10px;
   box-sizing: border-box;
 `;
@@ -62,6 +62,12 @@ const DayContainer = styled.div`
   width: 100%;
 `;
 
+const CircleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Circle = styled.div`
   min-width: 60px;
   min-height: 60px;
@@ -79,6 +85,12 @@ const Circle = styled.div`
   box-sizing: border-box;
 `;
 
+const Line = styled.div`
+  width: 5px;
+  height: 40px;
+  background-color: #e7e7e7;
+`;
+
 const MusicContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -93,6 +105,7 @@ const MusicTitle = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
+
 const MusicSinger = styled.div`
   font-family: "Pretendard-Medium";
   font-size: 12px;
@@ -116,29 +129,27 @@ const DestName = styled.div`
   color: #252a2f;
 `;
 
-
 const FloatingButton = styled.button.attrs({
-    className: 'no-capture'
-  })`
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    background-color: #252a2f;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-    font-family: "Pretendard-ExtraBold";
-    font-size: 13px;
-    z-index: 1000;
-  `;
-  
+  className: 'no-capture'
+})`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #252a2f;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-family: "Pretendard-ExtraBold";
+  font-size: 13px;
+  z-index: 1000;
+`;
 
-const RouteFix = ({ }) => {
+const RouteFix = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const travelDestinations = location.state.travelDestinations;
+  const { selectedRoute } = location.state;
 
   const handleSaveImageClick = () => {
     html2canvas(document.querySelector("#route-fix-container"), {
@@ -149,15 +160,14 @@ const RouteFix = ({ }) => {
       link.href = canvas.toDataURL();
       link.click();
     });
-  };  
-  
-
-  const convertDayKeyToKorean = (dayKey) => {
-    return `${parseInt(dayKey.replace('day', ''))}일차`;
   };
 
-  const handleDetailClick = (destinationId) => {
-    navigate(`/detail/${destinationId}`);
+  const convertDayKeyToKorean = (dayNumber) => {
+    return `${dayNumber}일차`;
+  };
+
+  const handleDetailClick = (placeId) => {
+    navigate(`/detail/${placeId}`);
   };
 
   return (
@@ -168,32 +178,38 @@ const RouteFix = ({ }) => {
           alt='logo' />
       </LogoContainer>
       <ContentContainer>
-        {travelDestinations.map((day, dayIndex) => (
-          <React.Fragment key={dayIndex}>
-            {Object.keys(day).map((dayKey) => (
-              <React.Fragment key={dayKey}>
-                <DayContainer>
-                 <Day>{convertDayKeyToKorean(dayKey)}</Day>
-                    {day[dayKey].map((destination, index) => (
-                    <TravelItemContainer key={destination.id}>
-                        <Circle isSelected={false}>
-                        {destination.visittime}
-                        </Circle>
-                        <TravelDetails onClick={() => handleDetailClick(destination.id)}>
-                          <DestName>{destination.name}</DestName>
-                          <MusicContainer>
-                            <img style={{ width: "14px" }}
-                            src = {process.env.PUBLIC_URL + '/asset/musicplay.png'} />
-                              <MusicTitle>{destination.musictitle}</MusicTitle>
-                              <MusicSinger>{destination.musicsinger}</MusicSinger>
-                          </MusicContainer>
-                        </TravelDetails>
-                    </TravelItemContainer>
-                    ))}
-                </DayContainer>
+        {selectedRoute.map((day) => (
+          <DayContainer key={day.dayNumber}>
+            <Day>{convertDayKeyToKorean(day.dayNumber)}</Day>
+            {day.itinerary.map((destination, index) => (
+              <React.Fragment key={destination.placeId}>
+                <TravelItemContainer>
+                  <CircleContainer>
+                    <Circle>
+                      {destination.duration}분
+                    </Circle>
+                    {index < day.itinerary.length - 1}
+                  </CircleContainer>
+                  <TravelDetails onClick={() => handleDetailClick(destination.placeId)}>
+                    <DestName>{destination.placeName}</DestName>
+                    <MusicContainer>
+                      <img style={{ width: "14px" }} src={process.env.PUBLIC_URL + '/asset/musicplay.png'} />
+                        <MusicTitle>{destination.musicName}</MusicTitle>
+                        <MusicSinger>{destination.musicArtist}</MusicSinger>
+                    </MusicContainer>
+                  </TravelDetails>
+                </TravelItemContainer>
+                {index < day.itinerary.length - 1 && (
+                  <div style={{ display: 'flex', justifyContent: 'left', width: '100%', alignItems: 'center', marginLeft: '27px' }}>
+                    <div style={{ height: '20px', width: '7px', backgroundColor: '#e7e7e7' }}></div>
+                    <div style={{ marginLeft: '10px', fontFamily: 'Pretendard-Regular', fontSize: '10px', color: '#575757', justifyItems: 'center' }}>
+                      {day.travelSegments[index].distance}m
+                    </div>
+                  </div>
+                )}
               </React.Fragment>
             ))}
-          </React.Fragment>
+          </DayContainer>
         ))}
       </ContentContainer>
       <FloatingButton onClick={handleSaveImageClick}>💾 저장</FloatingButton>

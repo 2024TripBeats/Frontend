@@ -135,7 +135,7 @@ const App = () => {
                   <Route path="/ts-summary" element={<TsSummary />} />
                   <Route path="/recommend" element={<RouteRecommend />} />
                   <Route path="/routefix" element={<RouteFix />} />
-                  <Route path="/detail/:id" element={<DetailPage />} />
+                  <Route path="/detail/:placeName" element={<DetailPage />} />
                   <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
                 </Routes>
               </Content>

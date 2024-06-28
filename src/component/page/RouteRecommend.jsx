@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate, useLocation } from 'react-router-dom';
-import response from './dummy.json';
 
 const Container = styled.div`
   display: flex;
@@ -11,7 +10,6 @@ const Container = styled.div`
   box-sizing: border-box;
   align-items: center;
   max-width: 500px;
-  box-sizing: border-box;
 `;
 
 const Message = styled.div`
@@ -116,11 +114,6 @@ const RouteContainer = styled.div`
   gap: 2px;
 `;
 
-const HighLightName = styled.div`
-  font-family: "Pretendard-ExtraBold";
-  color: #FF8A1D;
-`;
-
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -201,6 +194,7 @@ const MusicTitle = styled.div`
   font-size: 12px;
   color: #252a2f;
 `;
+
 const MusicSinger = styled.div`
   font-family: "Pretendard-Medium";
   font-size: 12px;
@@ -248,9 +242,12 @@ const Line = styled.div`
   padding: 2px 9px;
 `;
 
+
 const RouteRecommend = () => {
   const [travelDestinations, setTravelDestinations] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
+  const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
+  const [imageUrl, setImageUrl] = useState('');
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -264,20 +261,40 @@ const RouteRecommend = () => {
       setName(storedName);
       setId(storedId);
     } else {
-      // Handle case where data is not found in localStorage
       console.error("No user data found in localStorage");
     }
   }, []);
 
   useEffect(() => {
-    setTravelDestinations(response.data);
-    if (response.data.length > 0 && response.data[0].day1.length > 0) {
-      setSelectedDestination(response.data[0].day1[0]);
+    const storedRecommendations = localStorage.getItem('travelRecommendations');
+
+    if (storedRecommendations) {
+      const parsedRecommendations = JSON.parse(storedRecommendations);
+      if (Array.isArray(parsedRecommendations.recommendations)) {
+        setTravelDestinations(parsedRecommendations.recommendations);
+
+        if (parsedRecommendations.recommendations.length > 0 && parsedRecommendations.recommendations[0].candidates.length > 0) {
+          setSelectedDestination(parsedRecommendations.recommendations[0].candidates[0].itinerary[0]);
+        }
+      }
+    } else {
+      console.error("No travel recommendations found in localStorage");
     }
   }, []);
 
-  const convertDayKeyToKorean = (dayKey) => {
-    return `${parseInt(dayKey.replace('day', ''))}일차`;
+  useEffect(() => {
+    if (selectedDestination) {
+      fetch(`http://localhost:8888/spots/${selectedDestination.placeName}/image`)
+        .then((response) => response.text())
+        .then((data) => {
+          setImageUrl(data);
+        })
+        .catch((error) => console.error('Error fetching destination image:', error));
+    }
+  }, [selectedDestination]);
+
+  const convertDayKeyToKorean = (dayNumber) => {
+    return `${dayNumber}일차`;
   };
 
   const handleCircleClick = (destination) => {
@@ -285,11 +302,31 @@ const RouteRecommend = () => {
   };
 
   const handleDetailClick = () => {
-    navigate(`/detail/${selectedDestination.id}`);
+    if (selectedDestination) {
+      fetch(`http://localhost:8888/spots/${selectedDestination.placeName}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const parsedData = JSON.parse(data);
+          navigate(`/detail/${selectedDestination.placeName}`, { state: { destination: parsedData } });
+        })
+        .catch((error) => console.error('Error fetching destination:', error));
+    }
   };
 
   const handleFixRouteClick = () => {
-    navigate('/routefix', { state: { travelDestinations}});
+    const selectedRoute = travelDestinations.map(day => {
+      return {
+        dayNumber: day.dayNumber,
+        ...day.candidates[currentCandidateIndex]
+      };
+    });
+    navigate('/routefix', { state: { selectedRoute } });
+  };
+
+  const handleEditClick = () => {
+    const nextCandidateIndex = (currentCandidateIndex + 1) % travelDestinations[0].candidates.length;
+    setCurrentCandidateIndex(nextCandidateIndex);
+    setSelectedDestination(travelDestinations[0].candidates[nextCandidateIndex].itinerary[0]);
   };
 
   return (
@@ -305,17 +342,16 @@ const RouteRecommend = () => {
         <ImageContainer>
           {selectedDestination && (
             <>
-              <Image src={selectedDestination.image_url} />
+              <Image src={imageUrl} alt={selectedDestination.placeName} />
               <DetailsContainer>
-                <DestName>{selectedDestination.name}</DestName>
-                <DestDetails>{selectedDestination.details}</DestDetails>
+                <DestName>{selectedDestination.placeName}</DestName>
                 <DetailButton onClick={handleDetailClick}>자세히 보기</DetailButton>
                 <MusicContainer>
                   <img style={{ width: "20px" }}
-                  src = {process.env.PUBLIC_URL + '/asset/musicplay.png'} />
+                    src={process.env.PUBLIC_URL + '/asset/musicplay.png'} alt='music play icon'/>
                   <MusicBox>
-                    <MusicTitle>{selectedDestination.musictitle}</MusicTitle>
-                    <MusicSinger>{selectedDestination.musicsinger}</MusicSinger>
+                    <MusicTitle>{selectedDestination.musicName}</MusicTitle>
+                    <MusicSinger>{selectedDestination.musicArtist}</MusicSinger>
                   </MusicBox>
                 </MusicContainer>
               </DetailsContainer>
@@ -323,46 +359,42 @@ const RouteRecommend = () => {
           )}
         </ImageContainer>
         <RouteBox>
-          {travelDestinations.map((day, dayIndex) => (
-            <React.Fragment key={dayIndex}>
-              {Object.keys(day).map((dayKey) => (
-                <React.Fragment key={dayKey}>
-                  <RouteContainer>
-                  <Day>{convertDayKeyToKorean(dayKey)}</Day>
-                  <TravelPathContainer>
-                    <PathLine>
-                      {day[dayKey].map((destination, index) => (
-                          <React.Fragment key={destination.id}>
-                            <Circle 
-                              onClick={() => handleCircleClick(destination)}
-                              isSelected={selectedDestination && selectedDestination.id === destination.id}
-                            >
-                              <VisitTime
-                                onClick={() => handleCircleClick(destination)}
-                                isSelected={selectedDestination && selectedDestination.id === destination.id}
-                              >
-                                {destination.visittime}
-                              </VisitTime>
-                              <div>{destination.name}</div>
-                            </Circle>
-                            {index < day[dayKey].length - 1 &&
-                              <Line>
-                                {destination.distance}m
-                              </Line>
-                            }
-                          </React.Fragment>
-                        ))}
-                      </PathLine>
-                    </TravelPathContainer>
-                  </RouteContainer>
-                </React.Fragment>
-              ))}
+          {travelDestinations.map((day) => (
+            <React.Fragment key={day.dayNumber}>
+              <RouteContainer>
+                <Day>{convertDayKeyToKorean(day.dayNumber)}</Day>
+                <TravelPathContainer>
+                  <PathLine>
+                    {day.candidates[currentCandidateIndex].itinerary.map((destination, index) => (
+                      <React.Fragment key={destination.placeId}>
+                        <Circle 
+                          onClick={() => handleCircleClick(destination)}
+                          isSelected={selectedDestination && selectedDestination.placeId === destination.placeId}
+                        >
+                          <VisitTime
+                            onClick={() => handleCircleClick(destination)}
+                            isSelected={selectedDestination && selectedDestination.placeId === destination.placeId}
+                          >
+                            {destination.duration}분
+                          </VisitTime>
+                          <div>{destination.placeName}</div>
+                        </Circle>
+                        {index < day.candidates[currentCandidateIndex].itinerary.length - 1 &&
+                          <Line>
+                            {day.candidates[currentCandidateIndex].travelSegments[index].distance}m
+                          </Line>
+                        }
+                      </React.Fragment>
+                    ))}
+                  </PathLine>
+                </TravelPathContainer>
+              </RouteContainer>
             </React.Fragment>
           ))}
         </RouteBox>
         <ButtonContainer>
-            <FixButton onClick={handleFixRouteClick}>이 루트로 여행 갈래요!</FixButton>
-            <EditButton>다시 추천받을래요</EditButton>
+          <FixButton onClick={handleFixRouteClick}>이 루트로 여행 갈래요!</FixButton>
+          <EditButton onClick={handleEditClick}>다시 추천받을래요</EditButton>
         </ButtonContainer>
       </ContentContainer>
     </Container>

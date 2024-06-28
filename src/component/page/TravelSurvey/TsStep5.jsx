@@ -45,33 +45,40 @@ const TsStep5 = () => {
       stopwords: stopwordsText,
       requirewords: mandatoryText,
     };
-
+  
     setTravelSurveyData(surveyDataWithId);
     console.log(surveyDataWithId);
-
+  
+    // 데이터 전송 후 즉시 다음 페이지로 이동
+    navigate('/travelsurveyend');
+  
     try {
-      const response = await fetch('http://localhost:8888/trips', {
+      const response = await fetch('http://localhost:8888/recommend/getAllFinalRecommendation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(surveyDataWithId),
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
+  
       const result = await response.json();
       console.log('Success:', result);
-
+  
+      // Store the server response in local storage
+      localStorage.setItem('travelRecommendations', JSON.stringify(result));
       localStorage.setItem('surveyResponseReceived', 'true');
-
+  
+      // 서버 응답을 받으면 다다음 페이지로 이동
       navigate('/travelsurveyend');
     } catch (error) {
       console.error('Error:', error);
     }
-  };
+  };  
+
   return (
     <Container>
       <LogoContainer>

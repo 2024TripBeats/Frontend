@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import detailData from './detail.json';
 
@@ -12,6 +12,7 @@ const Container = styled.div`
   align-items: center;
   max-width: 100%;
   box-sizing: border-box;
+  margin-bottom: 50px;
 `;
 
 const LogoContainer = styled.div`
@@ -73,19 +74,17 @@ const Link = styled.div`
   font-family: "Pretendard-Medium";
 `;
 
-const DetailPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [destination, setDestination] = useState(null);
 
-  useEffect(() => {
-    const foundDestination = detailData.find(dest => dest.id === parseInt(id));
-    setDestination(foundDestination);
-  }, [id]);
+const DetailPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { destination } = location.state;
 
   if (!destination) {
     return <p>Loading...</p>;
   }
+
+  const getAccessibilityText = (value) => (value ? '가능' : '불가능');
 
   return (
     <Container>
@@ -96,15 +95,16 @@ const DetailPage = () => {
       </LogoContainer>
       <ContentContainer>
         <BackButton onClick={() => navigate(-1)}>⬅️</BackButton>
-        <Image src={destination.image_url} alt={destination.name} />
+        <Image src={destination.imageUrl} alt={destination.name} />
         <InfoContainer>
-          <InfoTitle>{destination.name}</InfoTitle>
-          <InfoText>📍 {destination.address}</InfoText>
-          <InfoText>⏰ {destination.hours}</InfoText>
-          <InfoText>📞 {destination.phone}</InfoText>
-          <Link href={destination.website} target="_blank" rel="noopener noreferrer">
-            🌐  {destination.website}
-          </Link>
+          <InfoTitle>{destination.visitAreaNm}</InfoTitle>
+          <InfoText style={{marginBottom: '20px'}}>{destination.description}</InfoText>
+          <InfoText>📍 {destination.radNmAddr}</InfoText>
+          <InfoText>⏰ {destination.time}</InfoText>
+          <InfoText>🐕 {getAccessibilityText(destination.petAccess)}</InfoText>
+          <InfoText>🚗 {getAccessibilityText(destination.parking)}</InfoText>
+          <InfoText>📞 {destination.contact}</InfoText>
+          <InfoText>{destination.hashtags}</InfoText>
         </InfoContainer>
       </ContentContainer>
     </Container>
