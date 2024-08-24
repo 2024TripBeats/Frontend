@@ -5,21 +5,21 @@ export const TravelSurveyContext = createContext();
 export const TravelSurveyProvider = ({ children }) => {
   const [travelsurveyData, setTravelSurveyData] = useState({
     destination: '', // 여행지
-    period: '', // 여행 기간 (일)
-    intensity: [],
-    // accomodation: [],
-    // restaurant: [],
+    startDate: null, // 여행 시작일
+    endDate: null, // 여행 종료일
+    intensity: [], // 각 날짜별 여행 강도
     stopwords: '',
     requirewords: '',
+    tripName: '', // 여행 이름 추가
   });
 
-  const updatePeriod = (newPeriod) => {
-    const periodInt = parseInt(newPeriod, 10);
-    if (!isNaN(periodInt)) {
+  const updatePeriod = (newStartDate, newEndDate) => {
+    if (newStartDate && newEndDate) {
       setTravelSurveyData((prevData) => ({
         ...prevData,
-        period: newPeriod,
-        intensity: []
+        startDate: newStartDate,
+        endDate: newEndDate,
+        intensity: [] // 날짜 범위가 변경될 때 강도 초기화
       }));
     }
   };

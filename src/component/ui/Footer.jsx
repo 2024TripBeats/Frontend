@@ -8,7 +8,7 @@ const FooterContainer = styled.div`
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 500px; /* AppContainer의 max-width와 동일하게 설정 */
+  max-width: 550px;
   height: 50px;
   background-color: #252a2f;
   display: flex;

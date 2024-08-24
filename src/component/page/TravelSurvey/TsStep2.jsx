@@ -1,19 +1,63 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { addDays, differenceInDays } from 'date-fns';
+import ko from 'date-fns/locale/ko';
+
+registerLocale('ko', ko);
+
+const CustomDatePicker = styled(DatePicker)`
+  && .react-datepicker__header {
+    background-color: #ff8a1d;
+    border-bottom: none;
+  }
+
+  && .react-datepicker__day {
+    color: #252a2f;
+  }
+
+  && .react-datepicker__day:hover {
+    background-color: #ff8a1d;
+    color: #ffffff;
+  }
+
+  && .react-datepicker__day--selected {
+    background-color: #252a2f;
+    color: #ffffff;
+  }
+
+  && .react-datepicker__current-month {
+    color: #ffffff;
+    font-weight: bold;
+  }
+
+  && .react-datepicker__day--keyboard-selected {
+    background-color: #252a2f;
+    color: #ffffff;
+  }
+`;
 
 const TsStep2 = () => {
   const navigate = useNavigate();
   const { travelsurveyData, setTravelSurveyData, updatePeriod } = useContext(TravelSurveyContext);
-  const [selectedPeriod, setSelectedPeriod] = useState('');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [intensity, setIntensity] = useState([]);
+  const [isScrollable, setIsScrollable] = useState(false);
 
-  const handleSelect = (event) => {
-    const period = event.target.value;
-    setSelectedPeriod(period);
-    updatePeriod(period); // Update the context state
-    setIntensity(Array(Number(period)).fill('')); // Reset intensity based on the selected period
+  const handleDateChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+
+    if (start && end) {
+      const period = differenceInDays(end, start) + 1; // 여행 기간 계산
+      updatePeriod(period);
+      setIntensity(Array(period).fill('')); // 여행 강도 초기화
+    }
   };
 
   const handleIntensityChange = (day, value) => {
@@ -23,10 +67,22 @@ const TsStep2 = () => {
     setTravelSurveyData({ ...travelsurveyData, intensity: newIntensity });
   };
 
-  const isButtonActive = !!selectedPeriod && intensity.length === Number(selectedPeriod) && intensity.every(val => val !== '');
+  const isButtonActive = startDate && endDate && intensity.length === differenceInDays(endDate, startDate) + 1 && intensity.every(val => val !== '');
+
+  // useEffect로 스크롤 여부를 감지하여 상태 설정
+  useEffect(() => {
+    const handleResize = () => {
+      setIsScrollable(window.innerHeight < document.documentElement.scrollHeight);
+    };
+
+    handleResize(); // 처음 렌더링 시에도 확인
+    window.addEventListener('resize', handleResize); // 윈도우 리사이즈 시 감지
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <Container>
+    <Container isScrollable={isScrollable}>
       <LogoContainer>
         <img style={{ width: "30%" }} 
           src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
@@ -38,18 +94,24 @@ const TsStep2 = () => {
         </ProgressBarContainer>
         <StepText>1/2 단계</StepText>
       </ProgressContainer>
-      <Question>며칠간의 여행인가요?</Question>
-      <SelectContainer>
-        <Message>여행 기간은 총</Message>
-        <Select value={selectedPeriod} onChange={handleSelect}>
-            <Option value=""></Option>
-            {[...Array(7)].map((_, i) => (
-            <Option key={i + 1} value={i + 1}>{i + 1}</Option>
-            ))}
-        </Select>
-        <Message>일 이에요</Message>
-      </SelectContainer>
-      {selectedPeriod && (
+      <Question>여행 시작일과 종료일을 선택하세요</Question>
+      <Message>여행은 최대 7일까지만 선택 가능합니다.</Message>
+      <DatePickerContainer>
+      <CustomDatePicker
+        selected={startDate}
+        onChange={handleDateChange}
+        startDate={startDate}
+        endDate={endDate}
+        selectsRange
+        inline
+        minDate={new Date()}
+        maxDate={startDate ? addDays(startDate, 6) : addDays(new Date(), 365)} 
+        placeholderText="여행 날짜를 선택하세요"
+        locale="ko"
+        dateFormat="yyyy년 MM월 dd일"
+      />
+      </DatePickerContainer>
+      {startDate && endDate && (
         <div>
           <Question style={{ marginTop: "5%" }}>여행 강도를 선택해주세요</Question>
           <LabelsContainer>
@@ -57,7 +119,7 @@ const TsStep2 = () => {
             <Divider />
             <Message>활동적인</Message>
           </LabelsContainer>
-          {[...Array(Number(selectedPeriod))].map((_, i) => (
+          {[...Array(differenceInDays(endDate, startDate) + 1)].map((_, i) => (
             <DayContainer key={i}>
               <DayLabel>{i + 1}일차</DayLabel>
               <RadioGroup>
@@ -104,6 +166,7 @@ const Container = styled.div`
   min-height: 100vh;
   background-color: #FAFAFA;
   box-sizing: border-box;
+  margin-bottom: 70px;
 `;
 
 const LogoContainer = styled.div`
@@ -122,36 +185,18 @@ const Question = styled.div`
   text-align: center;
 `;
 
-const SelectContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-top: 5%;
-  margin-bottom: 8%;
-`;
-
-const Select = styled.select`
-  padding: 10px;
-  margin: 0 5px;
-  height: 35px;
-  font-size: 13px;
-  font-family: "Pretendard-Regular";
-  border-radius: 5px;
-  border: none;
-  background-color: #fafafa;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
-`;
-
-const Option = styled.option`
-  font-size: 16px;
-  font-family: "Pretendard-Regular";
-`;
-
 const Message = styled.div`
   font-size: 14px;
   font-family: "Pretendard-Regular";
   color: #252a2f;
+  text-align: center;
+  margin-top: 10px;
+`;
+
+const DatePickerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 5%;
 `;
 
 const ButtonContainer = styled.div`
@@ -273,10 +318,9 @@ const Progress = styled.div`
 `;
 
 const StepText = styled.div`
-  font-size: 12px;
-  font-family: "Pretendard-Regular";
-  color: #252A2F;
-  text-align: center;
-  margin-bottom: 10px;
+font-size: 12px;
+font-family: "Pretendard-Regular";
+color: #252A2F;
+text-align: center;
+margin-bottom: 10px;
 `;
-

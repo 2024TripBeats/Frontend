@@ -178,7 +178,7 @@ const WordCount = styled.div`
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 100px;
+  height: 70px;
   font-size: 12px;
   font-family: "Pretendard-Regular";
   color: #252A2F;

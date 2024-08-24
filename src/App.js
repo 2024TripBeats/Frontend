@@ -77,10 +77,11 @@ const WebContainer = styled.div`
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 500px;
   margin: 0 auto;
   background-color: #fafafa;
   min-height: 100vh;
+  width: 100%;
+  max-width: 550px;
 `;
 
 const Content = styled.div`

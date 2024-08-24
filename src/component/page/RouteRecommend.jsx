@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -74,12 +74,6 @@ const DetailsContainer = styled.div`
 const DestName = styled.div`
   font-family: "Pretendard-ExtraBold";
   font-size: 18px;
-  color: #252a2f;
-`;
-
-const DestDetails = styled.div`
-  font-family: "Pretendard-Medium";
-  font-size: 12px;
   color: #252a2f;
 `;
 
@@ -242,7 +236,6 @@ const Line = styled.div`
   padding: 2px 9px;
 `;
 
-
 const RouteRecommend = () => {
   const [travelDestinations, setTravelDestinations] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
@@ -274,7 +267,7 @@ const RouteRecommend = () => {
         setTravelDestinations(parsedRecommendations.recommendations);
 
         if (parsedRecommendations.recommendations.length > 0 && parsedRecommendations.recommendations[0].candidates.length > 0) {
-          setSelectedDestination(parsedRecommendations.recommendations[0].candidates[0].itinerary[0]);
+          setSelectedDestination({ dayNumber: parsedRecommendations.recommendations[0].dayNumber, ...parsedRecommendations.recommendations[0].candidates[0].itinerary[0] });
         }
       }
     } else {
@@ -285,11 +278,11 @@ const RouteRecommend = () => {
   useEffect(() => {
     if (selectedDestination) {
       fetch(`http://localhost:8888/spots/${selectedDestination.placeName}/image`)
-        .then((response) => response.text())
-        .then((data) => {
-          setImageUrl(data);
-        })
-        .catch((error) => console.error('Error fetching destination image:', error));
+          .then((response) => response.text())
+          .then((data) => {
+            setImageUrl(data);
+          })
+          .catch((error) => console.error('Error fetching destination image:', error));
     }
   }, [selectedDestination]);
 
@@ -297,19 +290,19 @@ const RouteRecommend = () => {
     return `${dayNumber}일차`;
   };
 
-  const handleCircleClick = (destination) => {
-    setSelectedDestination(destination);
+  const handleCircleClick = (dayNumber, destination) => {
+    setSelectedDestination({ dayNumber, ...destination });
   };
 
   const handleDetailClick = () => {
     if (selectedDestination) {
       fetch(`http://localhost:8888/spots/${selectedDestination.placeName}`)
-        .then((response) => response.text())
-        .then((data) => {
-          const parsedData = JSON.parse(data);
-          navigate(`/detail/${selectedDestination.placeName}`, { state: { destination: parsedData } });
-        })
-        .catch((error) => console.error('Error fetching destination:', error));
+          .then((response) => response.text())
+          .then((data) => {
+            const parsedData = JSON.parse(data);
+            navigate(`/detail/${selectedDestination.placeName}`, { state: { destination: parsedData } });
+          })
+          .catch((error) => console.error('Error fetching destination:', error));
     }
   };
 
@@ -334,74 +327,73 @@ const RouteRecommend = () => {
   };
 
   return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + '/asset/logo/logo.png'}
-          alt='logo' />
-      </LogoContainer>
-      <ContentContainer>
-        <Message>{name}님의 취향을 바탕으로</Message>
-        <Message style={{marginBottom:"10px"}}>여행 루트와 음악을 추천해봤어요!</Message>
-        <ImageContainer>
-          {selectedDestination && (
-            <>
-              <Image src={imageUrl} alt={selectedDestination.placeName} onError={handleImageError} />
-              <DetailsContainer>
-                <DestName>{selectedDestination.placeName}</DestName>
-                <DetailButton onClick={handleDetailClick}>자세히 보기</DetailButton>
-                <MusicContainer>
-                  <img style={{ width: "20px" }}
-                    src={process.env.PUBLIC_URL + '/asset/musicplay.png'} alt='music play icon'/>
-                  <MusicBox>
-                    <MusicTitle>{selectedDestination.musicName}</MusicTitle>
-                    <MusicSinger>{selectedDestination.musicArtist}</MusicSinger>
-                  </MusicBox>
-                </MusicContainer>
-              </DetailsContainer>
-            </>
-          )}
-        </ImageContainer>
-        <RouteBox>
-          {travelDestinations.map((day) => (
-            <React.Fragment key={day.dayNumber}>
-              <RouteContainer>
-                <Day>{convertDayKeyToKorean(day.dayNumber)}</Day>
-                <TravelPathContainer>
-                  <PathLine>
-                    {day.candidates[currentCandidateIndex].itinerary.map((destination, index) => (
-                      <React.Fragment key={destination.placeId}>
-                        <Circle 
-                          onClick={() => handleCircleClick(destination)}
-                          isSelected={selectedDestination && selectedDestination.placeId === destination.placeId}
-                        >
-                          <VisitTime
-                            onClick={() => handleCircleClick(destination)}
-                            isSelected={selectedDestination && selectedDestination.placeId === destination.placeId}
-                          >
-                            {destination.duration}분
-                          </VisitTime>
-                          <div>{destination.placeName}</div>
-                        </Circle>
-                        {index < day.candidates[currentCandidateIndex].itinerary.length - 1 &&
-                          <Line>
-                            {day.candidates[currentCandidateIndex].travelSegments[index].distance.toFixed(2)}km
-                          </Line>
-                        }
-                      </React.Fragment>
-                    ))}
-                  </PathLine>
-                </TravelPathContainer>
-              </RouteContainer>
-            </React.Fragment>
-          ))}
-        </RouteBox>
-        <ButtonContainer>
-          <FixButton onClick={handleFixRouteClick}>이 루트로 여행 갈래요!</FixButton>
-          <EditButton onClick={handleEditClick}>다시 추천받을래요</EditButton>
-        </ButtonContainer>
-      </ContentContainer>
-    </Container>
+      <Container>
+        <LogoContainer>
+          <img style={{ width: "30%" }}
+               src={process.env.PUBLIC_URL + '/asset/logo/logo.png'}
+               alt='logo' />
+        </LogoContainer>
+        <ContentContainer>
+          <Message>{name}님의 취향을 바탕으로</Message>
+          <Message style={{marginBottom:"10px"}}>여행 루트와 음악을 추천해봤어요!</Message>
+          <ImageContainer>
+            {selectedDestination && (
+                <>
+                  <Image src={imageUrl} alt={selectedDestination.placeName} onError={handleImageError} />
+                  <DetailsContainer>
+                    <DestName>{selectedDestination.placeName}</DestName>
+                    <DetailButton onClick={handleDetailClick}>자세히 보기</DetailButton>
+                    <MusicContainer>
+                      <img style={{ width: "20px" }}
+                           src={process.env.PUBLIC_URL + '/asset/musicplay.png'} alt='music play icon'/>
+                      <MusicBox>
+                        <MusicTitle>{selectedDestination.musicName}</MusicTitle>
+                        <MusicSinger>{selectedDestination.musicArtist}</MusicSinger>
+                      </MusicBox>
+                    </MusicContainer>
+                  </DetailsContainer>
+                </>
+            )}
+          </ImageContainer>
+          <RouteBox>
+            {travelDestinations.map((day) => (
+                <React.Fragment key={day.dayNumber}>
+                  <RouteContainer>
+                    <Day>{convertDayKeyToKorean(day.dayNumber)}</Day>
+                    <TravelPathContainer>
+                      <PathLine>
+                        {day.candidates[currentCandidateIndex].itinerary.map((destination, index) => (
+                            <React.Fragment key={destination.placeId}>
+                              <Circle
+                                  onClick={() => handleCircleClick(day.dayNumber, destination)}
+                                  isSelected={selectedDestination && selectedDestination.dayNumber === day.dayNumber && selectedDestination.placeId === destination.placeId}
+                              >
+                                <VisitTime
+                                    isSelected={selectedDestination && selectedDestination.dayNumber === day.dayNumber && selectedDestination.placeId === destination.placeId}
+                                >
+                                  {destination.duration}분
+                                </VisitTime>
+                                <div>{destination.placeName}</div>
+                              </Circle>
+                              {index < day.candidates[currentCandidateIndex].itinerary.length - 1 &&
+                                  <Line>
+                                    {day.candidates[currentCandidateIndex].travelSegments[index].distance.toFixed(2)}km
+                                  </Line>
+                              }
+                            </React.Fragment>
+                        ))}
+                      </PathLine>
+                    </TravelPathContainer>
+                  </RouteContainer>
+                </React.Fragment>
+            ))}
+          </RouteBox>
+          <ButtonContainer>
+            <FixButton onClick={handleFixRouteClick}>이 루트로 여행 갈래요!</FixButton>
+            <EditButton onClick={handleEditClick}>다시 추천받을래요</EditButton>
+          </ButtonContainer>
+        </ContentContainer>
+      </Container>
   );
 };
 
