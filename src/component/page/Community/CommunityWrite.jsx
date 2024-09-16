@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { setMinutes, setHours } from 'date-fns';
+
 
 // Style for the overall container
 const Container = styled.div`
@@ -181,13 +185,26 @@ const SubmitButton = styled.button`
   opacity: ${({ active }) => (active ? '1' : '0.5')};
 `;
 
+const CustomDatePicker = styled(DatePicker)`
+  width: 100%;
+  padding: 6px 10px;
+  color: #252A2F;
+  border: none;
+  background-color: #FAFAFA;
+  border-radius: 5px;
+  font-size: 12px;
+  font-family: "Pretendard-Medium";
+  box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.25);
+  margin-left: 10px;
+`;
+
 const CommunityWrite = () => {
   const navigate = useNavigate();
   const [category, setCategory] = useState('같이 먹어요');
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
-  const [schedule, setSchedule] = useState('');
+  const [schedule, setSchedule] = useState(new Date());
   const [content, setContent] = useState('');
 
   const [name, setName] = useState("");
@@ -201,12 +218,10 @@ const CommunityWrite = () => {
       setName(storedName);
       setId(storedId);
     } else {
-      // Handle case where data is not found in localStorage
       console.error("No user data found in localStorage");
     }
   }, []);
 
-  // 버튼 활성화 조건: 모든 필드가 채워졌을 때
   const isFormComplete = category && title && location && schedule && content;
 
   const handleImageUpload = (e) => {
@@ -261,7 +276,7 @@ const CommunityWrite = () => {
         <Icon src="asset/icon/back.png" onClick={() => navigate('/community')} />
         <Title>게시글 작성하기</Title>
       </Header>
-      {/* Image upload box */}
+
       <ImageUploadBox onClick={() => document.getElementById('imageUpload').click()}>
         {image ? <img src={image} alt="Upload Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px'}} /> : '📸 사진을 추가하세요'}
       </ImageUploadBox>
@@ -272,6 +287,7 @@ const CommunityWrite = () => {
           <CategoryButton selected={category === '같이 먹어요'} onClick={() => setCategory('같이 먹어요')}>같이 먹어요</CategoryButton>
           <CategoryButton selected={category === '같이 놀아요'} onClick={() => setCategory('같이 놀아요')}>같이 놀아요</CategoryButton>
         </CategoryContainer>
+
         <InputContainer>
           <Label>장소</Label>
           <InfoInput
@@ -281,13 +297,19 @@ const CommunityWrite = () => {
             onChange={(e) => setLocation(e.target.value)} 
           />
         </InputContainer>
+
         <DateTimeContainer>
           <Label>일정</Label>
-          <InfoInput 
-            type="datetime-local" 
-            value={schedule} 
-            onFocus={(e) => e.target.showPicker()} // 클릭하면 바로 달력이 뜨도록
-            onChange={(e) => setSchedule(e.target.value)} 
+          <CustomDatePicker
+            selected={schedule}
+            onChange={(date) => setSchedule(date)}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}  // 15분 간격 설정
+            dateFormat="yyyy.MM.dd HH:mm"
+            timeCaption="시간"
+            minTime={setHours(setMinutes(new Date(), 0), 0)}  // 오전 0시
+            maxTime={setHours(setMinutes(new Date(), 45), 23)} // 오후 11시 45분
           />
         </DateTimeContainer>
       </SelectContainer>
@@ -309,7 +331,6 @@ const CommunityWrite = () => {
         />
       </InputContainer>
 
-      {/* Submit Button fixed at the bottom */}
       <ButtonContainer>
         <SubmitButton active={isFormComplete} onClick={handleSubmit}>
           완료

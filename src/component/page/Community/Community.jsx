@@ -252,7 +252,7 @@ const Community = () => {
               <PostImage src={post.image} />
               <PostFooter>
                 <FooterIcon>
-                  <CommentIcon src="asset/logo/comment.png" />
+                  <CommentIcon src="asset/icon/comment.png" />
                   <FooterText>{post.comments}</FooterText>
                 </FooterIcon>
               </PostFooter>
