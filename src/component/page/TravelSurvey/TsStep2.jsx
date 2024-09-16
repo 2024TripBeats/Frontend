@@ -2,43 +2,9 @@ import React, { useContext, useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
-import DatePicker, { registerLocale } from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import { addDays, differenceInDays } from 'date-fns';
-import ko from 'date-fns/locale/ko';
-
-registerLocale('ko', ko);
-
-const CustomDatePicker = styled(DatePicker)`
-  && .react-datepicker__header {
-    background-color: #ff8a1d;
-    border-bottom: none;
-  }
-
-  && .react-datepicker__day {
-    color: #252a2f;
-  }
-
-  && .react-datepicker__day:hover {
-    background-color: #ff8a1d;
-    color: #ffffff;
-  }
-
-  && .react-datepicker__day--selected {
-    background-color: #252a2f;
-    color: #ffffff;
-  }
-
-  && .react-datepicker__current-month {
-    color: #ffffff;
-    font-weight: bold;
-  }
-
-  && .react-datepicker__day--keyboard-selected {
-    background-color: #252a2f;
-    color: #ffffff;
-  }
-`;
 
 const TsStep2 = () => {
   const navigate = useNavigate();
@@ -48,17 +14,57 @@ const TsStep2 = () => {
   const [intensity, setIntensity] = useState([]);
   const [isScrollable, setIsScrollable] = useState(false);
 
-  const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-
-    if (start && end) {
-      const period = differenceInDays(end, start) + 1; // 여행 기간 계산
-      updatePeriod(period);
-      setIntensity(Array(period).fill('')); // 여행 강도 초기화
-    }
+  const prices = {
+    '2024-09-01': 100000,
+    '2024-09-02': 75000,
+    '2024-09-03': 32000,
+    // 필요한 날짜별 데이터 추가
   };
+
+  const handleDateChange = (selectedDate) => {
+    if (!startDate) {
+        // 첫 번째 날짜 선택 시
+        setStartDate(selectedDate);
+        setEndDate(null);
+        setIntensity([]); // 초기화
+    } else if (!endDate) {
+        // 첫 번째 날짜 선택 후 두 번째 날짜 선택 시
+        const maxSelectableDate = addDays(startDate, 7);
+        if (selectedDate < startDate) {
+            // startDate 이전 날짜가 선택된 경우, 이를 startDate로 설정
+            setStartDate(selectedDate);
+            setEndDate(null); // endDate 초기화
+            setIntensity([]); // 초기화
+        } else if (selectedDate > maxSelectableDate) {
+            // 선택된 날짜가 startDate로부터 7일을 넘는 경우
+            alert('여행 기간은 최대 7일까지만 선택 가능합니다.');
+        } else {
+            // 7일 이내의 날짜가 선택된 경우
+            setEndDate(selectedDate);
+            const period = differenceInDays(selectedDate, startDate) + 1;
+            updatePeriod(period);
+            setIntensity(Array(period).fill('')); // 여행 강도 초기화
+        }
+    } else {
+        // 날짜가 이미 선택된 상태에서 첫 번째 날짜를 다시 클릭한 경우 (초기화)
+        setStartDate(null);
+        setEndDate(null);
+        setIntensity([]); // 초기화
+        updatePeriod(0); // 여행 기간 초기화
+    }
+};
+
+  const getTileContent = ({ date, view }) => {
+    if (view === 'month') { // 월간 보기일 때만 텍스트 표시
+      const dateString = date.toISOString().split('T')[0]; // 날짜를 YYYY-MM-DD 형식으로 변환
+      if (prices[dateString]) {
+        // 가격을 10,000으로 나누어 "만 원" 단위로 변환하여 표시
+        const priceInManWon = (prices[dateString] / 10000).toFixed(1);
+        return <PriceTag>{priceInManWon}만 원</PriceTag>;
+      }
+    }
+    return null;
+};
 
   const handleIntensityChange = (day, value) => {
     const newIntensity = [...intensity];
@@ -69,14 +75,13 @@ const TsStep2 = () => {
 
   const isButtonActive = startDate && endDate && intensity.length === differenceInDays(endDate, startDate) + 1 && intensity.every(val => val !== '');
 
-  // useEffect로 스크롤 여부를 감지하여 상태 설정
   useEffect(() => {
     const handleResize = () => {
       setIsScrollable(window.innerHeight < document.documentElement.scrollHeight);
     };
 
-    handleResize(); // 처음 렌더링 시에도 확인
-    window.addEventListener('resize', handleResize); // 윈도우 리사이즈 시 감지
+    handleResize();
+    window.addEventListener('resize', handleResize);
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -97,22 +102,18 @@ const TsStep2 = () => {
       <Question>여행 시작일과 종료일을 선택하세요</Question>
       <Message>여행은 최대 7일까지만 선택 가능합니다.</Message>
       <DatePickerContainer>
-      <CustomDatePicker
-        selected={startDate}
-        onChange={handleDateChange}
-        startDate={startDate}
-        endDate={endDate}
-        selectsRange
-        inline
-        minDate={new Date()}
-        maxDate={startDate ? addDays(startDate, 6) : addDays(new Date(), 365)} 
-        placeholderText="여행 날짜를 선택하세요"
-        locale="ko"
-        dateFormat="yyyy년 MM월 dd일"
-      />
+        <StyledCalendar
+          onClickDay={handleDateChange}
+          value={startDate ? [startDate, endDate] : null}
+          tileContent={getTileContent} // 각 날짜 타일에 텍스트 추가
+          selectRange={false}
+          minDate={new Date()}
+          maxDate={startDate ? addDays(startDate, 6) : addDays(new Date(), 365)}
+          locale="ko"
+        />
       </DatePickerContainer>
       {startDate && endDate && (
-        <div>
+        <>
           <Question style={{ marginTop: "5%" }}>여행 강도를 선택해주세요</Question>
           <LabelsContainer>
             <Message>여유로운</Message>
@@ -141,7 +142,7 @@ const TsStep2 = () => {
               </RadioGroup>
             </DayContainer>
           ))}
-        </div>
+        </>
       )}
       <ButtonContainer>
         <BeforeButton onClick={() => navigate('/travelsurvey1')}>
@@ -157,6 +158,15 @@ const TsStep2 = () => {
     </Container>
   );
 };
+
+// 추가적인 스타일 정의
+const PriceTag = styled.div`
+  font-size: 8px;
+  color: #909193;
+  text-align: center;
+  font-family: 'Pretendard-Regular';
+  margin-top: 4px;
+`;
 
 export default TsStep2;
 
@@ -323,4 +333,86 @@ font-family: "Pretendard-Regular";
 color: #252A2F;
 text-align: center;
 margin-bottom: 10px;
+`;
+
+const StyledCalendar = styled(Calendar)`
+  /* 전체 캘린더 컨테이너 */
+  &.react-calendar {
+    background-color: #fafafa;
+    border-radius: 8px;
+    width: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #252a2f;
+    font-family: 'Pretendard-Regular';
+    border: none;
+    font-size: 14px;
+  }
+
+  /* 탐색 버튼 영역 */
+  .react-calendar__navigation {
+    margin-bottom: 10px;
+
+    .react-calendar__navigation__label {
+      font-weight: bold;
+      color: #252a2f;
+    }
+
+    .react-calendar__navigation__arrow,
+    .react-calendar__navigation__prev-button,
+    .react-calendar__navigation__next-button {
+      color: #252a2f;
+      transition: color 0.2s ease;
+      &:hover {
+        color: #ff8a1d;
+      }
+    }
+  }
+
+  /* 요일 이름 */
+  .react-calendar__month-view__weekdays__weekday {
+    color: #252a2f;
+    font-weight: bold;
+  }
+
+  /* 날짜 셀 스타일 */
+  .react-calendar__tile {
+    background-color: #fafafa;
+    color: #252a2f;
+    border-radius: 4px;
+    padding: 10px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    /* 기본 포커스 및 호버 스타일 초기화 */
+    &:focus, &:hover {
+      background-color: #ff8a1d;
+      color: #fafafa;
+      outline: none; /* 포커스 테두리 제거 */
+    }
+  }
+
+  /* 선택된 날짜 스타일 */
+  .react-calendar__tile--active {
+    border: 2px solid #252a2f;
+    background-color: #252a2f;
+    color: #fafafa;
+    border: none;
+  }
+
+  /* 범위 선택 시 스타일 */
+  .react-calendar__tile--range {
+    background-color: rgba(255, 138, 29, 0.3);
+    color: #252a2f;
+  }
+
+  .react-calendar__tile--rangeStart,
+  .react-calendar__tile--rangeEnd {
+    background-color: #ff8a1d;
+    color: #fafafa;
+  }
+
+  /* 주말 날짜 색상 */
+  .react-calendar__month-view__days__day--weekend {
+    color: #ff8a1d;
+  }
+
 `;

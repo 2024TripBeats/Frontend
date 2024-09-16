@@ -59,11 +59,9 @@ const MyPage = () => {
   //     // 서버에 GET 요청 보내기
   //     axios.get(`/api/travelRecords/${storedId}`)
   //       .then(response => {
-  //         // 서버로부터 받은 데이터를 상태에 저장
   //         setTravelRecords(response.data);
   //       })
   //       .catch(error => {
-  //         // 오류 처리
   //         console.error("Error fetching travel records:", error);
   //       });
   //   } else {
@@ -135,7 +133,7 @@ const Header = styled.div`
   background-color: #FF8A1D;
   flex-direction: column;
   width: 100%;
-  height: 33vh; /* 화면의 33% 높이를 차지 */
+  height: 33vh;
   box-sizing: border-box;
 `;
 
@@ -158,15 +156,15 @@ const MessageBox = styled.div`
 
 const Title = styled.h1`
   font-size: 28px;
-  font-family: "Pretendard-Bold";
+  font-family: "Pretendard-ExtraBold";
   color: #252a2f;
   margin: 0;
 `;
 
 const Subtitle = styled.div`
   font-size: 20px;
-  font-family: "Pretendard-Bold";
-  margin-top: 5px;
+  font-family: "Pretendard-ExtraBold";
+  margin-top: 10px;
   color: #252a2f;
 `;
 

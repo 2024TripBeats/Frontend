@@ -89,14 +89,6 @@ const DestinationName = styled.div`
   padding: 10px;
 `;
 
-const Message = styled.div`
-  font-size: 12px;
-  font-family: "Pretendard-Regular";
-  color: #252a2f;
-  text-align: center;
-  margin-top: 5%;
-`;
-
 const Button = styled.button`
   position: fixed;
   bottom: 20px;
@@ -234,7 +226,6 @@ const TsStep1 = () => {
           <DestinationName selected={selectedDestination === '제주'}>제주</DestinationName>
         </ImgContainer>
       </PickerContainer>
-      <Message>여행지 직접 고르기</Message>
       <Button 
         active={isButtonActive}
         onClick={handleNextClick}

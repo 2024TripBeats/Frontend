@@ -15,6 +15,10 @@ import Home from './component/page/Home';
 import MyPage from './component/page/MyPage';
 import Footer from './component/ui/Footer';
 
+// 커뮤니티
+import Community from './component/page/Community/Community';
+import CommunityWrite from './component/page/Community/CommunityWrite';
+
 // 유저 설문 조사 페이지
 import UsStep1 from './component/page/UserSurvey/UsStep1';
 import UsStep2 from './component/page/UserSurvey/UsStep2';
@@ -138,6 +142,8 @@ const App = () => {
                   <Route path="/routefix" element={<RouteFix />} />
                   <Route path="/detail/:placeName" element={<DetailPage />} />
                   <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
+                  <Route path="/community" element={<Community />} />
+                  <Route path="/write" element={<CommunityWrite />} />
                 </Routes>
               </Content>
               <FooterWithCondition />
@@ -151,7 +157,7 @@ const App = () => {
 
 const FooterWithCondition = () => {
   const location = useLocation();
-  const showFooterPaths = ["/home", "/mypage"]; // Footer가 보일 경로를 여기에 추가
+  const showFooterPaths = ["/home", "/mypage", "/community"]; // Footer가 보일 경로를 여기에 추가
 
   return showFooterPaths.includes(location.pathname) ? <Footer /> : null;
 };

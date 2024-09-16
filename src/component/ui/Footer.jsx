@@ -45,6 +45,11 @@ const Footer = () => {
         style={{height: '15px'}}/>
         홈
       </StyledLink>
+      <StyledLink to="/community">
+        <img src="/asset/footer/community.png" alt="community" 
+        style={{height: '15px'}}/>
+        커뮤니티
+      </StyledLink>
       <StyledLink to="/mypage">
         <img src="/asset/footer/user.png" alt="mypage" 
         style={{height: '15px'}}/>
