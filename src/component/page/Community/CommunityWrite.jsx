@@ -5,8 +5,6 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { setMinutes, setHours } from 'date-fns';
 
-
-// Style for the overall container
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -15,7 +13,7 @@ const Container = styled.div`
   padding-right: 40px;
   background-color: #FAFAFA;
   box-sizing: border-box;
-  padding-bottom: 100px; /* 버튼 아래 여유 공간 */
+  padding-bottom: 100px;
 `;
 
 const Header = styled.div`
@@ -206,6 +204,7 @@ const CommunityWrite = () => {
   const [location, setLocation] = useState('');
   const [schedule, setSchedule] = useState(new Date());
   const [content, setContent] = useState('');
+  const [writeTime, setWriteTime] = useState(null); // 작성 시각 추가
 
   const [name, setName] = useState("");
   const [id, setId] = useState("");
@@ -237,6 +236,7 @@ const CommunityWrite = () => {
 
   const handleSubmit = () => {
     if (isFormComplete) {
+      setWriteTime(new Date()); // 작성 시각 기록
       const formData = {
         id,                  // 작성자의 ID
         image: image || 'none', // 이미지 (없으면 none)
@@ -245,11 +245,12 @@ const CommunityWrite = () => {
         location,            // 장소
         schedule,            // 일정
         content,             // 본문 내용
+        writeTime: new Date().toISOString(), // 작성 시각 추가
       };
   
       console.log('Submitted: ', formData);
   
-      // // 실제 API 요청 코드 (주석 처리)
+      // 실제 API 요청 코드 (주석 처리)
       // fetch('https://api.example.com/community/posts', {
       //   method: 'POST',
       //   headers: {
@@ -268,7 +269,6 @@ const CommunityWrite = () => {
       // });
     }
   };
-
 
   return (
     <Container>

@@ -200,7 +200,7 @@ const Community = () => {
   // 샘플 데이터에 이미지 URL 추가
   const dummyData = [
     {
-      "post_number": 1,
+      "post_id": 1,
       "category": "같이 먹어요",
       "location": "서울 홍대 맛집",
       "schedule": "2024-09-10 18:00",
@@ -209,7 +209,7 @@ const Community = () => {
       "comments": 6,
     },
     {
-      "post_number": 2,
+      "post_id": 2,
       "category": "같이 놀아요",
       "location": "부산 해운대 해변",
       "schedule": "2024-09-12 14:00",
@@ -241,7 +241,7 @@ const Community = () => {
 
       <PostList>
         {dummyData.map((post) => (
-          <PostItem key={post.post_number}>
+          <PostItem key={post.post_id}>
             <PostContent>
               <CategoryTag category={post.category}>{post.category}</CategoryTag>
               <PostTitle>{post.title}</PostTitle>
