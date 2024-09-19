@@ -18,6 +18,7 @@ import Footer from './component/ui/Footer';
 // 커뮤니티
 import Community from './component/page/Community/Community';
 import CommunityWrite from './component/page/Community/CommunityWrite';
+import CommunityPost from './component/page/Community/CommunityPost';
 
 // 유저 설문 조사 페이지
 import UsStep1 from './component/page/UserSurvey/UsStep1';
@@ -144,6 +145,7 @@ const App = () => {
                   <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
                   <Route path="/community" element={<Community />} />
                   <Route path="/write" element={<CommunityWrite />} />
+                  <Route path="/post" element={<CommunityPost />} />
                 </Routes>
               </Content>
               <FooterWithCondition />
