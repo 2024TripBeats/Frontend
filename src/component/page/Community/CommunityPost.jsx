@@ -1,6 +1,127 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from 'axios';
+
+const CommunityPost = () => {
+  const [postData, setPostData] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const queryParams = new URLSearchParams(location.search);
+  const postId = queryParams.get('post_id');
+
+  useEffect(() => {
+    const fetchPostData = async () => {
+      try {
+        const response = await axios.get(`/api/post/${postId}`); // 실제 API 경로로 수정
+        setPostData(response.data);
+      } catch (error) {
+        console.error("Error fetching post data:", error);
+      }
+    };
+
+    if (postId) {
+      fetchPostData();
+    }
+  }, [postId]);
+
+  const handleImageClick = () => {
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleEdit = () => {
+    // 수정을 위해 /write로 이동하면서, postId를 쿼리스트링에 담아 보냄
+    navigate(`/write?post_id=${postId}`);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/api/post/${postId}`); // 서버에서 게시글 삭제 요청
+      navigate('/community'); // 삭제 후 커뮤니티 페이지로 이동
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  if (!postData) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <Container>
+      <Header>
+        <Icon src="asset/icon/back.png" onClick={() => navigate('/community')} />
+        <Title>커뮤니티</Title>
+      </Header>
+
+      <ImageContainer>
+        <Image 
+          src={postData.post.image}
+          alt="Uploaded Image" 
+          onClick={handleImageClick}
+        />
+      </ImageContainer>
+
+      <ContentInfoContainer>
+        <Category>{postData.post.category}</Category>
+        <TitleBox>
+          <PostTitle>{postData.post.title}</PostTitle>
+          <Author><AppoInfo>작성자</AppoInfo>{postData.post.kakaoName}</Author>
+        </TitleBox>
+        <AppoContainer>
+          <AppoInfo>일정 | {postData.post.schedule}</AppoInfo>
+          <AppoInfo>장소 | {postData.post.location}</AppoInfo>
+        </AppoContainer>
+      </ContentInfoContainer>
+
+      <Content>
+        {postData.post.content}<br/>
+      </Content>
+
+      <CommentsSection>
+        <CommentTitle>댓글 <CommentCount>{postData.post.totalCount}개</CommentCount></CommentTitle> 
+        {postData.post.commentList.map((comment) => (   
+          <Comment key={comment.commentId}>
+            <CommentInfoBox>
+              <CommentAuthor>{comment.kakaoName}</CommentAuthor> 
+              <AppoInfo style={{color: '#acacac'}}>{comment.timestamp}</AppoInfo>
+            </CommentInfoBox>
+            <CommentContent>{comment.content}</CommentContent>
+          </Comment>
+        ))}
+      </CommentsSection>
+
+      <ButtonContainer>
+        <SubmitButton onClick={handleEdit}>수정</SubmitButton>
+        <SubmitButton onClick={handleDelete}>삭제</SubmitButton>
+      </ButtonContainer>
+
+      <InputContainer>
+        <Input placeholder="댓글을 입력하세요" />
+        <Button>
+          <ButtonImage src="/asset/icon/send.png" alt="Send" />
+        </Button>
+      </InputContainer>
+
+      {showPopup && (
+        <PopupOverlay onClick={handleClosePopup}>
+          <PopupImage 
+            src={postData.post.image}
+            alt="Popup Image"
+          />
+        </PopupOverlay>
+      )}
+    </Container>
+  );
+};
+
+export default CommunityPost;
 
 const Container = styled.div`
   display: flex;
@@ -233,128 +354,145 @@ const PopupImage = styled.img`
   max-height: 90%;
 `;
 
-const CommunityPost = () => {
-  const [postData, setPostData] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
-  const navigate = useNavigate();
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  gap: 10%;
+`;
 
-  useEffect(() => {
-    const dummyData = {
-      post: {
-        post_id: 123,
-        title: "홍대에서 저녁 같이 먹어요!",
-        category: "같이 먹어요",
-        content: "어쩌구저쩌구 \n이렇게저렇게 \n계산은 식당에서 각자계산",
-        schedule: "2024-09-21 20:00",
-        location: "서울 홍대 맛집",
-        author: {
-          user_id: 456,
-          username: "김와빅"
-        },
-        created_at: "2024-09-19 18:30:50",
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_jyy8CbuH9Qzcov379LIXoh_0aELaynvXVw&s'
-      },
-      comments: {
-        total_count: 2,
-        comment_list: [
-          {
-            comment_id: 1,
-            author: {
-              user_id: 8097,
-              username: "최빅타"
-            },
-            content: "내일 식당 앞으로 가면 될까요?",
-            created_at: "2024-09-20 17:44:00"
-          },
-          {
-            comment_id: 2,
-            author: {
-              user_id: 456,
-              username: "김와빅"
-            },
-            content: "아뇨 싫어요",
-            created_at: "2024-09-20 19:01:00"
-          }
-        ]
-      }
-    };
+const SubmitButton = styled.button`
+  padding: 10px 40px;
+  background-color: ${({ active }) => (active ? '#FF8A1D' : '#d6d6d6')};
+  color: ${({ active }) => (active ? '#252a2f' : '#4a4a4a')};
+  border: none;
+  border-radius: 20px;
+  font-family: "Pretendard-ExtraBold";
+  font-size: 13px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  cursor: ${({ active }) => (active ? 'pointer' : 'not-allowed')};
+  opacity: ${({ active }) => (active ? '1' : '0.5')};
+`;
 
-    setPostData(dummyData);
-  }, []);
 
-  const handleImageClick = () => {
-    setShowPopup(true);
-  };
+// const CommunityPost = () => {
+//   const [postData, setPostData] = useState(null);
+//   const [showPopup, setShowPopup] = useState(false);
+//   const navigate = useNavigate();
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
+//   useEffect(() => {
+//     const dummyData = {
+//       post: {
+//         postId: 123,
+//         title: "홍대에서 저녁 같이 먹어요!",
+//         category: "같이 먹어요",
+//         content: "어쩌구저쩌구 \n이렇게저렇게 \n계산은 식당에서 각자계산",
+//         schedule: "2024-09-21 20:00",
+//         location: "서울 홍대 맛집",
+//         userId: 456,
+//         kakaoName: "김와빅",
+//         timestamp: "2024-09-19 18:30:50",
+//         image: "Base64 인코딩 뭐시기",
+//         totalCount: 2, // totalCount 사용
+//         commentList: [
+//           {
+//             commentId: 1,
+//             userId: 8097,
+//             kakaoName: "최빅타", // username 대신 kakaoName 사용
+//             content: "내일 식당 앞으로 가면 될까요?",
+//             timestamp: "2024-09-20 17:44:00" // created_at 대신 timestamp 사용
+//           },
+//           {
+//             commentId: 2,
+//             userId: 456,
+//             kakaoName: "김와빅", // username 대신 kakaoName 사용
+//             content: "아뇨 싫어요",
+//             timestamp: "2024-09-20 19:01:00" // created_at 대신 timestamp 사용
+//           }
+//         ]
+//       }
+//     };
 
-  if (!postData) {
-    return <div>Loading...</div>;
-  }
+//     setPostData(dummyData);
+//   }, []);
 
-  return (
-    <Container>
-      <Header>
-        <Icon src="asset/icon/back.png" onClick={() => navigate('/community')} />
-        <Title>커뮤니티</Title>
-      </Header>
+//   const handleImageClick = () => {
+//     setShowPopup(true);
+//   };
 
-      <ImageContainer>
-        <Image 
-          src={postData.post.image}
-          alt="Uploaded Image" 
-          onClick={handleImageClick}
-        />
-      </ImageContainer>
+//   const handleClosePopup = () => {
+//     setShowPopup(false);
+//   };
 
-      <ContentInfoContainer>
-        <Category>같이 먹어요</Category>
-        <TitleBox>
-          <PostTitle>{postData.post.title}</PostTitle>
-          <Author><AppoInfo>작성자</AppoInfo>{postData.post.author.username}</Author>
-        </TitleBox>
-        <AppoContainer>
-          <AppoInfo>일정 | {postData.post.schedule}</AppoInfo>
-          <AppoInfo>장소 | {postData.post.location}</AppoInfo>
-        </AppoContainer>
-      </ContentInfoContainer>
+//   if (!postData) {
+//     return <div>Loading...</div>;
+//   }
 
-      <Content>
-        {postData.post.content}<br/>
-      </Content>
+//   return (
+//     <Container>
+//       <Header>
+//         <Icon src="asset/icon/back.png" onClick={() => navigate('/community')} />
+//         <Title>커뮤니티</Title>
+//       </Header>
 
-      <CommentsSection>
-        <CommentTitle>댓글 <CommentCount>{postData.comments.total_count}개</CommentCount></CommentTitle>
-        {postData.comments.comment_list.map((comment) => (
-          <Comment key={comment.comment_id}>
-            <CommentInfoBox>
-              <CommentAuthor>{comment.author.username}</CommentAuthor>
-              <AppoInfo style={{color: '#acacac'}}>{comment.created_at}</AppoInfo>
-            </CommentInfoBox>
-            <CommentContent>{comment.content}</CommentContent>
-          </Comment>
-        ))}
-      </CommentsSection>
+//       <ImageContainer>
+//         <Image 
+//           src={postData.post.image}
+//           alt="Uploaded Image" 
+//           onClick={handleImageClick}
+//         />
+//       </ImageContainer>
 
-      <InputContainer>
-        <Input placeholder="댓글을 입력하세요" />
-        <Button>
-          <ButtonImage src="/asset/icon/send.png" alt="Send" />
-        </Button>
-      </InputContainer>
+//       <ContentInfoContainer>
+//         <Category>{postData.post.category}</Category>
+//         <TitleBox>
+//           <PostTitle>{postData.post.title}</PostTitle>
+//           <Author><AppoInfo>작성자</AppoInfo>{postData.post.kakaoName}</Author>
+//         </TitleBox>
+//         <AppoContainer>
+//           <AppoInfo>일정 | {postData.post.schedule}</AppoInfo>
+//           <AppoInfo>장소 | {postData.post.location}</AppoInfo>
+//         </AppoContainer>
+//       </ContentInfoContainer>
 
-      {showPopup && (
-        <PopupOverlay onClick={handleClosePopup}>
-          <PopupImage 
-            src={postData.post.image}
-            alt="Popup Image"
-          />
-        </PopupOverlay>
-      )}
-    </Container>
-  );
-};
+//       <Content>
+//         {postData.post.content}<br/>
+//       </Content>
 
-export default CommunityPost;
+//       <CommentsSection>
+//         <CommentTitle>댓글 <CommentCount>{postData.post.totalCount}개</CommentCount></CommentTitle> 
+//         {postData.post.commentList.map((comment) => (   
+//           <Comment key={comment.commentId}>
+//             <CommentInfoBox>
+//               <CommentAuthor>{comment.kakaoName}</CommentAuthor> 
+//               <AppoInfo style={{color: '#acacac'}}>{comment.timestamp}</AppoInfo>
+//             </CommentInfoBox>
+//             <CommentContent>{comment.content}</CommentContent>
+//           </Comment>
+//         ))}
+//       </CommentsSection>
+
+//       <InputContainer>
+//         <Input placeholder="댓글을 입력하세요" />
+//         <Button>
+//           <ButtonImage src="/asset/icon/send.png" alt="Send" />
+//         </Button>
+//       </InputContainer>
+
+//       {showPopup && (
+//         <PopupOverlay onClick={handleClosePopup}>
+//           <PopupImage 
+//             src={postData.post.image}
+//             alt="Popup Image"
+//           />
+//         </PopupOverlay>
+//       )}
+//     </Container>
+//   );
+// };
+
+// export default CommunityPost;

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import DatePicker from 'react-datepicker';
+import { useNavigate, useLocation } from "react-router-dom";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { setMinutes, setHours } from 'date-fns';
+import { setMinutes, setHours, format } from "date-fns";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -197,32 +198,45 @@ const CustomDatePicker = styled(DatePicker)`
   margin-left: 10px;
 `;
 
+
 const CommunityWrite = () => {
   const navigate = useNavigate();
-  const [category, setCategory] = useState('같이 먹어요');
-  const [image, setImage] = useState(null);
-  const [title, setTitle] = useState('');
-  const [location, setLocation] = useState('');
-  const [schedule, setSchedule] = useState(new Date());
-  const [content, setContent] = useState('');
-  const [writeTime, setWriteTime] = useState(null); // 작성 시각 추가
+  const location = useLocation();
+  
+  const queryParams = new URLSearchParams(location.search);
+  const postId = queryParams.get("post_id");
 
-  const [name, setName] = useState("");
-  const [id, setId] = useState("");
+  const [category, setCategory] = useState("같이 먹어요");
+  const [image, setImage] = useState(null);
+  const [title, setTitle] = useState("");
+  const [locationInput, setLocationInput] = useState("");
+  const [schedule, setSchedule] = useState(new Date());
+  const [content, setContent] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
-    const storedName = localStorage.getItem("name");
-    const storedId = localStorage.getItem("id");
-
-    if (storedName && storedId) {
-      setName(storedName);
-      setId(storedId);
-    } else {
-      console.error("No user data found in localStorage");
+    if (postId) {
+      // 수정 모드일 때 기존 데이터를 불러옴
+      setIsEditMode(true);
+      const fetchPostData = async () => {
+        try {
+          const response = await axios.get(`/api/post/${postId}`);
+          const post = response.data.post;
+          setCategory(post.category);
+          setImage(post.image);
+          setTitle(post.title);
+          setLocationInput(post.location);
+          setSchedule(new Date(post.schedule)); // 일정은 Date 객체로 변환
+          setContent(post.content);
+        } catch (error) {
+          console.error("Error fetching post data:", error);
+        }
+      };
+      fetchPostData();
     }
-  }, []);
+  }, [postId]);
 
-  const isFormComplete = category && title && location && schedule && content;
+  const isFormComplete = category && title && locationInput && schedule && content;
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -237,65 +251,69 @@ const CommunityWrite = () => {
 
   const handleSubmit = () => {
     if (isFormComplete) {
-      setWriteTime(new Date()); // 작성 시각 기록
+      const formattedSchedule = format(schedule, "yyyy-MM-dd HH:mm:ss"); // 일정 포맷 변경
       const formData = {
-        id,                  // 작성자의 ID
-        image: image || 'none', // Base64로 인코딩된 이미지 (없으면 none)
-        title,               // 제목
-        category,            // 카테고리
-        location,            // 장소
-        schedule,            // 일정
-        content,             // 본문 내용
-        writeTime: new Date().toISOString(), // 작성 시각 추가
+        image: image || "none", // Base64로 인코딩된 이미지 (없으면 none)
+        title,
+        category,
+        location: locationInput,
+        schedule: formattedSchedule, // 포맷된 일정
+        content,
       };
-  
-      console.log('Submitted: ', formData);
-  
-      //POST
-      fetch('https://api.example.com/community/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        // 성공 시 페이지 이동
-        navigate('/community'); //일단 커뮤니티 페이지로 이동
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+
+      if (isEditMode) {
+        // 수정 모드일 경우 PATCH 요청
+        axios
+          .patch(`/api/post/${postId}`, formData)
+          .then(() => {
+            navigate("/community");
+          })
+          .catch((error) => {
+            console.error("Error updating post:", error);
+          });
+      } else {
+        // 새 글 작성일 경우 POST 요청
+        axios
+          .post("/api/community/posts", formData)
+          .then(() => {
+            navigate("/community");
+          })
+          .catch((error) => {
+            console.error("Error creating post:", error);
+          });
+      }
     }
   };
 
   return (
     <Container>
       <Header>
-        <Icon src="asset/icon/back.png" onClick={() => navigate('/community')} />
-        <Title>게시글 작성하기</Title>
+        <Icon src="asset/icon/back.png" onClick={() => navigate("/community")} />
+        <Title>{isEditMode ? "게시글 수정하기" : "게시글 작성하기"}</Title>
       </Header>
 
-      <ImageUploadBox onClick={() => document.getElementById('imageUpload').click()}>
-        {image ? <img src={image} alt="Upload Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px'}} /> : '📸 사진을 추가하세요'}
+      <ImageUploadBox onClick={() => document.getElementById("imageUpload").click()}>
+        {image ? <img src={image} alt="Upload Preview" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px"}} /> : "📸 사진을 추가하세요"}
       </ImageUploadBox>
-      <input id="imageUpload" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
+      <input id="imageUpload" type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageUpload} />
 
       <SelectContainer>
         <CategoryContainer>
-          <CategoryButton selected={category === '같이 먹어요'} onClick={() => setCategory('같이 먹어요')}>같이 먹어요</CategoryButton>
-          <CategoryButton selected={category === '같이 놀아요'} onClick={() => setCategory('같이 놀아요')}>같이 놀아요</CategoryButton>
+          <CategoryButton selected={category === "같이 먹어요"} onClick={() => setCategory("같이 먹어요")}>
+            같이 먹어요
+          </CategoryButton>
+          <CategoryButton selected={category === "같이 놀아요"} onClick={() => setCategory("같이 놀아요")}>
+            같이 놀아요
+          </CategoryButton>
         </CategoryContainer>
 
         <InputContainer>
           <Label>장소</Label>
           <InfoInput
-            type="text" 
-            placeholder="장소를 입력하세요" 
-            value={location} 
-            onChange={(e) => setLocation(e.target.value)} 
+            type="text"
+            placeholder="장소를 입력하세요"
+            value={locationInput}
+            onChange={(e) => setLocationInput(e.target.value)}
           />
         </InputContainer>
 
@@ -306,35 +324,35 @@ const CommunityWrite = () => {
             onChange={(date) => setSchedule(date)}
             showTimeSelect
             timeFormat="HH:mm"
-            timeIntervals={15}  // 15분 간격 설정
+            timeIntervals={15}
             dateFormat="yyyy.MM.dd HH:mm"
             timeCaption="시간"
-            minTime={setHours(setMinutes(new Date(), 0), 0)}  // 오전 0시
-            maxTime={setHours(setMinutes(new Date(), 45), 23)} // 오후 11시 45분
+            minTime={setHours(setMinutes(new Date(), 0), 0)}
+            maxTime={setHours(setMinutes(new Date(), 45), 23)}
           />
         </DateTimeContainer>
       </SelectContainer>
 
       <InputContainer>
-        <Input 
-          type="text" 
-          placeholder="제목을 입력하세요" 
-          value={title} 
-          onChange={(e) => setTitle(e.target.value)} 
+        <Input
+          type="text"
+          placeholder="제목을 입력하세요"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </InputContainer>
 
-      <InputContainer style={{marginBottom: "20px"}}>
-        <TextArea 
-          placeholder="내용을 입력하세요" 
-          value={content} 
-          onChange={(e) => setContent(e.target.value)} 
+      <InputContainer style={{ marginBottom: "20px" }}>
+        <TextArea
+          placeholder="내용을 입력하세요"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
         />
       </InputContainer>
 
       <ButtonContainer>
         <SubmitButton active={isFormComplete} onClick={handleSubmit}>
-          완료
+          {isEditMode ? "수정 완료" : "작성 완료"}
         </SubmitButton>
       </ButtonContainer>
     </Container>

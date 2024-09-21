@@ -32,6 +32,7 @@ import UsSummary from './component/page/UserSurvey/UsSummary'; //임시 정보 �
 // 여행 설문 조사 페이지
 import TsStep1 from './component/page/TravelSurvey/TsStep1';
 import TsStep2 from './component/page/TravelSurvey/TsStep2';
+import TsStep21 from './component/page/TravelSurvey/TsStep21';
 // import TsStep3 from './component/page/TravelSurvey/TsStep3';
 // import TsStep4 from './component/page/TravelSurvey/TsStep4';
 import TsStep5 from './component/page/TravelSurvey/TsStep5';
@@ -134,6 +135,7 @@ const App = () => {
                   <Route path="/usersurveyend" element={<UsEnd />} />
                   <Route path="/travelsurvey1" element={<TsStep1 />} />
                   <Route path="/travelsurvey2" element={<TsStep2 />} />
+                  <Route path="/travelsurvey21" element={<TsStep21 />} />
                   {/* <Route path="/travelsurvey3" element={<TsStep3 />} />
                   <Route path="/travelsurvey4" element={<TsStep4 />} /> */}
                   <Route path="/travelsurvey5" element={<TsStep5 />} />

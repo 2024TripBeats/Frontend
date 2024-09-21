@@ -155,7 +155,7 @@ const MessageBox = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 28px;
+  font-size: 27px;
   font-family: "Pretendard-ExtraBold";
   color: #252a2f;
   margin: 0;
@@ -169,7 +169,7 @@ const Subtitle = styled.div`
 `;
 
 const Content = styled.div`
-  width: 85%;
+  width: 95%;
   padding: 20px;
   box-sizing: border-box;
   border-radius: 30px 30px 0 0;
@@ -225,7 +225,7 @@ const Location = styled.span`
 
 const TravelDate = styled.div`
   font-size: 13px;
-  color: #252a2f;
+  color: #727272;
   font-family: "Pretendard-Regular";
 `;
 
