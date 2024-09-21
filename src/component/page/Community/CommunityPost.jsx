@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 
 const CommunityPost = () => {
   const [postData, setPostData] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // 삭제 확인 팝업 상태
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  const queryParams = new URLSearchParams(location.search);
-  const postId = queryParams.get('post_id');
+  const { postId } = useParams(); // URL에서 postId 가져오기
 
+  // 데이터 받아오기
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const response = await axios.get(`/api/post/${postId}`); // 실제 API 경로로 수정
-        setPostData(response.data);
+        const response = await axios.get(`http://localhost:8888/posts/${postId}`);
+        setPostData(response.data);  // 데이터를 상태에 저장
       } catch (error) {
         console.error("Error fetching post data:", error);
       }
     };
 
     if (postId) {
-      fetchPostData();
+      fetchPostData();  // postId가 있을 때 데이터 요청
     }
   }, [postId]);
 
@@ -36,19 +35,29 @@ const CommunityPost = () => {
   };
 
   const handleEdit = () => {
-    // 수정을 위해 /write로 이동하면서, postId를 쿼리스트링에 담아 보냄
     navigate(`/write?post_id=${postId}`);
   };
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/post/${postId}`); // 서버에서 게시글 삭제 요청
+      await axios.delete(`http://localhost:8888/posts/${postId}`);
       navigate('/community'); // 삭제 후 커뮤니티 페이지로 이동
     } catch (error) {
       console.error("Error deleting post:", error);
     }
   };
 
+  // 삭제 팝업 열기
+  const openDeleteConfirmation = () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  // 삭제 팝업 닫기
+  const closeDeleteConfirmation = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  // postData가 없거나 데이터가 로드되지 않으면 로딩 표시
   if (!postData) {
     return <div>Loading...</div>;
   }
@@ -56,37 +65,48 @@ const CommunityPost = () => {
   return (
     <Container>
       <Header>
-        <Icon src="asset/icon/back.png" onClick={() => navigate('/community')} />
+        <Icon src="/asset/icon/back.png" onClick={() => navigate('/community')} />
         <Title>커뮤니티</Title>
       </Header>
 
-      <ImageContainer>
-        <Image 
-          src={postData.post.image}
-          alt="Uploaded Image" 
-          onClick={handleImageClick}
-        />
-      </ImageContainer>
+      {/* 이미지가 "none"이 아닐 경우에만 이미지 박스를 렌더링 */}
+      {postData.image !== "none" && (
+        <ImageContainer>
+          <Image 
+            src={postData.image}
+            alt="Uploaded Image" 
+            onClick={handleImageClick}
+          />
+        </ImageContainer>
+      )}
 
       <ContentInfoContainer>
-        <Category>{postData.post.category}</Category>
+        <Category>{postData.category}</Category>
         <TitleBox>
-          <PostTitle>{postData.post.title}</PostTitle>
-          <Author><AppoInfo>작성자</AppoInfo>{postData.post.kakaoName}</Author>
+          <PostTitle>{postData.title}</PostTitle>
+          <Author><AppoInfo>작성자</AppoInfo>{postData.kakaoName}</Author>
         </TitleBox>
-        <AppoContainer>
-          <AppoInfo>일정 | {postData.post.schedule}</AppoInfo>
-          <AppoInfo>장소 | {postData.post.location}</AppoInfo>
-        </AppoContainer>
+
+        {/* Flexbox를 사용하여 일정/장소와 버튼을 가로로 배치 */}
+        <AppoButtonContainer>
+          <AppoContainer>
+            <AppoInfo>일정 | {postData.schedule}</AppoInfo>
+            <AppoInfo>장소 | {postData.location}</AppoInfo>
+          </AppoContainer>
+          <ButtonContainer>
+            <SubmitButton onClick={handleEdit}>수정</SubmitButton>
+            <SubmitButton onClick={openDeleteConfirmation}>삭제</SubmitButton>
+          </ButtonContainer>
+        </AppoButtonContainer>
       </ContentInfoContainer>
 
       <Content>
-        {postData.post.content}<br/>
+        {postData.content}<br/>
       </Content>
 
       <CommentsSection>
-        <CommentTitle>댓글 <CommentCount>{postData.post.totalCount}개</CommentCount></CommentTitle> 
-        {postData.post.commentList.map((comment) => (   
+        <CommentTitle>댓글 <CommentCount>{postData.totalCount}개</CommentCount></CommentTitle> 
+        {postData.commentList.map((comment) => (   
           <Comment key={comment.commentId}>
             <CommentInfoBox>
               <CommentAuthor>{comment.kakaoName}</CommentAuthor> 
@@ -96,11 +116,6 @@ const CommunityPost = () => {
           </Comment>
         ))}
       </CommentsSection>
-
-      <ButtonContainer>
-        <SubmitButton onClick={handleEdit}>수정</SubmitButton>
-        <SubmitButton onClick={handleDelete}>삭제</SubmitButton>
-      </ButtonContainer>
 
       <InputContainer>
         <Input placeholder="댓글을 입력하세요" />
@@ -112,16 +127,30 @@ const CommunityPost = () => {
       {showPopup && (
         <PopupOverlay onClick={handleClosePopup}>
           <PopupImage 
-            src={postData.post.image}
+            src={postData.image}
             alt="Popup Image"
           />
         </PopupOverlay>
+      )}
+
+      {showDeleteConfirmation && (
+        <DeleteConfirmationOverlay>
+          <DeleteConfirmationBox>
+            <DeleteConfirmationText>정말 삭제하시겠습니까?</DeleteConfirmationText>
+            <DeleteConfirmationButtons>
+              <DeleteButton onClick={handleDelete}>네</DeleteButton>
+              <CancelButton onClick={closeDeleteConfirmation}>아니오</CancelButton>
+            </DeleteConfirmationButtons>
+          </DeleteConfirmationBox>
+        </DeleteConfirmationOverlay>
       )}
     </Container>
   );
 };
 
 export default CommunityPost;
+
+// 스타일 컴포넌트 정의
 
 const Container = styled.div`
   display: flex;
@@ -219,17 +248,40 @@ const Author = styled.div`
   gap: 4px;
 `;
 
+const AppoButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+`;
+
 const AppoContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-top: 10px;
 `;
 
 const AppoInfo = styled.div`
   font-size: 12px;
   font-family: "Pretendard-Regular";
   color: #797979;
+`;
+
+const ButtonContainer = styled.div`
+  padding-top: 5px;
+  box-sizing: border-box;
+  display: flex;
+`;
+
+const SubmitButton = styled.button`
+  padding: 5px;
+  color: #252a2f;
+  border: none;
+  background-color: #FAFAFA;
+  font-family: "Pretendard-Medium";
+  font-size: 10px;  /* 글씨 크기 줄임 */
+  cursor: pointer;
 `;
 
 const Content = styled.div`
@@ -298,8 +350,6 @@ const InputContainer = styled.div`
   left: 0;
   width: 100%;
   padding: 10px 20px;
-  /* background-color: #fff;
-  border-top: 1px solid #eee; */
   align-items: center;
   box-sizing: border-box;
 `;
@@ -332,7 +382,6 @@ const Button = styled.button`
 `;
 
 const ButtonImage = styled.img`
-  /* width: 18px; */
   height: 12px;
 `;
 
@@ -354,145 +403,53 @@ const PopupImage = styled.img`
   max-height: 90%;
 `;
 
-const ButtonContainer = styled.div`
+const DeleteConfirmationOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  gap: 10%;
+  align-items: center;
+  z-index: 11;
 `;
 
-const SubmitButton = styled.button`
-  padding: 10px 40px;
-  background-color: ${({ active }) => (active ? '#FF8A1D' : '#d6d6d6')};
-  color: ${({ active }) => (active ? '#252a2f' : '#4a4a4a')};
-  border: none;
-  border-radius: 20px;
+const DeleteConfirmationBox = styled.div`
+  background-color: #FAFAFA;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+`;
+
+const DeleteConfirmationText = styled.div`
   font-family: "Pretendard-ExtraBold";
-  font-size: 13px;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-  cursor: ${({ active }) => (active ? 'pointer' : 'not-allowed')};
-  opacity: ${({ active }) => (active ? '1' : '0.5')};
+  font-size: 16px;
+  margin-bottom: 20px;
 `;
 
+const DeleteConfirmationButtons = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
 
-// const CommunityPost = () => {
-//   const [postData, setPostData] = useState(null);
-//   const [showPopup, setShowPopup] = useState(false);
-//   const navigate = useNavigate();
+const DeleteButton = styled.button`
+  padding: 10px 20px;
+  background-color: #cdcdcd;
+  color: white;
+  font-family: "Pretendard-ExtraBold";
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+`;
 
-//   useEffect(() => {
-//     const dummyData = {
-//       post: {
-//         postId: 123,
-//         title: "홍대에서 저녁 같이 먹어요!",
-//         category: "같이 먹어요",
-//         content: "어쩌구저쩌구 \n이렇게저렇게 \n계산은 식당에서 각자계산",
-//         schedule: "2024-09-21 20:00",
-//         location: "서울 홍대 맛집",
-//         userId: 456,
-//         kakaoName: "김와빅",
-//         timestamp: "2024-09-19 18:30:50",
-//         image: "Base64 인코딩 뭐시기",
-//         totalCount: 2, // totalCount 사용
-//         commentList: [
-//           {
-//             commentId: 1,
-//             userId: 8097,
-//             kakaoName: "최빅타", // username 대신 kakaoName 사용
-//             content: "내일 식당 앞으로 가면 될까요?",
-//             timestamp: "2024-09-20 17:44:00" // created_at 대신 timestamp 사용
-//           },
-//           {
-//             commentId: 2,
-//             userId: 456,
-//             kakaoName: "김와빅", // username 대신 kakaoName 사용
-//             content: "아뇨 싫어요",
-//             timestamp: "2024-09-20 19:01:00" // created_at 대신 timestamp 사용
-//           }
-//         ]
-//       }
-//     };
-
-//     setPostData(dummyData);
-//   }, []);
-
-//   const handleImageClick = () => {
-//     setShowPopup(true);
-//   };
-
-//   const handleClosePopup = () => {
-//     setShowPopup(false);
-//   };
-
-//   if (!postData) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return (
-//     <Container>
-//       <Header>
-//         <Icon src="asset/icon/back.png" onClick={() => navigate('/community')} />
-//         <Title>커뮤니티</Title>
-//       </Header>
-
-//       <ImageContainer>
-//         <Image 
-//           src={postData.post.image}
-//           alt="Uploaded Image" 
-//           onClick={handleImageClick}
-//         />
-//       </ImageContainer>
-
-//       <ContentInfoContainer>
-//         <Category>{postData.post.category}</Category>
-//         <TitleBox>
-//           <PostTitle>{postData.post.title}</PostTitle>
-//           <Author><AppoInfo>작성자</AppoInfo>{postData.post.kakaoName}</Author>
-//         </TitleBox>
-//         <AppoContainer>
-//           <AppoInfo>일정 | {postData.post.schedule}</AppoInfo>
-//           <AppoInfo>장소 | {postData.post.location}</AppoInfo>
-//         </AppoContainer>
-//       </ContentInfoContainer>
-
-//       <Content>
-//         {postData.post.content}<br/>
-//       </Content>
-
-//       <CommentsSection>
-//         <CommentTitle>댓글 <CommentCount>{postData.post.totalCount}개</CommentCount></CommentTitle> 
-//         {postData.post.commentList.map((comment) => (   
-//           <Comment key={comment.commentId}>
-//             <CommentInfoBox>
-//               <CommentAuthor>{comment.kakaoName}</CommentAuthor> 
-//               <AppoInfo style={{color: '#acacac'}}>{comment.timestamp}</AppoInfo>
-//             </CommentInfoBox>
-//             <CommentContent>{comment.content}</CommentContent>
-//           </Comment>
-//         ))}
-//       </CommentsSection>
-
-//       <InputContainer>
-//         <Input placeholder="댓글을 입력하세요" />
-//         <Button>
-//           <ButtonImage src="/asset/icon/send.png" alt="Send" />
-//         </Button>
-//       </InputContainer>
-
-//       {showPopup && (
-//         <PopupOverlay onClick={handleClosePopup}>
-//           <PopupImage 
-//             src={postData.post.image}
-//             alt="Popup Image"
-//           />
-//         </PopupOverlay>
-//       )}
-//     </Container>
-//   );
-// };
-
-// export default CommunityPost;
+const CancelButton = styled.button`
+  padding: 10px 20px;
+  background-color: #FF8A1D;
+  color: #FAFAFA;
+  font-family: "Pretendard-ExtraBold";
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+`;

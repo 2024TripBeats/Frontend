@@ -16,8 +16,12 @@ const Community = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/community/posts'); // 실제 API 경로로 수정
-        setPosts(response.data); // 서버에서 받아온 데이터를 상태에 저장
+        const response = await axios.get('http://localhost:8888/posts/all'); // 실제 API 경로로 수정
+        
+        // posts를 timestamp 기준으로 정렬 (최신 글이 맨 위로 오도록)
+        const sortedPosts = response.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        setPosts(sortedPosts); // 정렬된 데이터를 상태에 저장
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -28,7 +32,7 @@ const Community = () => {
 
   // PostItem을 클릭했을 때 post_id로 이동 (쿼리스트링 사용)
   const handlePostClick = (postId) => {
-    navigate(`/post?post_id=${postId}`);
+    navigate(`/post/${postId}`);
   };
 
   return (
@@ -61,7 +65,10 @@ const Community = () => {
               <PostDetails>장소 | {post.location}</PostDetails>
             </PostContent>
             <PostImageContainer>
-              <PostImage src={post.image} />
+              {/* 이미지가 "none"이 아니고 값이 있을 때만 렌더링 */}
+              {post.image && post.image !== "none" && (
+                <PostImage src={post.image} />
+              )}
               <PostFooter>
                 <FooterIcon>
                   <CommentIcon src="asset/icon/comment.png" />

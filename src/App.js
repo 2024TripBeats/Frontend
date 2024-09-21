@@ -147,7 +147,7 @@ const App = () => {
                   <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
                   <Route path="/community" element={<Community />} />
                   <Route path="/write" element={<CommunityWrite />} />
-                  <Route path="/post" element={<CommunityPost />} />
+                  <Route path="/post/:postId" element={<CommunityPost />} />
                 </Routes>
               </Content>
               <FooterWithCondition />
