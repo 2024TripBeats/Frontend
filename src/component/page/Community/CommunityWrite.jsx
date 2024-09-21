@@ -9,8 +9,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 30px;
+  padding-right: 30px;
   background-color: #FAFAFA;
   box-sizing: border-box;
   padding-bottom: 100px;
@@ -133,6 +133,7 @@ const DateTimeContainer = styled.div`
 `;
 
 const Label = styled.label`
+  width: 25px;
   font-size: 14px;
   display: block;
   font-family: "Pretendard-Medium";
@@ -184,7 +185,7 @@ const SubmitButton = styled.button`
 `;
 
 const CustomDatePicker = styled(DatePicker)`
-  width: 100%;
+  width: 75%;
   padding: 6px 10px;
   color: #252A2F;
   border: none;
@@ -228,7 +229,7 @@ const CommunityWrite = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result);
+        setImage(reader.result); // Base64로 인코딩된 이미지를 상태에 저장
       };
       reader.readAsDataURL(file);
     }
@@ -239,7 +240,7 @@ const CommunityWrite = () => {
       setWriteTime(new Date()); // 작성 시각 기록
       const formData = {
         id,                  // 작성자의 ID
-        image: image || 'none', // 이미지 (없으면 none)
+        image: image || 'none', // Base64로 인코딩된 이미지 (없으면 none)
         title,               // 제목
         category,            // 카테고리
         location,            // 장소
@@ -250,23 +251,23 @@ const CommunityWrite = () => {
   
       console.log('Submitted: ', formData);
   
-      // 실제 API 요청 코드 (주석 처리)
-      // fetch('https://api.example.com/community/posts', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(formData),
-      // })
-      // .then(response => response.json())
-      // .then(data => {
-      //   console.log('Success:', data);
-      //   // 성공 시 페이지 이동
-      //   navigate('/community'); //일단 커뮤니티 페이지로 이동
-      // })
-      // .catch((error) => {
-      //   console.error('Error:', error);
-      // });
+      //POST
+      fetch('https://api.example.com/community/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        // 성공 시 페이지 이동
+        navigate('/community'); //일단 커뮤니티 페이지로 이동
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
     }
   };
 
