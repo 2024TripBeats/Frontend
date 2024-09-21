@@ -6,9 +6,12 @@ import axios from 'axios';
 const CommunityPost = () => {
   const [postData, setPostData] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // 삭제 확인 팝업 상태
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [newComment, setNewComment] = useState(""); // 댓글 상태 추가
   const navigate = useNavigate();
+  const [id, setId] = useState(null);  // id 상태 선언, 기본적으로 null로 설정
   const { postId } = useParams(); // URL에서 postId 가져오기
+
 
   // 데이터 받아오기
   useEffect(() => {
@@ -57,8 +60,74 @@ const CommunityPost = () => {
     setShowDeleteConfirmation(false);
   };
 
+  useEffect(() => {
+    const storedId = localStorage.getItem("id");
+    if (storedId) {
+      const numericId = parseInt(storedId);
+      setId(numericId);
+    }
+  }, []);
+  
+
+  // 댓글 전송 함수 작성
+  const handleSubmitComment = async () => {
+    if (newComment.trim() === "") return; // 빈 댓글은 전송하지 않음
+
+    try {
+      const commentData = {
+        postId: parseInt(postId), // postId 전달
+        accountId: id, // 작성자의 계정 아이디 전달 (숫자 타입)
+        content: newComment, // 작성한 댓글 내용
+      };
+
+      // 댓글을 서버에 전송
+      await axios.post('http://localhost:8888/comments', commentData);
+
+      // 전송 후 입력 필드 초기화
+      setNewComment("");
+
+      // 댓글 전송 후 최신 데이터를 불러오기
+      const response = await axios.get(`http://localhost:8888/posts/${postId}`);
+      setPostData(response.data);  // 댓글 전송 후 게시글 데이터 갱신
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    }
+  };
+
+  // 댓글 삭제 함수 작성
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(`http://localhost:8888/comments/${commentId}`);
+      // 댓글 삭제 후 최신 데이터를 불러오기
+      const response = await axios.get(`http://localhost:8888/posts/${postId}`);
+      setPostData(response.data);  // 삭제 후 게시글 데이터 갱신
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  // 댓글 작성 시간 포맷
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+  
+    // 연도, 월, 일, 시, 분을 각각 추출
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+  
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
+
+  // 댓글을 시간순으로 정렬 (postData와 commentList가 존재할 경우에만)
+  const sortedComments = postData?.commentList ? [...postData.commentList].sort((a, b) => {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+  }) : [];
+
   // postData가 없거나 데이터가 로드되지 않으면 로딩 표시
-  if (!postData) {
+  // postData나 id가 로드되지 않으면 로딩 표시
+  if (!postData || id === null) {
     return <div>Loading...</div>;
   }
 
@@ -93,10 +162,14 @@ const CommunityPost = () => {
             <AppoInfo>일정 | {postData.schedule}</AppoInfo>
             <AppoInfo>장소 | {postData.location}</AppoInfo>
           </AppoContainer>
-          <ButtonContainer>
-            <SubmitButton onClick={handleEdit}>수정</SubmitButton>
-            <SubmitButton onClick={openDeleteConfirmation}>삭제</SubmitButton>
-          </ButtonContainer>
+
+          {/* 작성자의 id와 로컬스토리지의 id가 일치할 때만 수정, 삭제 버튼 표시 */}
+          {postData && id !== null && postData.userId === id && (
+            <ButtonContainer>
+              <SubmitButton onClick={handleEdit}>수정</SubmitButton>
+              <SubmitButton onClick={openDeleteConfirmation}>삭제</SubmitButton>
+            </ButtonContainer>
+          )}
         </AppoButtonContainer>
       </ContentInfoContainer>
 
@@ -105,21 +178,34 @@ const CommunityPost = () => {
       </Content>
 
       <CommentsSection>
-        <CommentTitle>댓글 <CommentCount>{postData.totalCount}개</CommentCount></CommentTitle> 
-        {postData.commentList.map((comment) => (   
+        <CommentTitle>댓글 <CommentCount>{postData.totalCount}개</CommentCount></CommentTitle>
+        {sortedComments.map((comment) => (
           <Comment key={comment.commentId}>
             <CommentInfoBox>
-              <CommentAuthor>{comment.kakaoName}</CommentAuthor> 
-              <AppoInfo style={{color: '#acacac'}}>{comment.timestamp}</AppoInfo>
+              <CommentAuthor>{comment.kakaoName}</CommentAuthor>
+              {/* 댓글 시간 포맷팅 */}
+              <AppoInfo style={{ color: '#acacac' }}>{formatTimestamp(comment.timestamp)}</AppoInfo>
+              
+              {/* 작성자의 id와 로컬스토리지의 id가 일치할 때만 삭제 버튼 표시 */}
+              {comment.userId === id && (
+                <DeleteCommentButton onClick={() => handleDeleteComment(comment.commentId)}>
+                  X
+                </DeleteCommentButton>
+              )}
             </CommentInfoBox>
             <CommentContent>{comment.content}</CommentContent>
           </Comment>
         ))}
       </CommentsSection>
 
+      {/* 댓글 입력 필드 */}
       <InputContainer>
-        <Input placeholder="댓글을 입력하세요" />
-        <Button>
+        <Input
+          placeholder="댓글을 입력하세요"
+          value={newComment} // 댓글 상태값
+          onChange={(e) => setNewComment(e.target.value)} // 댓글 입력 시 상태 업데이트
+        />
+        <Button onClick={handleSubmitComment}>
           <ButtonImage src="/asset/icon/send.png" alt="Send" />
         </Button>
       </InputContainer>
@@ -150,7 +236,16 @@ const CommunityPost = () => {
 
 export default CommunityPost;
 
-// 스타일 컴포넌트 정의
+const DeleteCommentButton = styled.span`
+  color: red;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: "Pretendard-Re";
+  margin-left: 10px;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 const Container = styled.div`
   display: flex;
