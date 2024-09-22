@@ -8,11 +8,11 @@ import { addDays, differenceInDays } from 'date-fns';
 
 const TsStep2 = () => {
   const navigate = useNavigate();
-  const { travelsurveyData, setTravelSurveyData, updatePeriod } = useContext(TravelSurveyContext);
+  const { setTravelSurveyData } = useContext(TravelSurveyContext);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [intensity, setIntensity] = useState([]);
   const [isScrollable, setIsScrollable] = useState(false);
+  const [ticketPrice, setTicketPrice] = useState(null); // 항공권 가격 상태 추가
 
   const prices = {
     '2024-09-01': 100000,
@@ -21,70 +21,83 @@ const TsStep2 = () => {
     // 필요한 날짜별 데이터 추가
   };
 
+  // 비동기 함수로 항공권 가격을 가져옴
+  const fetchTicketPrice = async (startDate, endDate) => {
+    try {
+      const response = await fetch('https://api.example.com/ticket-price', { // 실제 API 엔드포인트로 대체
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ startDate, endDate }),
+      });
+      const data = await response.json();
+      setTicketPrice(data.price); // 서버에서 받은 가격을 상태에 저장
+    } catch (error) {
+      console.error('Error fetching ticket price:', error);
+    }
+  };
+
+  // 날짜가 변경될 때마다 서버에서 항공권 가격을 요청
+  useEffect(() => {
+    if (startDate && endDate) {
+      fetchTicketPrice(startDate, endDate);
+      setTravelSurveyData(prevData => ({ ...prevData, startDate, endDate })); // 선택한 날짜를 Context에 저장
+    }
+  }, [startDate, endDate, setTravelSurveyData]);
+
+  // 날짜 선택 로직
   const handleDateChange = (selectedDate) => {
     if (!startDate) {
-        // 첫 번째 날짜 선택 시
+      setStartDate(selectedDate);
+      setEndDate(null);
+    } else if (!endDate) {
+      const maxSelectableDate = addDays(startDate, 7);
+      if (selectedDate > maxSelectableDate) {
+        alert('여행 기간은 최대 7일까지만 선택 가능합니다.');
+      } else if (selectedDate < startDate) {
         setStartDate(selectedDate);
         setEndDate(null);
-        setIntensity([]); // 초기화
-    } else if (!endDate) {
-        // 첫 번째 날짜 선택 후 두 번째 날짜 선택 시
-        const maxSelectableDate = addDays(startDate, 7);
-        if (selectedDate < startDate) {
-            // startDate 이전 날짜가 선택된 경우, 이를 startDate로 설정
-            setStartDate(selectedDate);
-            setEndDate(null); // endDate 초기화
-            setIntensity([]); // 초기화
-        } else if (selectedDate > maxSelectableDate) {
-            // 선택된 날짜가 startDate로부터 7일을 넘는 경우
-            alert('여행 기간은 최대 7일까지만 선택 가능합니다.');
-        } else {
-            // 7일 이내의 날짜가 선택된 경우
-            setEndDate(selectedDate);
-            const period = differenceInDays(selectedDate, startDate) + 1;
-            updatePeriod(period);
-            setIntensity(Array(period).fill('')); // 여행 강도 초기화
-        }
+      } else {
+        setEndDate(selectedDate);
+      }
     } else {
-        // 날짜가 이미 선택된 상태에서 첫 번째 날짜를 다시 클릭한 경우 (초기화)
-        setStartDate(null);
-        setEndDate(null);
-        setIntensity([]); // 초기화
-        updatePeriod(0); // 여행 기간 초기화
+      setStartDate(selectedDate);
+      setEndDate(null);
     }
-};
+  };
 
+  // 날짜별 가격 정보 표시
   const getTileContent = ({ date, view }) => {
-    if (view === 'month') { // 월간 보기일 때만 텍스트 표시
-      const dateString = date.toISOString().split('T')[0]; // 날짜를 YYYY-MM-DD 형식으로 변환
+    if (view === 'month') {
+      const dateString = date.toISOString().split('T')[0];
       if (prices[dateString]) {
-        // 가격을 10,000으로 나누어 "만 원" 단위로 변환하여 표시
         const priceInManWon = (prices[dateString] / 10000).toFixed(1);
         return <PriceTag>{priceInManWon}만 원</PriceTag>;
       }
     }
     return null;
-};
-
-  const handleIntensityChange = (day, value) => {
-    const newIntensity = [...intensity];
-    newIntensity[day - 1] = value;
-    setIntensity(newIntensity);
-    setTravelSurveyData({ ...travelsurveyData, intensity: newIntensity });
   };
 
-  const isButtonActive = startDate && endDate && intensity.length === differenceInDays(endDate, startDate) + 1 && intensity.every(val => val !== '');
+  const resetSelection = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setTicketPrice(null); // 리셋할 때 항공권 가격도 초기화
+  };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsScrollable(window.innerHeight < document.documentElement.scrollHeight);
-    };
+  const tileDisabled = ({ date }) => {
+    const today = new Date();
+    if (date < today.setHours(0, 0, 0, 0)) {
+      return true;
+    }
+    if (startDate) {
+      const maxSelectableDate = addDays(startDate, 7);
+      return date > maxSelectableDate || date < startDate;
+    }
+    return false;
+  };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const isButtonActive = startDate && endDate;
 
   return (
     <Container isScrollable={isScrollable}>
@@ -95,9 +108,9 @@ const TsStep2 = () => {
       </LogoContainer>
       <ProgressContainer>
         <ProgressBarContainer>
-          <Progress width={50} />
+          <Progress width={28.57} />
         </ProgressBarContainer>
-        <StepText>1/2 단계</StepText>
+        <StepText>2/7 단계</StepText>
       </ProgressContainer>
       <Question>여행 시작일과 종료일을 선택하세요</Question>
       <Message>여행은 최대 7일까지만 선택 가능합니다.</Message>
@@ -105,52 +118,34 @@ const TsStep2 = () => {
         <StyledCalendar
           onClickDay={handleDateChange}
           value={startDate ? [startDate, endDate] : null}
-          tileContent={getTileContent} // 각 날짜 타일에 텍스트 추가
+          tileContent={getTileContent}
+          tileDisabled={tileDisabled}
           selectRange={false}
           minDate={new Date()}
           maxDate={startDate ? addDays(startDate, 6) : addDays(new Date(), 365)}
           locale="ko"
         />
       </DatePickerContainer>
-      {startDate && endDate && (
-        <>
-          <Question style={{ marginTop: "5%" }}>여행 강도를 선택해주세요</Question>
-          <LabelsContainer>
-            <Message>여유로운</Message>
-            <Divider />
-            <Message>활동적인</Message>
-          </LabelsContainer>
-          {[...Array(differenceInDays(endDate, startDate) + 1)].map((_, i) => (
-            <DayContainer key={i}>
-              <DayLabel>{i + 1}일차</DayLabel>
-              <RadioGroup>
-                {[...Array(5)].map((_, j) => (
-                  <React.Fragment key={j}>
-                    <HiddenRadioButton
-                      id={`day${i + 1}_intensity${j + 1}`}
-                      name={`day${i + 1}`}
-                      value={j + 1}
-                      checked={intensity[i] === j + 1}
-                      onChange={() => handleIntensityChange(i + 1, j + 1)}
-                    />
-                    <CustomRadioButton
-                      htmlFor={`day${i + 1}_intensity${j + 1}`}
-                      checked={intensity[i] === j + 1}
-                    />
-                  </React.Fragment>
-                ))}
-              </RadioGroup>
-            </DayContainer>
-          ))}
-        </>
+      <ResetContainer>
+        <ResetButton onClick={resetSelection}>
+          🔄
+        </ResetButton>
+      </ResetContainer>
+
+      {/* 항공권 가격 출력 부분 */}
+      {ticketPrice !== null && (
+        <PriceMessage>
+          예측 왕복 항공권의 가격은 {ticketPrice.toLocaleString()}원 입니다
+        </PriceMessage>
       )}
+
       <ButtonContainer>
         <BeforeButton onClick={() => navigate('/travelsurvey1')}>
           이전으로
         </BeforeButton>
         <Button 
           active={isButtonActive}
-          onClick={() => isButtonActive && navigate('/travelsurvey5')}
+          onClick={() => isButtonActive && navigate('/travelsurvey31')} // travelsurvey31로 이동
         >
           다음으로
         </Button>
@@ -159,7 +154,18 @@ const TsStep2 = () => {
   );
 };
 
-// 추가적인 스타일 정의
+export default TsStep2;
+
+// 스타일
+
+const PriceMessage = styled.div`
+  font-size: 16px;
+  font-family: 'Pretendard-Bold';
+  color: #252a2f;
+  text-align: center;
+  margin-top: 20px;
+`;
+
 const PriceTag = styled.div`
   font-size: 8px;
   color: #909193;
@@ -168,8 +174,7 @@ const PriceTag = styled.div`
   margin-top: 4px;
 `;
 
-export default TsStep2;
-
+/* 나머지 스타일은 그대로 유지 */
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -222,13 +227,12 @@ const ButtonContainer = styled.div`
 
 const Button = styled.button`
   padding: 10px 40px;
-  background-color: ${props => (props.active ? '#FF8A1D' : props.left ? '#FAFAFA' : '#848484')};
+  background-color: ${props => (props.active ? '#FF8A1D' : '#848484')};
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
-  color: ${props => (props.left ? '#252a2f' : '#FAFAFA')};
+  color: #FAFAFA;
   cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
   opacity: ${props => (props.active ? '1' : '0.5')};
 `;
@@ -239,7 +243,6 @@ const BeforeButton = styled.button`
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
   color: #252a2f;
   cursor: pointer;
@@ -296,10 +299,6 @@ const CustomRadioButton = styled.label`
   background-color: ${props => (props.checked ? '#252a2f' : 'transparent')};
   cursor: pointer;
   transition: background-color 0.2s;
-
-  ${HiddenRadioButton}:checked + & {
-    background-color: #252a2f;
-  }
 `;
 
 const ProgressContainer = styled.div`
@@ -328,91 +327,100 @@ const Progress = styled.div`
 `;
 
 const StepText = styled.div`
-font-size: 12px;
-font-family: "Pretendard-Regular";
-color: #252A2F;
-text-align: center;
-margin-bottom: 10px;
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
+  color: #252A2F;
+  text-align: center;
+  margin-bottom: 10px;
 `;
 
 const StyledCalendar = styled(Calendar)`
-  /* 전체 캘린더 컨테이너 */
+  width: 65%;
+  font-size: 13px;
+  background-color: #fafafa;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  border: none;
+
   &.react-calendar {
-    background-color: #fafafa;
-    border-radius: 8px;
-    width: 80%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: #252a2f;
-    font-family: 'Pretendard-Regular';
-    border: none;
-    font-size: 14px;
-  }
+    & .react-calendar__tile {
+      color: #252a2f; /* 기본 텍스트 색상 */
+      transition: background-color 0.2s ease, color 0.2s ease;
+      font-family: "Pretendard-Medium";
 
-  /* 탐색 버튼 영역 */
-  .react-calendar__navigation {
-    margin-bottom: 10px;
-
-    .react-calendar__navigation__label {
-      font-weight: bold;
-      color: #252a2f;
-    }
-
-    .react-calendar__navigation__arrow,
-    .react-calendar__navigation__prev-button,
-    .react-calendar__navigation__next-button {
-      color: #252a2f;
-      transition: color 0.2s ease;
+      /* 타일에 마우스를 올렸을 때 */
       &:hover {
-        color: #ff8a1d;
+        background-color: #ff8a1d; /* 호버 시 배경색 */
+        color: #fafafa; /* 호버 시 텍스트 색상 */
       }
     }
-  }
 
-  /* 요일 이름 */
-  .react-calendar__month-view__weekdays__weekday {
-    color: #252a2f;
-    font-weight: bold;
-  }
-
-  /* 날짜 셀 스타일 */
-  .react-calendar__tile {
-    background-color: #fafafa;
-    color: #252a2f;
-    border-radius: 4px;
-    padding: 10px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-
-    /* 기본 포커스 및 호버 스타일 초기화 */
-    &:focus, &:hover {
-      background-color: #ff8a1d;
-      color: #fafafa;
-      outline: none; /* 포커스 테두리 제거 */
+    /* 현재 날짜 (오늘) 타일 스타일 */
+    & .react-calendar__tile--now {
+      background-color: transparent; /* 배경색을 투명하게 설정 */
+      color: inherit; /* 텍스트 색상을 기본 상속 값으로 설정 */
+      box-shadow: none; /* 만약 그림자가 있다면 제거 */
     }
-  }
+    /* 선택된 날짜 스타일 */
+    & .react-calendar__tile--active {
+      background-color: #ff8a1d; /* 선택된 날짜 배경색 */
+      color: white; /* 선택된 날짜 텍스트 색상 */
+    }
 
-  /* 선택된 날짜 스타일 */
-  .react-calendar__tile--active {
-    border: 2px solid #252a2f;
-    background-color: #252a2f;
-    color: #fafafa;
-    border: none;
-  }
+    /* 날짜 범위 스타일 (여러 날짜 선택 시) */
+    & .react-calendar__tile--range {
+      background-color: rgba(255, 138, 29, 0.3); /* 범위 내 날짜 배경색 */
+      color: #252a2f;
+    }
 
-  /* 범위 선택 시 스타일 */
-  .react-calendar__tile--range {
-    background-color: rgba(255, 138, 29, 0.3);
-    color: #252a2f;
-  }
+    /* 범위 시작 날짜 */
+    & .react-calendar__tile--rangeStart {
+      background-color: #ff8a1d; /* 범위 시작 날짜 배경 */
+      color: #fafafa; /* 범위 시작 날짜 텍스트 색 */
+    }
 
-  .react-calendar__tile--rangeStart,
-  .react-calendar__tile--rangeEnd {
-    background-color: #ff8a1d;
-    color: #fafafa;
-  }
+    /* 범위 끝 날짜 */
+    & .react-calendar__tile--rangeEnd {
+      background-color: #ff8a1d; /* 범위 끝 날짜 배경 */
+      color: #fafafa; /* 범위 끝 날짜 텍스트 색 */
+    }
 
-  /* 주말 날짜 색상 */
-  .react-calendar__month-view__days__day--weekend {
-    color: #ff8a1d;
-  }
+    /* 주말 날짜 스타일 (토, 일) */
+    & .react-calendar__month-view__days__day--weekend {
+      color: #a45a15; /* 주말 텍스트 색상 */
+    }
 
+    & .react-calendar__navigation__label {
+      font-size: 12px; /* 폰트 크기 조정 */
+      font-family: "Pretendard-Bold"; /* 폰트 패밀리 조정 */
+      color: #252a2f; /* 텍스트 색상 조정 */
+    }
+
+    & .react-calendar__navigation__arrow {
+      color: #252a2f; /* 화살표 색상 조정 */
+    }
+    
+  }
+`;
+
+const ResetContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+`;
+
+const ResetButton = styled.button`
+  background-color: #FAFAFA; /* 리셋 버튼 배경색 */
+  border-radius: 50%;
+  font-family: "Pretendard-ExtraBold";
+  border: none;
+  font-size: 16px;
+  box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.5);
+  color: #252a2f;
+  cursor: pointer;
+  opacity: 0.8;
+
+  &:hover {
+    background-color: #e0e0e0; /* 호버 시 배경색 */
+  }
 `;

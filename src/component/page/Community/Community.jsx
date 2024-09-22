@@ -7,6 +7,8 @@ const Community = () => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [posts, setPosts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태 추가
+  const [searchInputVisible, setSearchInputVisible] = useState(false); // 검색창 표시 여부 상태 추가
 
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
@@ -35,12 +37,31 @@ const Community = () => {
     navigate(`/post/${postId}`);
   };
 
+  // 검색어에 맞는 포스트 필터링
+  const filteredPosts = posts.filter((post) => 
+    post.title.toLowerCase().includes(searchTerm.toLowerCase()) // 검색어로 필터링
+  );
+
+  // 검색 버튼을 눌렀을 때 검색창 표시/숨기기
+  const toggleSearchInput = () => {
+    setSearchInputVisible((prev) => !prev); // 현재 상태의 반대값으로 토글
+  };
+
   return (
     <Container>
       <Header>
         <Message>커뮤니티</Message>
         <HeaderBox>
-          <Icon src="asset/icon/search_logo.png" onClick={() => navigate('/search')} />
+          {/* 검색창이 보일 때만 렌더링 */}
+          {searchInputVisible && (
+            <SearchInput 
+              type="text"
+              placeholder="제목 검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // 입력할 때마다 상태 업데이트
+            />
+          )}
+          <Icon src="asset/icon/search_logo.png" onClick={toggleSearchInput} />
           <Icon src="asset/icon/write.png" onClick={() => navigate('/write')} />
         </HeaderBox>
       </Header>
@@ -56,7 +77,7 @@ const Community = () => {
       </AdContainer>
 
       <PostList>
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <PostItem key={post.postId} onClick={() => handlePostClick(post.postId)}>
             <PostContent>
               <CategoryTag category={post.category}>{post.category}</CategoryTag>
@@ -112,7 +133,7 @@ const Header = styled.div`
 
 const HeaderBox = styled.div`
   display: flex;
-  gap: 20%;
+  gap: 10px;
 `;
 
 const Icon = styled.img`
@@ -271,4 +292,15 @@ const CommentIcon = styled.img`
   height: 10px;
   margin-left: 5px;
   margin-right: 3px;
+`;
+
+const SearchInput = styled.input`
+  padding: 5px 10px;
+  width: 120px;
+  border: none;
+  background-color: #FAFAFA;
+  box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: "Pretendard-Regular";
 `;

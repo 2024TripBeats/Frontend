@@ -33,8 +33,9 @@ import UsSummary from './component/page/UserSurvey/UsSummary'; //임시 정보 �
 import TsStep1 from './component/page/TravelSurvey/TsStep1';
 import TsStep2 from './component/page/TravelSurvey/TsStep2';
 import TsStep21 from './component/page/TravelSurvey/TsStep21';
-// import TsStep3 from './component/page/TravelSurvey/TsStep3';
-// import TsStep4 from './component/page/TravelSurvey/TsStep4';
+import TsStep31 from './component/page/TravelSurvey/TsStep31';
+import TsStep3 from './component/page/TravelSurvey/TsStep3';
+import TsStep4 from './component/page/TravelSurvey/TsStep4';
 import TsStep5 from './component/page/TravelSurvey/TsStep5';
 import TsEnd from './component/page/TravelSurvey/TsEnd';
 import TsSummary from './component/page/TravelSurvey/TsSummary'; //임시 정보 확인 페이지
@@ -136,8 +137,9 @@ const App = () => {
                   <Route path="/travelsurvey1" element={<TsStep1 />} />
                   <Route path="/travelsurvey2" element={<TsStep2 />} />
                   <Route path="/travelsurvey21" element={<TsStep21 />} />
-                  {/* <Route path="/travelsurvey3" element={<TsStep3 />} />
-                  <Route path="/travelsurvey4" element={<TsStep4 />} /> */}
+                  <Route path="/travelsurvey31" element={<TsStep31 />} />
+                  <Route path="/travelsurvey3" element={<TsStep3 />} />
+                  <Route path="/travelsurvey4" element={<TsStep4 />} />
                   <Route path="/travelsurvey5" element={<TsStep5 />} />
                   <Route path="/travelsurveyend" element={<TsEnd />} />
                   <Route path="/ts-summary" element={<TsSummary />} />

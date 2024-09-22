@@ -54,6 +54,8 @@ const UsStep2 = () => {
 
   const allSelected = desranks.every(rank => rank !== null);
 
+  console.log(desranks)
+
   return (
     <Container>
       <LogoContainer>

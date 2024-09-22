@@ -1,14 +1,107 @@
 import React, { useContext, useState } from 'react';
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { TravelSurveyContext } from './TsContext';
+
+const TsStep3 = () => {
+  const navigate = useNavigate();
+  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
+  const [selectedAccommodations, setSelectedAccommodations] = useState(travelsurveyData.accomodation || []);
+  const [requiredAccomText, setRequiredAccomText] = useState(travelsurveyData.requiredAccomText || '');
+  const [accomPriority, setAccomPriority] = useState(travelsurveyData.accompriority || '');
+
+  const toggleAccommodation = (id) => {
+    const updatedAccommodations = selectedAccommodations.includes(id)
+      ? selectedAccommodations.filter(accomId => accomId !== id)
+      : [...selectedAccommodations, id];
+    setSelectedAccommodations(updatedAccommodations);
+    setTravelSurveyData({ ...travelsurveyData, accomodation: updatedAccommodations });
+  };
+
+  const handleNextClick = () => {
+    if (selectedAccommodations.length > 0 && accomPriority) {
+      setTravelSurveyData({
+        ...travelsurveyData,
+        requiredAccomText: requiredAccomText || null,
+        accompriority: accomPriority,
+      });
+      navigate('/travelsurvey4');
+    }
+  };
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img
+          style={{ width: '30%' }}
+          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          alt="logo"
+        />
+      </LogoContainer>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={57.14} />
+        </ProgressBarContainer>
+        <StepText>4/7 단계</StepText>
+      </ProgressContainer>
+      <Question>필요한 숙박 옵션을 선택해주세요</Question>
+      <Message>*다중 선택 가능</Message>
+
+      <Row>
+        <OptionButton onClick={() => toggleAccommodation('parking')} active={selectedAccommodations.includes('parking')}>주차시설</OptionButton>
+        <OptionButton onClick={() => toggleAccommodation('sauna')} active={selectedAccommodations.includes('sauna')}>사우나</OptionButton>
+        <OptionButton onClick={() => toggleAccommodation('pool')} active={selectedAccommodations.includes('pool')}>수영장</OptionButton>
+      </Row>
+      <Row>
+        <OptionButton onClick={() => toggleAccommodation('large')} active={selectedAccommodations.includes('large')}>20평 이상</OptionButton>
+        <OptionButton onClick={() => toggleAccommodation('medium')} active={selectedAccommodations.includes('medium')}>20평 ~ 10평</OptionButton>
+        <OptionButton onClick={() => toggleAccommodation('small')} active={selectedAccommodations.includes('small')}>10평 이하</OptionButton>
+      </Row>
+      <Row>
+        <OptionButton onClick={() => toggleAccommodation('breakfast')} active={selectedAccommodations.includes('breakfast')}>조식</OptionButton>
+        <OptionButton onClick={() => toggleAccommodation('cooking')} active={selectedAccommodations.includes('cooking')}>조리 가능</OptionButton>
+        <OptionButton onClick={() => toggleAccommodation('bbq')} active={selectedAccommodations.includes('bbq')}>바베큐장</OptionButton>
+      </Row>
+
+      <InputContainer>
+        <Question style={{fontSize: "13px"}}>필요 설비:</Question>
+        <Input
+          type="text"
+          placeholder="드라이기, tv와 같이 설비 사이에 쉼표(,)를 써주세요."
+          value={requiredAccomText}
+          onChange={(e) => setRequiredAccomText(e.target.value)}
+        />
+      </InputContainer>
+
+      <Question style={{marginBottom: '25px'}}>숙박 시설을 고르는 기준 중 더 중요한 것을 골라주세요.</Question>
+
+      <Row>
+        <OptionButton onClick={() => setAccomPriority('quality')} active={accomPriority === 'quality'}>좋은 품질</OptionButton>
+        <OptionButton onClick={() => setAccomPriority('affordable')} active={accomPriority === 'affordable'}>가성비</OptionButton>
+      </Row>
+
+      <ButtonContainer>
+        <BeforeButton onClick={() => navigate('/travelsurvey31')}>이전으로</BeforeButton>
+        <Button
+          active={selectedAccommodations.length > 0 && accomPriority} 
+          onClick={handleNextClick}
+        >
+          다음으로
+        </Button>
+      </ButtonContainer>
+    </Container>
+  );
+};
+
+export default TsStep3;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   box-sizing: border-box;
+  margin-bottom: 70px;
 `;
 
 const LogoContainer = styled.div`
@@ -22,29 +115,93 @@ const LogoContainer = styled.div`
 
 const Question = styled.div`
   font-size: 18px;
-  font-family: "Pretendard-ExtraBold";
+  font-family: 'Pretendard-ExtraBold';
   color: #252a2f;
   text-align: center;
 `;
 
 const Message = styled.div`
   font-size: 11px;
-  font-family: "Pretendard-Regular";
-  color: #FF8A1D;
+  font-family: 'Pretendard-Regular';
+  color: #ff8a1d;
   text-align: center;
   margin-top: 1%;
-  margin-bottom: 5%;
+  margin-bottom: 25px;
 `;
 
-const PickerContainer = styled.div`
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  width: ${(props) => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
+
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: 'Pretendard-Regular';
+  color: #252a2f;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+`;
+
+const OptionButton = styled.button`
+  background-color: ${props => (props.active ? '#252a2f' : '#FAFAFA')};
+  color: ${props => (props.active ? '#FAFAFA' : '#252A2F')};
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 30px;
+  width: 120px;
+  height: 40px;
+  font-size: 13px;
+  font-family: "Pretendard-Bold";
+  cursor: pointer;
+`;
+
+const InputContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 0 7%;
-  margin-top: 5%;
-  gap: 5%;
+  gap: 10px;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  margin-left: 30px;
+  margin-right: 30px;
+`;
+
+const Input = styled.input`
+  background-color: #f3f3f3;
+  padding: 10px;
+  width: 60%;
+  border: none;
+  border-radius: 30px;
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
 `;
 
 const ButtonContainer = styled.div`
@@ -58,135 +215,24 @@ const ButtonContainer = styled.div`
   gap: 10%;
 `;
 
-const ImgContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 45%; /* 두 개씩 배치되도록 조정 */
-  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
-  border-radius: 15px;
-  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
-  cursor: pointer;
-  overflow: hidden; /* 이미지가 컨테이너를 벗어나지 않도록 함 */
-`;
-
-const ImgPicker = styled.div`
-  display: flex;
-  position: relative;
-  width: 100%;
-  height: 130px; /* 고정 높이 설정 */
-`;
-
-const Img = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 이미지 자르기 */
-  border-radius: 15px 15px 0 0;
-`;
-
-const AccomoName = styled.div`
-  font-size: 15px;
-  font-family: "Pretendard-ExtraBold";
-  color: ${props => (props.selected ? '#FAFAFA' : '#252a2f')};
-  text-align: center;
-  padding: 10px;
-`;
-
 const Button = styled.button`
   padding: 10px 40px;
-  background-color: ${props => (props.active ? '#FF8A1D' : props.left ? '#FAFAFA' : '#848484')};
+  background-color: ${(props) => (props.active ? '#ff8a1d' : '#848484')};
   border-radius: 20px;
-  font-family: "Pretendard-ExtraBold";
+  font-family: 'Pretendard-ExtraBold';
   border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
-  color: ${props => (props.left ? '#252a2f' : '#FAFAFA')};
-  cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
-  opacity: ${props => (props.active ? '1' : '0.5')};
+  color: #fafafa;
+  cursor: ${(props) => (props.active ? 'pointer' : 'not-allowed')};
 `;
 
 const BeforeButton = styled.button`
   padding: 10px 40px;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   border-radius: 20px;
-  font-family: "Pretendard-ExtraBold";
+  font-family: 'Pretendard-ExtraBold';
   border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
   color: #252a2f;
   cursor: pointer;
 `;
-
-const accommodationOptions = [
-  { id: 1, name: '호텔', image: '/asset/sample/sample.png' },
-  { id: 2, name: '리조트', image: '/asset/sample/sample.png' },
-  { id: 3, name: '펜션', image: '/asset/sample/sample.png' },
-  { id: 4, name: '민박', image: '/asset/sample/sample.png' },
-];
-
-const chunkArray = (array, size) => {
-  const result = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
-};
-
-const TsStep3 = () => {
-  const navigate = useNavigate();
-  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
-  const [selectedAccommodations, setSelectedAccommodations] = useState(travelsurveyData.accomodation || []);
-
-  const toggleAccommodation = (id) => {
-    const updatedAccommodations = selectedAccommodations.includes(id)
-      ? selectedAccommodations.filter(accomId => accomId !== id)
-      : [...selectedAccommodations, id];
-    setSelectedAccommodations(updatedAccommodations);
-    setTravelSurveyData({ ...travelsurveyData, accomodation: updatedAccommodations });
-  };
-
-  return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
-          alt='logo' />
-      </LogoContainer>
-      <Question style={{ marginTop: "5%" }}>선호하는 숙박 타입을</Question>
-      <Question>선택해주세요</Question>
-      <Message>*복수 응답 가능</Message>
-      {chunkArray(accommodationOptions, 2).map((row, rowIndex) => (
-        <PickerContainer key={rowIndex}>
-          {row.map(option => (
-            <ImgContainer
-              key={option.id}
-              selected={selectedAccommodations.includes(option.id)}
-              onClick={() => toggleAccommodation(option.id)}
-            >
-              <ImgPicker>
-                <Img src={process.env.PUBLIC_URL + option.image} />
-              </ImgPicker>
-              <AccomoName selected={selectedAccommodations.includes(option.id)}>
-                {option.name}
-              </AccomoName>
-            </ImgContainer>
-          ))}
-        </PickerContainer>
-      ))}
-      <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey2')}>
-          이전으로
-        </BeforeButton>
-        <Button
-          active={selectedAccommodations.length > 0}
-          onClick={() => selectedAccommodations.length > 0 && navigate('/travelsurvey4')}
-        >
-          다음으로
-        </Button>
-      </ButtonContainer>
-    </Container>
-  );
-};
-
-export default TsStep3;
