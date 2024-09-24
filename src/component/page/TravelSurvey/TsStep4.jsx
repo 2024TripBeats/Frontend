@@ -1,14 +1,120 @@
 import React, { useContext, useState } from 'react';
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { TravelSurveyContext } from './TsContext';
+
+const TsStep4 = () => {
+  const navigate = useNavigate();
+  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
+  const [selectedRestaurants, setSelectedRestaurants] = useState(travelsurveyData.restaurant || []);
+  const [requiredRestText, setRequiredRestText] = useState(travelsurveyData.requiredRestText || '');
+  const [selectedCafes, setSelectedCafes] = useState(travelsurveyData.cafe || []);
+
+  const toggleRestaurant = (id) => {
+    const updatedRestaurants = selectedRestaurants.includes(id)
+      ? selectedRestaurants.filter(restId => restId !== id)
+      : [...selectedRestaurants, id];
+    setSelectedRestaurants(updatedRestaurants);
+    setTravelSurveyData({ ...travelsurveyData, restaurant: updatedRestaurants });
+  };
+
+  const toggleCafe = (id) => {
+    const updatedCafes = selectedCafes.includes(id)
+      ? selectedCafes.filter(cafeId => cafeId !== id)
+      : [...selectedCafes, id];
+    setSelectedCafes(updatedCafes);
+    setTravelSurveyData({ ...travelsurveyData, cafe: updatedCafes });
+  };
+
+  const handleNextClick = () => {
+    if (selectedRestaurants.length > 0 && selectedCafes.length > 0) {
+      setTravelSurveyData({
+        ...travelsurveyData,
+        requiredRestText: requiredRestText || null,
+        cafe: selectedCafes,
+      });
+      navigate('/travelsurvey51');
+    }
+  };
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img
+          style={{ width: '30%' }}
+          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          alt="logo"
+        />
+      </LogoContainer>
+      <ProgressContainer>
+        <ProgressBarContainer>
+          <Progress width={71.43} />
+        </ProgressBarContainer>
+        <StepText>5/7 단계</StepText>
+      </ProgressContainer>
+      <Question>필요한 식당 옵션을 선택해주세요</Question>
+      <Message>*다중 선택 가능</Message>
+
+      <Row>
+        <OptionButton onClick={() => toggleRestaurant('가성비')} active={selectedRestaurants.includes('가성비')}>가성비</OptionButton>
+        <OptionButton onClick={() => toggleRestaurant('로컬 맛집')} active={selectedRestaurants.includes('로컬 맛집')}>로컬 맛집</OptionButton>
+        <OptionButton onClick={() => toggleRestaurant('주차시설')} active={selectedRestaurants.includes('주차시설')}>주차시설</OptionButton>
+        <OptionButton onClick={() => toggleRestaurant('위생적인')} active={selectedRestaurants.includes('위생적인')}>위생적인</OptionButton>
+      </Row>
+      <Row>
+        <OptionButton onClick={() => toggleRestaurant('오션뷰')} active={selectedRestaurants.includes('오션뷰')}>오션뷰</OptionButton>
+        <OptionButton onClick={() => toggleRestaurant('뷰가 좋은')} active={selectedRestaurants.includes('뷰가 좋은')}>뷰가 좋은</OptionButton>
+        <OptionButton onClick={() => toggleRestaurant('이국적인')} active={selectedRestaurants.includes('이국적인')}>이국적인</OptionButton>
+        <OptionButton onClick={() => toggleRestaurant('좋은 분위기')} active={selectedRestaurants.includes('좋은 분위기')}>좋은 분위기</OptionButton>
+      </Row>
+
+      <InputContainer>
+        <Question style={{fontSize: "13px"}}>먹고 싶은 음식:</Question>
+        <Input
+          type="text"
+          placeholder="떡볶이, 순대와 같이 음식 사이에 쉼표(,)를 써주세요."
+          value={requiredRestText}
+          onChange={(e) => setRequiredRestText(e.target.value)}
+        />
+      </InputContainer>
+
+      <Question>필요한 카페 옵션을 선택해주세요</Question>
+      <Message>*다중 선택 가능</Message>
+      <Row>
+        <OptionButton onClick={() => toggleCafe('가성비')} active={selectedCafes.includes('가성비')}>가성비</OptionButton>
+        <OptionButton onClick={() => toggleCafe('로컬 맛집')} active={selectedCafes.includes('로컬 맛집')}>로컬 맛집</OptionButton>
+        <OptionButton onClick={() => toggleCafe('주차시설')} active={selectedCafes.includes('주차시설')}>주차시설</OptionButton>
+        <OptionButton onClick={() => toggleCafe('위생적인')} active={selectedCafes.includes('위생적인')}>위생적인</OptionButton>
+      </Row>
+      <Row>
+        <OptionButton onClick={() => toggleCafe('오션뷰')} active={selectedCafes.includes('오션뷰')}>오션뷰</OptionButton>
+        <OptionButton onClick={() => toggleCafe('뷰가 좋은')} active={selectedCafes.includes('뷰가 좋은')}>뷰가 좋은</OptionButton>
+        <OptionButton onClick={() => toggleCafe('이국적인')} active={selectedCafes.includes('이국적인')}>이국적인</OptionButton>
+        <OptionButton onClick={() => toggleCafe('좋은 분위기')} active={selectedCafes.includes('좋은 분위기')}>좋은 분위기</OptionButton>
+      </Row>
+
+      <ButtonContainer>
+        <BeforeButton onClick={() => navigate('/travelsurvey31')}>이전으로</BeforeButton>
+        <Button
+          active={selectedRestaurants.length > 0 && selectedCafes.length > 0} 
+          onClick={handleNextClick}
+        >
+          다음으로
+        </Button>
+      </ButtonContainer>
+    </Container>
+  );
+};
+
+export default TsStep4;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   box-sizing: border-box;
+  margin-bottom: 70px;
 `;
 
 const LogoContainer = styled.div`
@@ -22,29 +128,93 @@ const LogoContainer = styled.div`
 
 const Question = styled.div`
   font-size: 18px;
-  font-family: "Pretendard-ExtraBold";
+  font-family: 'Pretendard-ExtraBold';
   color: #252a2f;
   text-align: center;
 `;
 
 const Message = styled.div`
   font-size: 11px;
-  font-family: "Pretendard-Regular";
-  color: #FF8A1D;
+  font-family: 'Pretendard-Regular';
+  color: #ff8a1d;
   text-align: center;
   margin-top: 1%;
-  margin-bottom: 5%;
+  margin-bottom: 25px;
 `;
 
-const PickerContainer = styled.div`
+const ProgressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
+const ProgressBarContainer = styled.div`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  width: ${(props) => props.width}%;
+  height: 100%;
+  background-color: #ff8a1d;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+`;
+
+const StepText = styled.div`
+  font-size: 12px;
+  font-family: 'Pretendard-Regular';
+  color: #252a2f;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+`;
+
+const OptionButton = styled.button`
+  background-color: ${props => (props.active ? '#252a2f' : '#FAFAFA')};
+  color: ${props => (props.active ? '#FAFAFA' : '#252A2F')};
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 30px;
+  width: 20%;
+  height: 40px;
+  font-size: 13px;
+  font-family: "Pretendard-Bold";
+  cursor: pointer;
+`;
+
+const InputContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 0 7%;
-  margin-top: 5%;
-  gap: 5%;
+  gap: 10px;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  margin-left: 30px;
+  margin-right: 30px;
+`;
+
+const Input = styled.input`
+  background-color: #f3f3f3;
+  padding: 10px;
+  width: 60%;
+  border: none;
+  border-radius: 30px;
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
 `;
 
 const ButtonContainer = styled.div`
@@ -58,145 +228,24 @@ const ButtonContainer = styled.div`
   gap: 10%;
 `;
 
-const ImgContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 45%; /* 두 개씩 배치되도록 조정 */
-  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
-  border-radius: 15px;
-  background-color: ${props => (props.selected ? '#252a2f' : '#FAFAFA')};
-  cursor: pointer;
-  overflow: hidden; /* 이미지가 컨테이너를 벗어나지 않도록 함 */
-`;
-
-const ImgPicker = styled.div`
-  display: flex;
-  position: relative;
-  width: 100%;
-  height: 130px; /* 고정 높이 설정 */
-`;
-
-const Img = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 이미지 자르기 */
-  border-radius: 15px 15px 0 0;
-`;
-
-const Category = styled.div`
-  font-size: 15px;
-  font-family: "Pretendard-ExtraBold";
-  color: ${props => (props.selected ? '#FAFAFA' : '#252a2f')};
-  text-align: center;
-  padding: 10px;
-`;
-
 const Button = styled.button`
   padding: 10px 40px;
-  background-color: ${props => (props.active ? '#FF8A1D' : props.left ? '#FAFAFA' : '#848484')};
+  background-color: ${(props) => (props.active ? '#ff8a1d' : '#848484')};
   border-radius: 20px;
-  font-family: "Pretendard-ExtraBold";
+  font-family: 'Pretendard-ExtraBold';
   border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
-  color: ${props => (props.left ? '#252a2f' : '#FAFAFA')};
-  cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
-  opacity: ${props => (props.active ? '1' : '0.5')};
+  color: #fafafa;
+  cursor: ${(props) => (props.active ? 'pointer' : 'not-allowed')};
 `;
 
 const BeforeButton = styled.button`
   padding: 10px 40px;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   border-radius: 20px;
-  font-family: "Pretendard-ExtraBold";
+  font-family: 'Pretendard-ExtraBold';
   border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
   color: #252a2f;
   cursor: pointer;
 `;
-
-const RestaurantOptions = [
-  { id: 1, name: '한식', image: '/asset/sample/sample.png' },
-  { id: 2, name: '중식', image: '/asset/sample/sample.png' },
-  { id: 3, name: '일식', image: '/asset/sample/sample.png' },
-  { id: 4, name: '이탈리안', image: '/asset/sample/sample.png' },
-];
-
-const chunkArray = (array, size) => {
-  const result = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
-};
-
-const TsStep4 = () => {
-  const navigate = useNavigate();
-  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
-  const [selectedRestaurants, setSelectedRestaurants] = useState(travelsurveyData.restaurant || []);
-
-  const toggleRestaurant = (id) => {
-    const updatedRestaurants = selectedRestaurants.includes(id)
-      ? selectedRestaurants.filter(restId => restId !== id)
-      : [...selectedRestaurants, id];
-    setSelectedRestaurants(updatedRestaurants);
-    setTravelSurveyData({ ...travelsurveyData, restaurant: updatedRestaurants });
-  };
-
-  const handleButtonClick = () => {
-    if (selectedRestaurants.length > 0) {
-      setTravelSurveyData(prevData => ({
-        ...prevData,
-        restaurant: selectedRestaurants,
-      }));
-      navigate('/travelsurvey5');
-    }
-  }
-
-  return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
-          alt='logo' />
-      </LogoContainer>
-      <Question style={{ marginTop: "5%" }}>선호하는 식당 카테고리를</Question>
-      <Question>선택해주세요</Question>
-      <Message>*복수 응답 가능</Message>
-      {chunkArray(RestaurantOptions, 2).map((row, rowIndex) => (
-        <PickerContainer key={rowIndex}>
-          {row.map(option => (
-            <ImgContainer
-              key={option.id}
-              selected={selectedRestaurants.includes(option.id)}
-              onClick={() => toggleRestaurant(option.id)}
-            >
-              <ImgPicker>
-                <Img src={process.env.PUBLIC_URL + option.image} />
-              </ImgPicker>
-              <Category selected={selectedRestaurants.includes(option.id)}>
-                {option.name}
-              </Category>
-            </ImgContainer>
-          ))}
-        </PickerContainer>
-      ))}
-      <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey3')}>
-          이전으로
-        </BeforeButton>
-        <Button
-          active={selectedRestaurants.length > 0}
-          onClick={handleButtonClick}
-        >
-          다음으로
-        </Button>
-      </ButtonContainer>
-    </Container>
-  );
-};
-
-export default TsStep4;

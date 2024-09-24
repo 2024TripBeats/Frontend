@@ -30,8 +30,6 @@ const TravelSurvey31 = () => {
 
   const isButtonActive = intensity.length > 0 && intensity.every(val => val !== '');
 
-  console.log(intensity);
-
   return (
     <Container>
       <LogoContainer>

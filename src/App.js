@@ -37,6 +37,7 @@ import TsStep31 from './component/page/TravelSurvey/TsStep31';
 import TsStep3 from './component/page/TravelSurvey/TsStep3';
 import TsStep4 from './component/page/TravelSurvey/TsStep4';
 import TsStep5 from './component/page/TravelSurvey/TsStep5';
+import TsStep51 from './component/page/TravelSurvey/TsStep51';
 import TsEnd from './component/page/TravelSurvey/TsEnd';
 import TsSummary from './component/page/TravelSurvey/TsSummary'; //임시 정보 확인 페이지
 
@@ -141,6 +142,7 @@ const App = () => {
                   <Route path="/travelsurvey3" element={<TsStep3 />} />
                   <Route path="/travelsurvey4" element={<TsStep4 />} />
                   <Route path="/travelsurvey5" element={<TsStep5 />} />
+                  <Route path="/travelsurvey51" element={<TsStep51 />} />
                   <Route path="/travelsurveyend" element={<TsEnd />} />
                   <Route path="/ts-summary" element={<TsSummary />} />
                   <Route path="/recommend" element={<RouteRecommend />} />

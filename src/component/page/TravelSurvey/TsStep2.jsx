@@ -335,7 +335,7 @@ const StepText = styled.div`
 `;
 
 const StyledCalendar = styled(Calendar)`
-  width: 65%;
+  width: 85%;
   font-size: 13px;
   background-color: #fafafa;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);

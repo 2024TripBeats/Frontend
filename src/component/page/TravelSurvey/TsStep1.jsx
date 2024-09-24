@@ -1,7 +1,97 @@
 import React, { useContext, useState } from 'react';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { TravelSurveyContext } from './TsContext';
+import { TravelSurveyContext } from './TsContext';  // Context import
+
+const TsStep1 = () => {
+  const navigate = useNavigate();
+  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);  // Context 사용
+  const [selectedDestination, setSelectedDestination] = useState('');
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [tripName, setTripName] = useState('');
+  const [destinationLocation, setDestinationLocation] = useState('');
+
+  const handleSelectDestination = (destination) => {
+    if (destination !== '서울') {
+      setSelectedDestination(destination);
+      setDestinationLocation(destination);
+      setTravelSurveyData({ ...travelsurveyData, destination });
+    }
+  };
+
+  const handleNextClick = () => {
+    if (selectedDestination) {
+      setModalOpen(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    const finalTripName = tripName.trim() || `나의 ${destinationLocation} 여행`;
+    setTravelSurveyData({ ...travelsurveyData, tripName: finalTripName });
+    setModalOpen(false);
+    navigate('/travelsurvey21');
+  };
+
+  const isButtonActive = !!selectedDestination;
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img style={{ width: "30%" }} 
+          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
+          alt='logo' />
+      </LogoContainer>
+      <Question style={{ marginTop: "5%" }}>아래 여행지는 어떠세요?</Question>
+      <PickerContainer>
+        <ImgContainer 
+          onClick={() => handleSelectDestination('서울')} 
+          selected={selectedDestination === '서울'}
+          disabled
+        >
+          <ImgPicker>
+            <Img src={process.env.PUBLIC_URL + `/asset/sample/seoul.jpg`} disabled />
+            <ComingSoonText disabled>11월 오픈 예정</ComingSoonText>
+          </ImgPicker>
+          <DestinationName selected={selectedDestination === '서울'}>서울</DestinationName>
+        </ImgContainer>
+        <ImgContainer 
+          onClick={() => handleSelectDestination('제주')} 
+          selected={selectedDestination === '제주'}
+        >
+          <ImgPicker>
+            <Img src={process.env.PUBLIC_URL + `/asset/sample/jeju.jpg`} />
+          </ImgPicker>
+          <DestinationName selected={selectedDestination === '제주'}>제주</DestinationName>
+        </ImgContainer>
+      </PickerContainer>
+      <Button 
+        active={isButtonActive}
+        onClick={handleNextClick}
+      >
+        다음으로
+      </Button>
+
+      {isModalOpen && (
+        <Overlay>
+          <Modal>
+            <ModalText>여행 이름을 지정하실래요?</ModalText>
+            <Input
+              type="text"
+              value={tripName}
+              onChange={(e) => setTripName(e.target.value.slice(0, 15))}  // 15자 제한
+              placeholder="최대 15자, 미입력 시 '나의 제주 여행'으로 저장"
+            />
+            <ButtonContainer>
+              <ModalButton onClick={handleModalClose}>확인</ModalButton>
+            </ButtonContainer>
+          </Modal>
+        </Overlay>
+      )}
+    </Container>
+  );
+};
+
+export default TsStep1;
 
 const Container = styled.div`
   display: flex;
@@ -164,93 +254,3 @@ const ModalButton = styled.button`
   color: #FAFAFA;
   cursor: pointer;
 `;
-
-const TsStep1 = () => {
-  const navigate = useNavigate();
-  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
-  const [selectedDestination, setSelectedDestination] = useState('');
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [tripName, setTripName] = useState('');
-  const [destinationLocation, setDestinationLocation] = useState(''); // location을 destinationLocation으로 변경
-
-  const handleSelectDestination = (destination) => {
-    if (destination !== '서울') { // 서울은 선택 불가능하게
-      setSelectedDestination(destination);
-      setDestinationLocation(destination); // setLocation을 setDestinationLocation으로 변경
-      setTravelSurveyData({ ...travelsurveyData, destination });
-    }
-  };
-
-  const handleNextClick = () => {
-    if (selectedDestination) {
-      setModalOpen(true);
-    }
-  };
-
-  const handleModalClose = () => {
-    const finalTripName = tripName.trim() || `나의 ${destinationLocation} 여행`; // location을 destinationLocation으로 변경
-    setTravelSurveyData({ ...travelsurveyData, tripName: finalTripName });
-    setModalOpen(false);
-    navigate('/travelsurvey2');
-  };
-
-  const isButtonActive = !!selectedDestination;
-
-  return (
-    <Container>
-      <LogoContainer>
-        <img style={{ width: "30%" }} 
-          src={process.env.PUBLIC_URL + `asset/logo/simplelogo.png`}
-          alt='logo' />
-      </LogoContainer>
-      <Question style={{ marginTop: "5%" }}>아래 여행지는 어떠세요?</Question>
-      <PickerContainer>
-        <ImgContainer 
-          onClick={() => handleSelectDestination('서울')} 
-          selected={selectedDestination === '서울'}
-          disabled
-        >
-          <ImgPicker>
-            <Img src={process.env.PUBLIC_URL + `/asset/sample/seoul.jpg`} disabled />
-            <ComingSoonText disabled>11월 오픈 예정</ComingSoonText>
-          </ImgPicker>
-          <DestinationName selected={selectedDestination === '서울'}>서울</DestinationName>
-        </ImgContainer>
-        <ImgContainer 
-          onClick={() => handleSelectDestination('제주')} 
-          selected={selectedDestination === '제주'}
-        >
-          <ImgPicker>
-            <Img src={process.env.PUBLIC_URL + `/asset/sample/jeju.jpg`} />
-          </ImgPicker>
-          <DestinationName selected={selectedDestination === '제주'}>제주</DestinationName>
-        </ImgContainer>
-      </PickerContainer>
-      <Button 
-        active={isButtonActive}
-        onClick={handleNextClick}
-      >
-        다음으로
-      </Button>
-
-      {isModalOpen && (
-        <Overlay>
-          <Modal>
-            <ModalText>여행 이름을 지정하실래요?</ModalText>
-            <Input
-              type="text"
-              value={tripName}
-              onChange={(e) => setTripName(e.target.value.slice(0, 15))} // 15자 제한
-              placeholder="최대 15자, 미입력 시 '나의 제주 여행'으로 저장"
-            />
-            <ButtonContainer>
-              <ModalButton onClick={handleModalClose}>확인</ModalButton>
-            </ButtonContainer>
-          </Modal>
-        </Overlay>
-      )}
-    </Container>
-  );
-};
-
-export default TsStep1;

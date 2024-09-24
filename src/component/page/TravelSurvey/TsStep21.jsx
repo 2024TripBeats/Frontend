@@ -54,56 +54,54 @@ const TsStep21 = () => {
     }));
   };
 
-  // 서버에 POST 요청 보내는 함수
-  const sendSurveyDataToServer = async () => {
-    setIsLoading(true); // 로딩 상태 시작
-    try {
-      const surveyData = {
-        startAirport,
-        endAirport,
-        departureTime,
-        returnTime
-      };
+  // 서버에 POST 요청 보내는 함수 (현재 주석 처리)
+  // const sendSurveyDataToServer = async () => {
+  //   setIsLoading(true); // 로딩 상태 시작
+  //   try {
+  //     const surveyData = {
+  //       startAirport,
+  //       endAirport,
+  //       departureTime,
+  //       returnTime
+  //     };
 
-      // 서버로 POST 요청 보내기
-      const response = await fetch('http://localhost:8888/airport', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(surveyData),
-      });
+  //     // 서버로 POST 요청 보내기
+  //     const response = await fetch('http://localhost:8888/airport', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(surveyData),
+  //     });
 
-      if (!response.ok) {
-        throw new Error('서버 응답에 실패했습니다.');
-      }
+  //     if (!response.ok) {
+  //       throw new Error('서버 응답에 실패했습니다.');
+  //     }
 
-      const data = await response.json(); // 서버에서 받은 응답 데이터
+  //     const data = await response.json(); // 서버에서 받은 응답 데이터
 
-      // 서버에서 받은 데이터를 travelsurveyData에 저장
-      setTravelSurveyData((prevData) => ({
-        ...prevData,
-        serverResponse: data, // 서버에서 받은 응답 데이터를 저장
-      }));
+  //     // 서버에서 받은 데이터를 travelsurveyData에 저장
+  //     setTravelSurveyData((prevData) => ({
+  //       ...prevData,
+  //       serverResponse: data, // 서버에서 받은 응답 데이터를 저장
+  //     }));
 
-      // 데이터를 성공적으로 받으면 다음 페이지로 이동
-      navigate('/travelsurvey2', {
-        state: {
-          startAirport,
-          endAirport,
-          departureTime,
-          returnTime,
-          serverData: data, // 서버에서 받은 데이터를 함께 전달
-        },
-      });
-    } catch (error) {
-      console.error('서버 요청 실패:', error);
-    } finally {
-      setIsLoading(false); // 로딩 상태 종료
-    }
-  };
-
-  console.log(travelsurveyData); // 현재까지의 설문조사 데이터 확인 (개발 중에만 사용
+  //     // 데이터를 성공적으로 받으면 다음 페이지로 이동
+  //     navigate('/travelsurvey2', {
+  //       state: {
+  //         startAirport,
+  //         endAirport,
+  //         departureTime,
+  //         returnTime,
+  //         serverData: data, // 서버에서 받은 데이터를 함께 전달
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error('서버 요청 실패:', error);
+  //   } finally {
+  //     setIsLoading(false); // 로딩 상태 종료
+  //   }
+  // };
 
   // 버튼 활성화 조건 확인: 모든 값이 선택된 경우만 버튼 활성화
   const isButtonActive = startAirport && endAirport && departureTime && returnTime;
@@ -111,7 +109,15 @@ const TsStep21 = () => {
   // 다음 페이지로 데이터를 넘기기 위한 함수
   const handleNextPage = () => {
     if (isButtonActive) {
-      sendSurveyDataToServer(); // 서버에 POST 요청 보내기
+      // 서버로 데이터를 보내는 대신 바로 다음 페이지로 이동
+      navigate('/travelsurvey2', {
+        state: {
+          startAirport,
+          endAirport,
+          departureTime,
+          returnTime,
+        },
+      });
     }
   };
 
@@ -135,7 +141,8 @@ const TsStep21 = () => {
         {/* 출발 공항 및 시간 선택 */}
         <SelectContainer style={{ paddingTop: "20px", marginBottom: "15px" }}>
           <Title>출발</Title>
-          <Title>도착</Title>
+          <img style={{width:"35px"}} src={process.env.PUBLIC_URL + `asset/icon/arrow.png`} alt="arrow" />
+          <Title style={{color:"#D9D9D9"}}>도착</Title>
         </SelectContainer>
         <SelectContainer style={{ paddingBottom: "30px", borderBottom: "1px solid #e9e9e9" }}>
           <DayContainer>
@@ -187,13 +194,14 @@ const TsStep21 = () => {
             </RadioContainer>
           </DayContainer>
           <DayContainer>
-            <Message>제주(CJU)</Message>
+            <Message style={{marginLeft: "25px"}}>제주(CJU)</Message>
           </DayContainer>
         </SelectContainer>
 
         {/* 돌아오는 시간 선택 */}
         <SelectContainer style={{ paddingTop: "30px", marginBottom: "15px" }}>
-          <Title>출발</Title>
+          <Title style={{color:"#D9D9D9"}}>출발</Title>
+          <img style={{width:"35px"}} src={process.env.PUBLIC_URL + `asset/icon/arrow.png`} alt="arrow" />
           <Title>도착</Title>
         </SelectContainer>
         <SelectContainer>
@@ -236,7 +244,7 @@ const TsStep21 = () => {
             </RadioContainer>
           </DayContainer>
           <DayContainer>
-            <Dropdown
+            <Dropdown style={{marginLeft: "25px"}}
               value={endAirport}
               onChange={(e) => handleAirportChange2(e.target.value)}
             >
@@ -257,7 +265,7 @@ const TsStep21 = () => {
         </BeforeButton>
         <Button 
           active={isButtonActive && !isLoading}
-          onClick={handleNextPage} // 서버에 데이터 보내고 다음 페이지로 넘기는 로직
+          onClick={handleNextPage} // 다음 페이지로 넘기는 로직
         >
           {isLoading ? '로딩 중...' : '다음으로'}
         </Button>
@@ -321,9 +329,9 @@ const Title = styled.div`
 `;
 
 const Message = styled.div`
-  font-size: 14px;
-  font-family: "Pretendard-Medium";
-  color: #252A2F;
+  font-size: 17px;
+  font-family: "Pretendard-Bold";
+  color: #D9D9D9;
 `;
 
 const Dropdown = styled.select`
@@ -339,14 +347,14 @@ const Dropdown = styled.select`
 const RadioContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 13px;
 `;
 
 const RadioLabel = styled.label`
   display: flex;
   align-items: center;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   font-family: "Pretendard-SemiBold";
   color: #252a2f;
 `;
@@ -356,8 +364,8 @@ const RadioInput = styled.input`
 `;
 
 const CustomRadio = styled.span`
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   margin-right: 8px;
   background-color: ${(props) => (props.selected ? '#FF8A1D' : '#FAFAFA')};

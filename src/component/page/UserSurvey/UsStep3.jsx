@@ -184,11 +184,12 @@ const SurveyButton = styled.button`
   color: ${props => (props.selected ? '#FAFAFA' : '#252A2F')};
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
   border: none;
-  border-radius: 10px;
-  width: 35%;
-  height: 50px;
-  font-size: 16px;
-  font-family: "Pretendard-ExtraBold";
+  border-radius: 30px;
+  width: 120px;
+  height: 40px;
+  font-size: 13px;
+  font-family: "Pretendard-Bold";
+  cursor: pointer;
 `;
 
 const LikertContainer = styled.div`

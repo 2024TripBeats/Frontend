@@ -48,20 +48,20 @@ const TsStep3 = () => {
       <Message>*다중 선택 가능</Message>
 
       <Row>
-        <OptionButton onClick={() => toggleAccommodation('parking')} active={selectedAccommodations.includes('parking')}>주차시설</OptionButton>
-        <OptionButton onClick={() => toggleAccommodation('sauna')} active={selectedAccommodations.includes('sauna')}>사우나</OptionButton>
-        <OptionButton onClick={() => toggleAccommodation('pool')} active={selectedAccommodations.includes('pool')}>수영장</OptionButton>
-      </Row>
-      <Row>
-        <OptionButton onClick={() => toggleAccommodation('large')} active={selectedAccommodations.includes('large')}>20평 이상</OptionButton>
-        <OptionButton onClick={() => toggleAccommodation('medium')} active={selectedAccommodations.includes('medium')}>20평 ~ 10평</OptionButton>
-        <OptionButton onClick={() => toggleAccommodation('small')} active={selectedAccommodations.includes('small')}>10평 이하</OptionButton>
-      </Row>
-      <Row>
-        <OptionButton onClick={() => toggleAccommodation('breakfast')} active={selectedAccommodations.includes('breakfast')}>조식</OptionButton>
-        <OptionButton onClick={() => toggleAccommodation('cooking')} active={selectedAccommodations.includes('cooking')}>조리 가능</OptionButton>
-        <OptionButton onClick={() => toggleAccommodation('bbq')} active={selectedAccommodations.includes('bbq')}>바베큐장</OptionButton>
-      </Row>
+  <OptionButton onClick={() => toggleAccommodation('주차시설')} active={selectedAccommodations.includes('주차시설')}>주차시설</OptionButton>
+  <OptionButton onClick={() => toggleAccommodation('사우나')} active={selectedAccommodations.includes('사우나')}>사우나</OptionButton>
+  <OptionButton onClick={() => toggleAccommodation('수영장')} active={selectedAccommodations.includes('수영장')}>수영장</OptionButton>
+</Row>
+<Row>
+  <OptionButton onClick={() => toggleAccommodation('20평 이상')} active={selectedAccommodations.includes('20평 이상')}>20평 이상</OptionButton>
+  <OptionButton onClick={() => toggleAccommodation('20평 ~ 10평')} active={selectedAccommodations.includes('20평 ~ 10평')}>20평 ~ 10평</OptionButton>
+  <OptionButton onClick={() => toggleAccommodation('10평 이하')} active={selectedAccommodations.includes('10평 이하')}>10평 이하</OptionButton>
+</Row>
+<Row>
+  <OptionButton onClick={() => toggleAccommodation('조식')} active={selectedAccommodations.includes('조식')}>조식</OptionButton>
+  <OptionButton onClick={() => toggleAccommodation('조리 가능')} active={selectedAccommodations.includes('조리 가능')}>조리 가능</OptionButton>
+  <OptionButton onClick={() => toggleAccommodation('바베큐장')} active={selectedAccommodations.includes('바베큐장')}>바베큐장</OptionButton>
+</Row>
 
       <InputContainer>
         <Question style={{fontSize: "13px"}}>필요 설비:</Question>
@@ -73,11 +73,12 @@ const TsStep3 = () => {
         />
       </InputContainer>
 
-      <Question style={{marginBottom: '25px'}}>숙박 시설을 고르는 기준 중 더 중요한 것을 골라주세요.</Question>
+      <Question>숙박 시설을 고르는 기준 중</Question>
+      <Question style={{marginBottom: '25px'}}>더 중요한 것을 골라주세요.</Question>
 
       <Row>
-        <OptionButton onClick={() => setAccomPriority('quality')} active={accomPriority === 'quality'}>좋은 품질</OptionButton>
-        <OptionButton onClick={() => setAccomPriority('affordable')} active={accomPriority === 'affordable'}>가성비</OptionButton>
+        <OptionButton onClick={() => setAccomPriority('좋은 품질')} active={accomPriority === '좋은 품질'}>좋은 품질</OptionButton>
+        <OptionButton onClick={() => setAccomPriority('가성비')} active={accomPriority === '가성비'}>가성비</OptionButton>
       </Row>
 
       <ButtonContainer>
@@ -175,7 +176,7 @@ const OptionButton = styled.button`
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
   border: none;
   border-radius: 30px;
-  width: 120px;
+  width: 25%;
   height: 40px;
   font-size: 13px;
   font-family: "Pretendard-Bold";
@@ -201,7 +202,7 @@ const Input = styled.input`
   border: none;
   border-radius: 30px;
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
-  font-size: 12px;
+  font-size: 10px;
 `;
 
 const ButtonContainer = styled.div`

@@ -38,19 +38,18 @@ const TsStep5 = () => {
 
   const handleSubmit = async () => {
     const surveyDataWithId = {
+      ...travelsurveyData, // 기존 context에 있는 모든 데이터
       accountId: id,
-      destination: travelsurveyData.destination,
-      period: travelsurveyData.period,
-      intensity: travelsurveyData.intensity,
       stopwords: stopwordsText,
       requirewords: mandatoryText,
     };
-  
+
     setTravelSurveyData(surveyDataWithId);
-    console.log(surveyDataWithId);
   
     // 데이터 전송 후 즉시 다음 페이지로 이동
     navigate('/travelsurveyend');
+    console.log(surveyDataWithId)
+  
   
     try {
       const response = await fetch('http://localhost:8888/recommend/getAllFinalRecommendation', {
@@ -67,7 +66,7 @@ const TsStep5 = () => {
   
       const result = await response.json();
       console.log('Success:', result);
-  
+
       // Store the server response in local storage
       localStorage.setItem('travelRecommendations', JSON.stringify(result));
       localStorage.setItem('surveyResponseReceived', 'true');
@@ -90,7 +89,7 @@ const TsStep5 = () => {
         <ProgressBarContainer>
           <Progress width={100} />
         </ProgressBarContainer>
-        <StepText>2/2 단계</StepText>
+        <StepText>7/7 단계</StepText>
       </ProgressContainer>
       <Question>이번 여행에서</Question>
       <Question style={{color:'#FF8A1D'}}>이것만큼은 꼭 지켜야 한다고</Question>
@@ -134,8 +133,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   box-sizing: border-box;
+  margin-bottom: 70px;
 `;
 
 const LogoContainer = styled.div`
