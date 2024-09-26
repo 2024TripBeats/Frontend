@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { TravelSurveyContext } from './TsContext';
 
-const TsStep4 = () => {
+const RestCafe = () => {
   const navigate = useNavigate();
   const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
   const [selectedRestaurants, setSelectedRestaurants] = useState(travelsurveyData.restaurant || []);
@@ -33,7 +33,7 @@ const TsStep4 = () => {
         requiredRestText: requiredRestText || null,
         cafe: selectedCafes,
       });
-      navigate('/travelsurvey51');
+      navigate('/preferlocation');
     }
   };
 
@@ -94,7 +94,7 @@ const TsStep4 = () => {
       </Row>
 
       <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey31')}>이전으로</BeforeButton>
+        <BeforeButton onClick={() => navigate('/accomodation')}>이전으로</BeforeButton>
         <Button
           active={selectedRestaurants.length > 0 && selectedCafes.length > 0} 
           onClick={handleNextClick}
@@ -106,7 +106,7 @@ const TsStep4 = () => {
   );
 };
 
-export default TsStep4;
+export default RestCafe;
 
 const Container = styled.div`
   display: flex;

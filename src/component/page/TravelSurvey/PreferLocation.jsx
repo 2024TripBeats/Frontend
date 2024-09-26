@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { TravelSurveyContext } from './TsContext';
 
-const TsStep51 = () => {
+const PreferLocation = () => {
   const navigate = useNavigate();
   const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
   
@@ -27,7 +27,7 @@ const TsStep51 = () => {
         ...travelsurveyData,
         travelCategory: selectedCategories,
       });
-      navigate('/travelsurvey5');  // 다음 페이지로 이동
+      navigate('/stoprequire');  // 다음 페이지로 이동
     }
   };
 
@@ -63,7 +63,7 @@ const TsStep51 = () => {
       </Row>
 
       <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey4')}>이전으로</BeforeButton>
+        <BeforeButton onClick={() => navigate('/restcafe')}>이전으로</BeforeButton>
         <Button
           active={selectedCategories.length > 0}
           onClick={handleNextClick}
@@ -75,7 +75,7 @@ const TsStep51 = () => {
   );
 };
 
-export default TsStep51;
+export default PreferLocation;
 
 const Container = styled.div`
   display: flex;

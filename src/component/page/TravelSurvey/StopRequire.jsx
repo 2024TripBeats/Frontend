@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
 
-const TsStep5 = () => {
+const StopRequire = () => {
   const navigate = useNavigate();
   const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
   const [mandatoryText, setMandatoryText] = useState('');
@@ -116,7 +116,7 @@ const TsStep5 = () => {
         <WordCount>{stopwordsText.length}/500</WordCount>
       </SurveyContainer>
       <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey3')}>
+        <BeforeButton onClick={() => navigate('/preferlocation')}>
           이전으로
         </BeforeButton>
         <Button onClick={handleSubmit}>
@@ -127,7 +127,7 @@ const TsStep5 = () => {
   );
 };
 
-export default TsStep5;
+export default StopRequire;
 
 const Container = styled.div`
   display: flex;

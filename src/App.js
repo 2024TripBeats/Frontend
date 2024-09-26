@@ -30,16 +30,15 @@ import UsEnd from './component/page/UserSurvey/UsEnd';
 import UsSummary from './component/page/UserSurvey/UsSummary'; //임시 정보 확인 페이지
 
 // 여행 설문 조사 페이지
-import TsStep1 from './component/page/TravelSurvey/TsStep1';
-import TsStep2 from './component/page/TravelSurvey/TsStep2';
-import TsStep21 from './component/page/TravelSurvey/TsStep21';
-import TsStep31 from './component/page/TravelSurvey/TsStep31';
-import TsStep3 from './component/page/TravelSurvey/TsStep3';
-import TsStep4 from './component/page/TravelSurvey/TsStep4';
-import TsStep5 from './component/page/TravelSurvey/TsStep5';
-import TsStep51 from './component/page/TravelSurvey/TsStep51';
+import Destination from './component/page/TravelSurvey/Destination';
+import Airport from './component/page/TravelSurvey/Airport';
+import SelectDate from './component/page/TravelSurvey/SelectDate';
+import Intensity from './component/page/TravelSurvey/Intensity';
+import Accomodation from './component/page/TravelSurvey/Accomodation';
+import RestCafe from './component/page/TravelSurvey/RestCafe';
+import PreferLocation from './component/page/TravelSurvey/PreferLocation';
+import StopRequire from './component/page/TravelSurvey/StopRequire';
 import TsEnd from './component/page/TravelSurvey/TsEnd';
-import TsSummary from './component/page/TravelSurvey/TsSummary'; //임시 정보 확인 페이지
 
 // 추천 페이지
 import RouteRecommend from './component/page/RouteRecommend';
@@ -139,16 +138,16 @@ const App = () => {
                   <Route path="/usersurvey5" element={<UsStep5 />} />
                   <Route path="/us-summary" element={<UsSummary />} />
                   <Route path="/usersurveyend" element={<UsEnd />} />
-                  <Route path="/travelsurvey1" element={<TsStep1 />} />
-                  <Route path="/travelsurvey2" element={<TsStep2 />} />
-                  <Route path="/travelsurvey21" element={<TsStep21 />} />
-                  <Route path="/travelsurvey31" element={<TsStep31 />} />
-                  <Route path="/travelsurvey3" element={<TsStep3 />} />
-                  <Route path="/travelsurvey4" element={<TsStep4 />} />
-                  <Route path="/travelsurvey5" element={<TsStep5 />} />
-                  <Route path="/travelsurvey51" element={<TsStep51 />} />
+
+                  <Route path="/destination" element={<Destination />} />
+                  <Route path="/airport" element={<Airport />} />
+                  <Route path="/selectdate" element={<SelectDate />} />
+                  <Route path="/intensity" element={<Intensity />} />
+                  <Route path="/accomodation" element={<Accomodation />} />
+                  <Route path="/restcafe" element={<RestCafe />} />
+                  <Route path="/stoprequire" element={<StopRequire />} />
+                  <Route path="/preferlocation" element={<PreferLocation />} />
                   <Route path="/travelsurveyend" element={<TsEnd />} />
-                  <Route path="/ts-summary" element={<TsSummary />} />
                   <Route path="/recommend" element={<RouteRecommend />} />
                   <Route path="/routefix" element={<RouteFix />} />
                   <Route path="/detail/:placeName" element={<DetailPage />} />

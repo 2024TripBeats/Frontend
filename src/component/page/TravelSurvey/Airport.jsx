@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
 import 'react-calendar/dist/Calendar.css';
 
-const TsStep21 = () => {
+const Airport = () => {
   const navigate = useNavigate();
   const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
 
@@ -87,7 +87,7 @@ const TsStep21 = () => {
   //     }));
 
   //     // 데이터를 성공적으로 받으면 다음 페이지로 이동
-  //     navigate('/travelsurvey2', {
+  //     navigate('/selectdate', {
   //       state: {
   //         startAirport,
   //         endAirport,
@@ -110,7 +110,7 @@ const TsStep21 = () => {
   const handleNextPage = () => {
     if (isButtonActive) {
       // 서버로 데이터를 보내는 대신 바로 다음 페이지로 이동
-      navigate('/travelsurvey2', {
+      navigate('/selectdate', {
         state: {
           startAirport,
           endAirport,
@@ -260,7 +260,7 @@ const TsStep21 = () => {
       </SelectBox>
 
       <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey1')}>
+        <BeforeButton onClick={() => navigate('/destination')}>
           이전으로
         </BeforeButton>
         <Button 
@@ -274,7 +274,7 @@ const TsStep21 = () => {
   );
 };
 
-export default TsStep21;
+export default Airport;
 
 // 스타일 정의
 const Container = styled.div`

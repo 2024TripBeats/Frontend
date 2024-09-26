@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
 import { differenceInDays } from 'date-fns';
 
-const TravelSurvey31 = () => {
+const SelectIntensity = () => {
   const navigate = useNavigate();
   const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
   const [intensity, setIntensity] = useState([]);
@@ -72,12 +72,12 @@ const TravelSurvey31 = () => {
         </DayContainer>
       ))}
       <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey2')}>
+        <BeforeButton onClick={() => navigate('/selectdate')}>
           이전으로
         </BeforeButton>
         <Button 
             isActive={isButtonActive} // 수정된 prop 이름 사용
-            onClick={() => isButtonActive && navigate('/travelsurvey3')} // 다음 페이지로 이동
+            onClick={() => isButtonActive && navigate('/accomodation')} // 다음 페이지로 이동
             >
             다음으로
             </Button>
@@ -86,7 +86,7 @@ const TravelSurvey31 = () => {
   );
 };
 
-export default TravelSurvey31;
+export default SelectIntensity;
 
 const Container = styled.div`
   display: flex;

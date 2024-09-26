@@ -47,7 +47,7 @@ const Home = () => {
   }, []);
 
   const handleButtonClick = () => {
-    navigate("/travelsurvey1");
+    navigate("/destination");
   };
 
   const handleNavigate = () => {

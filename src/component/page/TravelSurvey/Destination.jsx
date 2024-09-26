@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';  // Context import
 
-const TsStep1 = () => {
+const Destination = () => {
   const navigate = useNavigate();
   const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);  // Context 사용
   const [selectedDestination, setSelectedDestination] = useState('');
@@ -29,7 +29,7 @@ const TsStep1 = () => {
     const finalTripName = tripName.trim() || `나의 ${destinationLocation} 여행`;
     setTravelSurveyData({ ...travelsurveyData, tripName: finalTripName });
     setModalOpen(false);
-    navigate('/travelsurvey21');
+    navigate('/airport');
   };
 
   const isButtonActive = !!selectedDestination;
@@ -91,7 +91,7 @@ const TsStep1 = () => {
   );
 };
 
-export default TsStep1;
+export default Destination;
 
 const Container = styled.div`
   display: flex;

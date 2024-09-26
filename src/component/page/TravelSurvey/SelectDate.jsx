@@ -6,7 +6,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { addDays, differenceInDays } from 'date-fns';
 
-const TsStep2 = () => {
+const SelectDate = () => {
   const navigate = useNavigate();
   const { setTravelSurveyData } = useContext(TravelSurveyContext);
   const [startDate, setStartDate] = useState(null);
@@ -140,12 +140,12 @@ const TsStep2 = () => {
       )}
 
       <ButtonContainer>
-        <BeforeButton onClick={() => navigate('/travelsurvey1')}>
+        <BeforeButton onClick={() => navigate('/airport')}>
           이전으로
         </BeforeButton>
         <Button 
           active={isButtonActive}
-          onClick={() => isButtonActive && navigate('/travelsurvey31')} // travelsurvey31로 이동
+          onClick={() => isButtonActive && navigate('/intensity')}
         >
           다음으로
         </Button>
@@ -154,7 +154,7 @@ const TsStep2 = () => {
   );
 };
 
-export default TsStep2;
+export default SelectDate;
 
 // 스타일
 
