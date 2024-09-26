@@ -76,7 +76,7 @@ const TsEnd = () => {
 
       if (responseReceived) {
         localStorage.removeItem('surveyResponseReceived'); // Clean up the flag
-        navigate('/recommend');
+        navigate('/selectroute');
       } else {
         setTimeout(checkResponseReceived, 1000); // Check again after 1 second
       }

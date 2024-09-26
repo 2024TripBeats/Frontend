@@ -26,25 +26,26 @@ const UsStep5 = () => {
     // 임시 해시태그 데이터
     const hashtags = [
         "기분전환",
-        "감성",
         "힐링",
         "드라이브",
         "사랑",
         "추억",
-        "이별",
-        "여행",
-        "스트레스",
+        "위로",
+        "감성",
+        "스트레스해소",
         "휴식",
         "운동",
-        "비오는날",
-        "위로",
-        "트렌디",
+        "이별",
         "공부",
         "몽환",
-        "카페",
-        "매장",
-        "라운지",
-        "한강"
+        "비오는날",
+        "트렌디",
+        "설렘",
+        "여유",
+        "기대감",
+        "분노",
+        "아픔",
+        "웅장함"
     ];
   
     // 선택된 태그가 변경될 때마다 버튼 활성화 여부 업데이트
@@ -197,7 +198,7 @@ const SurveyContainer = styled.div`
   margin-left: 7%;
   margin-right: 7%;
   overflow: hidden;
-  max-height: ${props => (props.showMore ? 'none' : '200px')};
+  max-height: ${props => (props.showMore ? 'none' : '100px')};
 `;
 
 const SurveyButton = styled.button`
