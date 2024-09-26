@@ -64,7 +64,7 @@ const TsStep4 = () => {
       <Row>
         <OptionButton onClick={() => toggleRestaurant('오션뷰')} active={selectedRestaurants.includes('오션뷰')}>오션뷰</OptionButton>
         <OptionButton onClick={() => toggleRestaurant('뷰가 좋은')} active={selectedRestaurants.includes('뷰가 좋은')}>뷰가 좋은</OptionButton>
-        <OptionButton onClick={() => toggleRestaurant('이국적인')} active={selectedRestaurants.includes('이국적인')}>이국적인</OptionButton>
+        <OptionButton onClick={() => toggleRestaurant('반려동물O')} active={selectedRestaurants.includes('반려동물O')}>반려동물O</OptionButton>
         <OptionButton onClick={() => toggleRestaurant('좋은 분위기')} active={selectedRestaurants.includes('좋은 분위기')}>좋은 분위기</OptionButton>
       </Row>
 
@@ -89,7 +89,7 @@ const TsStep4 = () => {
       <Row>
         <OptionButton onClick={() => toggleCafe('오션뷰')} active={selectedCafes.includes('오션뷰')}>오션뷰</OptionButton>
         <OptionButton onClick={() => toggleCafe('뷰가 좋은')} active={selectedCafes.includes('뷰가 좋은')}>뷰가 좋은</OptionButton>
-        <OptionButton onClick={() => toggleCafe('이국적인')} active={selectedCafes.includes('이국적인')}>이국적인</OptionButton>
+        <OptionButton onClick={() => toggleCafe('반려동물O')} active={selectedCafes.includes('반려동물O')}>반려동물O</OptionButton>
         <OptionButton onClick={() => toggleCafe('좋은 분위기')} active={selectedCafes.includes('좋은 분위기')}>좋은 분위기</OptionButton>
       </Row>
 
