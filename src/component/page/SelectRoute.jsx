@@ -5,11 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const SelectRoute = () => {
     const [travelDestinations, setTravelDestinations] = useState([]);
     const [selectedDestination, setSelectedDestination] = useState(null);
-    const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
     const [dayIndexByRoute, setDayIndexByRoute] = useState({});
     const [name, setName] = useState("");
     const [id, setId] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);  // 모달 창을 관리하는 상태
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -25,96 +24,233 @@ const SelectRoute = () => {
         }
     }, []);
 
-    // 더미 데이터 추가: 각 루트는 1일차와 2일차의 장소를 포함
     useEffect(() => {
         const dummyData = {
-            recommendations: [
+            "recommendations": [
                 {
-                    routeId: "1",
-                    totalCost: 331000,
-                    itinerary: [
+                    "candidates": 1,
+                    "itinerary": [
                         {
-                            dayNumber: 1, // 1일차
-                            places: [
-                                { placeId: "cafe_001", placeName: "Cafe A", duration: 60 },
-                                { placeId: "restaurant_001", placeName: "Restaurant B", duration: 90 },
-                                { placeId: "bar_001", placeName: "Bar C", duration: 120 }
+                            "dayNumber": 1,
+                            "places": [
+                                {
+                                    "placeId": "802",
+                                    "placeName": "남산서울타워",
+                                    "category": "관광지",
+                                    "duration": 120,
+                                    "order": 1,
+                                    "new_order": 1,
+                                    "timeOfDay": "아침",
+                                    "music_bool": true,
+                                    "top_musicId": "우리의 새벽은 낮보다 뜨겁다_7789",
+                                    "song_title": "우리의 새벽은 낮보다 뜨겁다",
+                                    "artist_name": "세븐틴 (SEVENTEEN)",
+                                    "spotify_id": "EGRE8lyfRRGuq7spra3eR",
+                                    "price": 10000
+                                },
+                                {
+                                    "placeId": "777",
+                                    "placeName": "경복궁",
+                                    "category": "역사 유적지",
+                                    "duration": 120,
+                                    "order": 2,
+                                    "new_order": 2,
+                                    "timeOfDay": "오후",
+                                    "music_bool": true,
+                                    "top_musicId": "obonda_6088",
+                                    "song_title": "obonda",
+                                    "artist_name": "Tusken",
+                                    "spotify_id": "2kmjwoyyDF3FGVbuXmLens",
+                                    "price": 3000
+                                }
                             ],
-                            travelSegments: [
-                                { distance: 2 },
-                                { distance: 3 }
+                            "travelSegments": [
+                                {
+                                    "distance": 3.2
+                                }
                             ]
                         },
                         {
-                            dayNumber: 2, // 2일차
-                            places: [
-                                { placeId: "cafe_002", placeName: "Cafe D", duration: 70 },
-                                { placeId: "restaurant_002", placeName: "Restaurant E", duration: 100 },
-                                { placeId: "bar_002", placeName: "Bar F", duration: 150 }
+                            "dayNumber": 2,
+                            "places": [
+                                {
+                                    "placeId": "829",
+                                    "placeName": "북촌한옥마을",
+                                    "category": "전통 마을",
+                                    "duration": 120,
+                                    "order": 3,
+                                    "new_order": 3,
+                                    "timeOfDay": "밤",
+                                    "music_bool": true,
+                                    "top_musicId": "Peaceful Wood_3994",
+                                    "song_title": "Peaceful Wood",
+                                    "artist_name": "Graig Camewell",
+                                    "spotify_id": "77IwPfYgetVTqvF1CBoNO9",
+                                    "price": 0
+                                },
+                                {
+                                    "placeId": "808",
+                                    "placeName": "동대문디자인플라자(DDP",
+                                    "category": "문화시설",
+                                    "duration": 120,
+                                    "order": 4,
+                                    "new_order": null,
+                                    "timeOfDay": "밤",
+                                    "music_bool": false,
+                                    "top_musicId": null,
+                                    "song_title": null,
+                                    "artist_name": null,
+                                    "spotify_id": null,
+                                    "price": 15000
+                                }
                             ],
-                            travelSegments: [
-                                { distance: 4 },
-                                { distance: 2 }
+                            "travelSegments": [
+                                {
+                                    "distance": 4.7
+                                }
                             ]
                         }
                     ]
                 },
                 {
-                    routeId: "2",
-                    totalCost: 431000,
-                    itinerary: [
+                    "candidates": 2,
+                    "itinerary": [
                         {
-                            dayNumber: 1,
-                            places: [
-                                { placeId: "cafe_003", placeName: "Cafe G", duration: 50 },
-                                { placeId: "restaurant_003", placeName: "Restaurant H", duration: 80 },
-                                { placeId: "bar_003", placeName: "Bar I", duration: 130 }
+                            "dayNumber": 1,
+                            "places": [
+                                {
+                                    "placeId": "791",
+                                    "placeName": "남산공원",
+                                    "category": "공원",
+                                    "duration": 120,
+                                    "order": 1,
+                                    "new_order": 1,
+                                    "timeOfDay": "오후",
+                                    "music_bool": true,
+                                    "top_musicId": "크리스마스 노래_8138",
+                                    "song_title": "크리스마스 노래",
+                                    "artist_name": "4minute",
+                                    "spotify_id": "0k0FrlcGxU31Ibwi3ZKcne",
+                                    "price": 0
+                                },
+                                {
+                                    "placeId": "1194",
+                                    "placeName": "롯데면세점 명동본점",
+                                    "category": "상업지구",
+                                    "duration": 120,
+                                    "order": 2,
+                                    "new_order": 2,
+                                    "timeOfDay": "오후",
+                                    "music_bool": true,
+                                    "top_musicId": "Bright Blue Skies_736",
+                                    "song_title": "Bright Blue Skies",
+                                    "artist_name": "Mitch James",
+                                    "spotify_id": "5zxwumO0laRosoeOvbVSvc",
+                                    "price": 0
+                                }
                             ],
-                            travelSegments: [
-                                { distance: 5 },
-                                { distance: 3 }
+                            "travelSegments": [
+                                {
+                                    "distance": 2.5
+                                }
                             ]
                         },
                         {
-                            dayNumber: 2,
-                            places: [
-                                { placeId: "cafe_004", placeName: "Cafe J", duration: 60 },
-                                { placeId: "restaurant_004", placeName: "Restaurant K", duration: 90 },
-                                { placeId: "park_001", placeName: "Park L", duration: 80 }
+                            "dayNumber": 2,
+                            "places": [
+                                {
+                                    "placeId": "878",
+                                    "placeName": "인사동 문화의거리",
+                                    "category": "전통 문화 거리",
+                                    "duration": 120,
+                                    "order": 3,
+                                    "new_order": 3,
+                                    "timeOfDay": "오후",
+                                    "music_bool": true,
+                                    "top_musicId": null,
+                                    "song_title": null,
+                                    "artist_name": null,
+                                    "spotify_id": null,
+                                    "price": 0
+                                },
+                                {
+                                    "placeId": "903",
+                                    "placeName": "청계천헌책방거리",
+                                    "category": "산책로",
+                                    "duration": 120,
+                                    "order": 4,
+                                    "new_order": null,
+                                    "timeOfDay": "밤",
+                                    "music_bool": false,
+                                    "top_musicId": null,
+                                    "song_title": null,
+                                    "artist_name": null,
+                                    "spotify_id": null,
+                                    "price": 0
+                                }
                             ],
-                            travelSegments: [
-                                { distance: 1.5 },
-                                { distance: 2.5 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    routeId: "3",
-                    totalCost: 321000,
-                    itinerary: [
-                        {
-                            dayNumber: 1,
-                            places: [
-                                { placeId: "cafe_005", placeName: "Cafe M", duration: 60 },
-                                { placeId: "restaurant_005", placeName: "Restaurant N", duration: 110 },
-                                { placeId: "museum_001", placeName: "Museum O", duration: 90 }
-                            ],
-                            travelSegments: [
-                                { distance: 3 },
-                                { distance: 1.8 }
+                            "travelSegments": [
+                                {
+                                    "distance": 3.9
+                                }
                             ]
                         },
                         {
-                            dayNumber: 2,
-                            places: [
-                                { placeId: "cafe_006", placeName: "Cafe P", duration: 50 },
-                                { placeId: "restaurant_006", placeName: "Restaurant Q", duration: 100 },
-                                { placeId: "mall_001", placeName: "Shopping Mall R", duration: 120 }
+                            "dayNumber": 3,
+                            "places": [
+                                {
+                                    "placeId": "786",
+                                    "placeName": "난지한강공원",
+                                    "category": "공원",
+                                    "duration": 120,
+                                    "order": 1,
+                                    "new_order": 1,
+                                    "timeOfDay": "아침",
+                                    "music_bool": true,
+                                    "top_musicId": "이 노래_5012",
+                                    "song_title": "이 노래",
+                                    "artist_name": "2AM",
+                                    "spotify_id": "26T2nw3lmciAUmk43Yimih",
+                                    "price": 0
+                                },
+                                {
+                                    "placeId": "923",
+                                    "placeName": "전쟁기념관 어린이박물관",
+                                    "category": "역사 유적지",
+                                    "duration": 120,
+                                    "order": 2,
+                                    "new_order": 2,
+                                    "timeOfDay": "오전",
+                                    "music_bool": true,
+                                    "top_musicId": "역사 속으로_7789",
+                                    "song_title": "Let Me Know",
+                                    "artist_name": "LANY",
+                                    "spotify_id": "7DMPq3XndRJaj6NTINsLOz",
+                                    "price": 0
+                                },
+                                {
+                                    "placeId": "922",
+                                    "placeName": "국립중앙박물관",
+                                    "category": "박물관",
+                                    "duration": 120,
+                                    "order": 3,
+                                    "new_order": 3,
+                                    "timeOfDay": "오후",
+                                    "music_bool": true,
+                                    "top_musicId": null,
+                                    "song_title": null,
+                                    "artist_name": null,
+                                    "spotify_id": null,
+                                    "price": 3000
+                                }
                             ],
-                            travelSegments: [
-                                { distance: 2.3 },
-                                { distance: 4 }
+                            "travelSegments": [
+                                {
+                                    "distance": 4.8
+                                },
+                                {
+                                    "distance": 3.3
+                                }
                             ]
                         }
                     ]
@@ -124,34 +260,33 @@ const SelectRoute = () => {
 
         setTravelDestinations(dummyData.recommendations);
 
-        // 각 루트의 기본 일차를 1일차로 설정 (0번째 인덱스가 1일차)
         const initialDayIndex = {};
-        dummyData.recommendations.forEach(route => {
-            initialDayIndex[route.routeId] = 0; // 각 루트에 대해 1일차를 기본값으로 설정
+        dummyData.recommendations.forEach((_, idx) => {
+            initialDayIndex[idx] = 0; // 각 후보(candidates)의 1일차를 기본값으로 설정
         });
         setDayIndexByRoute(initialDayIndex);
-
-        setSelectedDestination(dummyData.recommendations[0].itinerary[0].places[0]); // 첫 번째 후보의 첫 번째 장소를 기본 선택
     }, []);
 
-    const handleCircleClick = (dayNumber, destination) => {
-        setSelectedDestination({ dayNumber, ...destination });
+    const calculateTotalPrice = (itinerary) => {
+        return itinerary.reduce((total, day) => {
+            const dayTotal = day.places.reduce((sum, place) => sum + place.price, 0);
+            return total + dayTotal;
+        }, 0);
     };
 
     const handleFixRouteClick = () => {
         const selectedRoute = travelDestinations.map(route => {
             return {
-                routeId: route.routeId,
                 itinerary: route.itinerary
             };
         });
         navigate('/routefix', { state: { selectedRoute } });
     };
 
-    const handleDayChange = (routeId, newDayIndex) => {
+    const handleDayChange = (candidateIndex, newDayIndex) => {
         setDayIndexByRoute((prev) => ({
             ...prev,
-            [routeId]: newDayIndex,
+            [candidateIndex]: newDayIndex,
         }));
     };
 
@@ -163,26 +298,9 @@ const SelectRoute = () => {
         setIsModalOpen(false);  // 모달 닫기
     };
 
-    const handleDetailClick = async (routeId) => {
-        try {
-            // 백엔드로 routeId를 POST 요청으로 전달
-            const response = await fetch(`http://localhost:8000/api/route/details`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ routeId })  // routeId를 JSON으로 백엔드에 전달
-            });
-
-            // 백엔드에서 응답 받은 데이터를 처리
-            const data = await response.json();
-            console.log("Route Details:", data);
-
-            // 응답 데이터로 원하는 처리를 여기서 진행
-            // 예: 새 데이터를 상태에 저장하거나, 새 페이지로 이동
-        } catch (error) {
-            console.error("Error fetching route details:", error);
-        }
+    const handleDetailClick = (candidateIndex) => {
+        navigate('/recommend', { state: { selectedDestination: travelDestinations[candidateIndex] } });
+        console.log(travelDestinations[candidateIndex]);
     };
 
     return (
@@ -194,25 +312,22 @@ const SelectRoute = () => {
                 <Message>{name}님을 위한 여행코스가 추천되었어요!</Message>
                 <Message style={{marginBottom:"10px"}}>원하는 코스를 선택해주세요</Message>
 
-                {travelDestinations.map((route, index) => (
-                    <RouteBox key={route.routeId}>
-                        <Message style={{marginBottom:"10px"}}>여행 코스 {index + 1}</Message>
+                {travelDestinations.map((route, candidateIndex) => (
+                    <RouteBox key={candidateIndex}>
+                        <Message style={{marginBottom:"10px", fontSize:"16px"}}>여행 코스 {candidateIndex + 1}</Message>
                         <DaySelector>
                             <DayButtonContainer>
-                                <DayButton
-                                    onClick={() => handleDayChange(route.routeId, 0)}
-                                    isSelected={dayIndexByRoute[route.routeId] === 0}
-                                >
-                                    1일차
-                                </DayButton>
-                                <DayButton
-                                    onClick={() => handleDayChange(route.routeId, 1)}
-                                    isSelected={dayIndexByRoute[route.routeId] === 1}
-                                >
-                                    2일차
-                                </DayButton>
+                                {route.itinerary.map((day, i) => (
+                                    <DayButton
+                                        key={i}
+                                        onClick={() => handleDayChange(candidateIndex, i)}
+                                        isSelected={dayIndexByRoute[candidateIndex] === i}
+                                    >
+                                        {day.dayNumber}일차
+                                    </DayButton>
+                                ))}
                             </DayButtonContainer>
-                            <DetailContainer onClick={() => handleDetailClick(route.routeId)}>
+                            <DetailContainer onClick={() => handleDetailClick(candidateIndex)}>
                                 자세히 보기
                                 <DetailButton>
                                     <img src={process.env.PUBLIC_URL + '/asset/icon/passover.png'} alt='detail' />
@@ -222,20 +337,16 @@ const SelectRoute = () => {
                         <RouteContainer>
                             <TravelPathContainer>
                                 <PathLine>
-                                    {route.itinerary[dayIndexByRoute[route.routeId] || 0].places.map((destination, i) => (
+                                    {/* 안전하게 places 접근하기 위해 조건부 렌더링 추가 */}
+                                    {route.itinerary[dayIndexByRoute[candidateIndex]]?.places?.map((destination, i) => (
                                         <React.Fragment key={destination.placeId}>
-                                            <Circle
-                                                onClick={() => handleCircleClick(route.itinerary[dayIndexByRoute[route.routeId]].dayNumber, destination)}
-                                                isSelected={selectedDestination && selectedDestination.placeId === destination.placeId}
-                                            >
-                                                <VisitTime isSelected={selectedDestination && selectedDestination.placeId === destination.placeId}>
-                                                    {destination.duration}분
-                                                </VisitTime>
+                                            <Circle>
+                                                <VisitTime>{destination.duration}분</VisitTime>
                                                 <div>{destination.placeName}</div>
                                             </Circle>
-                                            {i < route.itinerary[dayIndexByRoute[route.routeId]].places.length - 1 && (
+                                            {i < route.itinerary[dayIndexByRoute[candidateIndex]].places.length - 1 && (
                                                 <Line>
-                                                    {route.itinerary[dayIndexByRoute[route.routeId]].travelSegments[i].distance.toFixed(2)}km
+                                                    {route.itinerary[dayIndexByRoute[candidateIndex]].travelSegments[i].distance.toFixed(2)}km
                                                 </Line>
                                             )}
                                         </React.Fragment>
@@ -243,8 +354,8 @@ const SelectRoute = () => {
                                 </PathLine>
                             </TravelPathContainer>
                             <CostContainer>
-                                <CostLabel>예상 경비 | </CostLabel>
-                                <>{route.totalCost.toLocaleString()}원</>
+                                <CostLabel>예상 경비</CostLabel>
+                                <CostAmount>{calculateTotalPrice(route.itinerary).toLocaleString()}원</CostAmount>
                             </CostContainer>
                         </RouteContainer>
                     </RouteBox>

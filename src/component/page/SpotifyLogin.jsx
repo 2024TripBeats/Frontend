@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 
-const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID
+const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const REDIRECT_URI = "http://localhost:8000/callback"; // FastAPI 콜백 URL
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
 const RESPONSE_TYPE = "code";
@@ -20,6 +20,8 @@ const SpotifyLogin = () => {
     const authUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${encodeURIComponent(SCOPES)}`;
     window.location.href = authUrl; // Spotify 로그인 페이지로 리디렉션
   };
+
+  console.log("CLIENT_ID:", CLIENT_ID);
 
   return (
     <Container>

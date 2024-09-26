@@ -157,12 +157,13 @@ const OptionButton = styled.button`
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
   border: none;
   border-radius: 30px;
-  width: 120px;
+  padding: 5px 14px;
   height: 40px;
-  font-size: 13px;
+  font-size: 14px;
   font-family: "Pretendard-Bold";
   cursor: pointer;
 `;
+
 
 const ButtonContainer = styled.div`
   display: flex;
