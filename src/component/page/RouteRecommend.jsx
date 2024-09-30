@@ -5,70 +5,249 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const RouteRecommend = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedDestination } = location.state; // Data passed from the previous page
+  
+  // 처음에는 location.state에서 데이터를 가져오고, 이후에는 localStorage에서 복원
+  const initialDestination = location.state?.selectedDestination || JSON.parse(localStorage.getItem('selectedDestination'));
+  const [selectedDestination, setSelectedDestination] = useState(initialDestination);
 
   const [name, setName] = useState("");
   const [id, setId] = useState("");
   const [imageUrl, setImageUrl] = useState('');
   const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
-  const [currentPlace, setCurrentPlace] = useState(null); // New state to track the currently selected place
+  const [currentPlace, setCurrentPlace] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [accessToken, setAccessToken] = useState(""); // 액세스 토큰 상태
+  const [trackQueue, setTrackQueue] = useState([]); // Spotify 트랙들을 저장하는 상태
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 여부 상태
 
+  const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+  const REDIRECT_URI = "http://localhost:8000/callback"; // FastAPI 콜백 URL
+  const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
+  const RESPONSE_TYPE = "code";
+  const SCOPES = [
+      'streaming',
+      'user-read-email',
+      'user-read-private',
+      'user-modify-playback-state',
+      'user-read-playback-state',
+      'playlist-modify-public',
+      'playlist-modify-private'
+  ].join(' ');
+
+    // 자세히 보기 detail 페이지 이동
+    const handleDetailClick = () => {
+      if (currentPlace) {
+        fetch(`http://localhost:8888/spots/${currentPlace.placeName}`)
+          .then((response) => response.json()) // Already parsed JSON
+          .then((data) => {
+            navigate(`/detail/${currentPlace.placeName}`, { state: { destination: data } });
+          })
+          .catch((error) => console.error('Error fetching destination details:', error));
+      }
+    };
+
+    useEffect(() => {
+      const storedName = localStorage.getItem("name");
+      const storedId = localStorage.getItem("id");
+      
+      if (storedName && storedId) {
+        setName(storedName);
+        setId(storedId);
+      } else {
+        console.error("No user data found in localStorage");
+      }
+  
+      // selectedDestination이 처음에 없다면 로컬스토리지에서 복구
+      if (!selectedDestination) {
+        const storedDestination = localStorage.getItem("selectedDestination");
+        if (storedDestination) {
+          setSelectedDestination(JSON.parse(storedDestination));
+        }
+      }
+  
+      // URL에서 액세스 토큰을 추출하여 저장
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('access_token');
+      if (token) {
+        setAccessToken(token);
+        navigate(window.location.pathname, { replace: true });
+      }
+    }, [navigate, selectedDestination]);
+
+    useEffect(() => {
+      if (selectedDestination) {
+        // 선택된 목적지 데이터를 localStorage에 저장
+        localStorage.setItem("selectedDestination", JSON.stringify(selectedDestination));
+  
+        // 첫 번째 장소를 기본 선택
+        setCurrentPlace(selectedDestination.itinerary[0].places[0]);
+  
+        // 총 비용 계산
+        const total = selectedDestination.itinerary.reduce((acc, day) => {
+          return acc + day.places.reduce((dayAcc, place) => dayAcc + place.price, 0);
+        }, 0);
+        setTotalPrice(total);
+  
+        // 여행지의 모든 spotify_id를 모아서 trackQueue에 저장
+        const allTracks = [];
+        selectedDestination.itinerary.forEach(day => {
+          day.places.forEach(place => {
+            if (place.spotify_id && place.spotify_id.length === 22) {
+              allTracks.push(`spotify:track:${place.spotify_id}`);
+            }
+          });
+        });
+        setTrackQueue(allTracks);
+      }
+    }, [selectedDestination]);
+
+      // Spotify 사용자 로그인 여부 확인
   useEffect(() => {
-    const storedName = localStorage.getItem("name");
-    const storedId = localStorage.getItem("id");
+    const checkIfLoggedIn = async () => {
+      if (accessToken) {
+        try {
+          const response = await fetch('https://api.spotify.com/v1/me', {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
+          if (response.ok) {
+            setIsLoggedIn(true); // 로그인 상태
+          } else {
+            setIsLoggedIn(false); // 로그인되지 않음
+          }
+        } catch (error) {
+          console.error('Spotify 사용자 정보를 가져오는 중 오류 발생:', error);
+          setIsLoggedIn(false);
+        }
+      }
+    };
 
-    if (storedName && storedId) {
-      setName(storedName);
-      setId(storedId);
-    } else {
-      console.error("No user data found in localStorage");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selectedDestination) {
-      // Initially set the first place as the current place
-      setCurrentPlace(selectedDestination.itinerary[0].places[0]);
-    }
-  }, [selectedDestination]);
+    checkIfLoggedIn();
+  }, [accessToken]);
+  
+    // 플레이리스트 생성 후 새 창에서 열기
+    const createPlaylistAndOpenNewWindow = async () => {
+      if (trackQueue.length === 0) {
+        console.error('트랙 목록이 비어 있습니다.');
+        return;
+      }
+  
+      try {
+        // 사용자 정보 가져오기
+        const userResponse = await fetch('https://api.spotify.com/v1/me', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+        const userData = await userResponse.json();
+        const userId = userData.id;
+  
+        // 플레이리스트 생성
+        const createPlaylistResponse = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: '여행 플레이리스트',
+            description: 'TRIPBEATS에서 추천한 플레이리스트',
+            public: false
+          })
+        });
+        
+        // 트랙 배열 확인하기
+        console.log(trackQueue);
+  
+        if (!createPlaylistResponse.ok) {
+          console.error('플레이리스트 생성 중 오류 발생:', await createPlaylistResponse.text());
+          return;
+        }
+  
+        const playlistData = await createPlaylistResponse.json();
+        const playlistId = playlistData.id;
+  
+        // 플레이리스트에 트랙 추가
+        const addTracksResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            uris: trackQueue
+          })
+        });
+  
+        if (!addTracksResponse.ok) {
+          console.error('트랙 추가 중 오류 발생:', await addTracksResponse.text());
+          return;
+        }
+  
+        // 새 창에서 플레이리스트 열기
+        const playlistUrl = `https://open.spotify.com/playlist/${playlistId}`;
+        window.open(playlistUrl, '_blank');
+      } catch (error) {
+        console.error('플레이리스트 생성 중 오류 발생:', error);
+      }
+    };
+  
 
   useEffect(() => {
     if (currentPlace) {
       fetch(`http://localhost:8888/spots/${currentPlace.placeName}/image`)
         .then((response) => response.text())
-        .then((data) => {
-          setImageUrl(data);
-        })
+        .then((data) => setImageUrl(data))
         .catch((error) => console.error('Error fetching destination image:', error));
     }
   }, [currentPlace]);
 
-  // 자세히 보기 detail 페이지 이동
-  const handleDetailClick = () => {
-    if (currentPlace) {
-      fetch(`http://localhost:8888/spots/${currentPlace.placeName}`)
-        .then((response) => response.json()) // Already parsed JSON
-        .then((data) => {
-          navigate(`/detail/${currentPlace.placeName}`, { state: { destination: data } });
-        })
-        .catch((error) => console.error('Error fetching destination details:', error));
+  const handleLogin = () => {
+    if (selectedDestination) {
+      localStorage.setItem("selectedDestination", JSON.stringify(selectedDestination));
     }
+    const authUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${encodeURIComponent(SCOPES)}`;
+    window.location.href = authUrl;
   };
 
   const handleCircleClick = (dayNumber, place) => {
-    setCurrentPlace(place); // Update current place when a circle is clicked
+    setCurrentPlace(place);
   };
 
-  const handleFixRouteClick = () => {
-    const selectedRoute = selectedDestination.itinerary.map(day => ({
-      dayNumber: day.dayNumber,
-      places: day.places,
-    }));
-    navigate('/routefix', { state: { selectedRoute } });
-  };
+  const handleFixRouteClick = async () => {
+    try {
+      const response = await fetch('http://localhost:8888/saveItinerary', { // 서버 URL을 적절히 변경
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: id, // 유저 ID
+          itinerary: selectedDestination.itinerary, // 여행 경로 데이터
+        }),
+      });
 
-  const handleEditClick = () => {
-    setCurrentCandidateIndex((prevIndex) => (prevIndex + 1) % selectedDestination.itinerary.length);
+       console.log(JSON.stringify({
+        userId: id,
+        itinerary: selectedDestination.itinerary
+      }));
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('여행 경로 저장 성공:', data);
+
+  
+        // 저장 성공 후 경로 이동
+        navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
+      } else {
+        navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
+        console.error('여행 경로 저장 실패:', response.statusText);
+      }
+    } catch (error) {
+      navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
+      console.error('서버 요청 중 오류 발생:', error);
+    }
   };
 
   const handleImageError = (e) => {
@@ -78,13 +257,19 @@ const RouteRecommend = () => {
   return (
     <Container>
       <LogoContainer>
-        <img style={{ width: "30%" }}
-             src={process.env.PUBLIC_URL + '/asset/logo/logo.png'}
-             alt='logo' />
+        <img style={{ width: "30%" }} src={process.env.PUBLIC_URL + '/asset/logo/logo.png'} alt='logo' />
       </LogoContainer>
       <ContentContainer>
         <Message>{name}님의 취향을 바탕으로</Message>
-        <Message style={{marginBottom:"10px"}}>여행 루트와 음악을 추천해봤어요!</Message>
+        <Message style={{ marginBottom: "10px" }}>여행 루트와 음악을 추천해봤어요!</Message>
+        <MusicMessage>* 스포티파이 프리미엄 유저라면, 로그인하고 플레이리스트를 생성해보세요!</MusicMessage>
+        <SpotifyContainer>
+          <LoginButton onClick={handleLogin} disabled={isLoggedIn}>
+            <SpotifyImg src={process.env.PUBLIC_URL + '/asset/icon/spotify.png'} alt='spotify icon' />
+            {isLoggedIn ? "로그인됨" : "로그인"}
+          </LoginButton>
+          <MusicButton onClick={createPlaylistAndOpenNewWindow} disabled={trackQueue.length === 0}>🎧 추천된 음악 나의 플리에서 듣기</MusicButton>
+        </SpotifyContainer>
         <ImageContainer>
           {currentPlace && (
             <>
@@ -94,11 +279,9 @@ const RouteRecommend = () => {
                 <DetailButton onClick={handleDetailClick}>
                   자세히 보기
                 </DetailButton>
-                {/* Check if spotify_id exists before rendering the MusicContainer */}
                 {currentPlace.spotify_id && (
                   <MusicContainer>
-                    <img style={{ width: "20px" }}
-                         src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'} alt='music play icon'/>
+                    <img style={{ width: "20px" }} src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'} alt='music play icon' />
                     <MusicBox>
                       <MusicTitle>{currentPlace.song_title}</MusicTitle>
                       <MusicSinger>{currentPlace.artist_name}</MusicSinger>
@@ -110,6 +293,9 @@ const RouteRecommend = () => {
           )}
         </ImageContainer>
         <RouteBox>
+          <TotalPriceContainer>
+            예상 경비 | {totalPrice.toLocaleString()}원
+          </TotalPriceContainer>
           {selectedDestination?.itinerary.map((day) => (
             <React.Fragment key={day.dayNumber}>
               <RouteContainer>
@@ -118,22 +304,13 @@ const RouteRecommend = () => {
                   <PathLine>
                     {day.places.map((place, index) => (
                       <React.Fragment key={place.placeId}>
-                        <Circle
-                          onClick={() => handleCircleClick(day.dayNumber, place)}
-                          isSelected={place.placeId === currentPlace?.placeId}
-                        >
-                          <VisitTime
-                            isSelected={place.placeId === currentPlace?.placeId}
-                          >
-                            {place.duration}분
-                          </VisitTime>
+                        <Circle onClick={() => handleCircleClick(day.dayNumber, place)} isSelected={place.placeId === currentPlace?.placeId}>
+                          <VisitTime isSelected={place.placeId === currentPlace?.placeId}>{place.duration}분</VisitTime>
                           <div>{place.placeName}</div>
-                          <PriceTag>{place.price.toLocaleString()}원</PriceTag> {/* Display price */}
+                          <PriceTag>{place.price.toLocaleString()}원</PriceTag>
                         </Circle>
                         {index < day.places.length - 1 && (
-                          <Line>
-                            {day.travelSegments[index]?.distance.toFixed(2)}km
-                          </Line>
+                          <Line>{day.travelSegments[index]?.distance.toFixed(2)}km</Line>
                         )}
                       </React.Fragment>
                     ))}
@@ -145,7 +322,6 @@ const RouteRecommend = () => {
         </RouteBox>
         <ButtonContainer>
           <FixButton onClick={handleFixRouteClick}>이 루트로 여행 갈래요!</FixButton>
-          <EditButton onClick={handleEditClick}>다시 추천받을래요</EditButton>
         </ButtonContainer>
       </ContentContainer>
     </Container>
@@ -154,6 +330,14 @@ const RouteRecommend = () => {
 
 export default RouteRecommend;
 
+const TotalPriceContainer = styled.div`
+  font-size: 15px;
+  font-family: "Pretendard-Bold";
+  color: #7d7d7d;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -246,7 +430,7 @@ const DetailButton = styled.button`
 const RouteBox = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: self-start;
+    align-items: center; 
     justify-content: center;
     margin-bottom: 20px;
     width: 100%;
@@ -267,7 +451,7 @@ const ButtonContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: 15px;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 `;
 
 const FixButton = styled.button`
@@ -396,4 +580,58 @@ const PriceTag = styled.div`
   padding: 2px 5px;
   color: #606060;
   margin-top: 5px;
+`;
+
+const SpotifyContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  width: 100%;
+  gap: 5%;
+`;
+
+const LoginButton = styled.button`
+  width: 150px;
+  height: 30px;
+  font-size: 14px;
+  background-color: ${props => (props.disabled ? '#b0b0b0' : '#1ED760')}; /* 비활성화 상태일 때 회색 처리 */
+  color: #252a2f;
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 20px;
+  font-family: "Pretendard-ExtraBold";
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')}; /* 비활성화 상태에서 커서 변경 */
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  pointer-events: ${props => (props.disabled ? 'none' : 'auto')}; /* 클릭되지 않도록 설정 */
+`;
+
+const SpotifyImg = styled.img`
+  width: 70px;
+`;
+
+const MusicButton = styled.button`
+  width: 220px;
+  height: 30px;
+  font-size: 14px;
+  font-family: "Pretendard-Bold";
+  background-color: #252a2f;
+  color: #1ED760;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+`;
+
+const MusicMessage = styled.div`
+  font-size: 12px;
+  font-family: "Pretendard-Medium";
+  color: #156c33;
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 0px;
 `;

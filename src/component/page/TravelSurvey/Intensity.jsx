@@ -145,11 +145,12 @@ const Button = styled.button`
 `;
 
 const BeforeButton = styled.button`
-  padding: 10px 40px;
+  padding: 10px 25px;
   background-color: #FAFAFA;
   border-radius: 20px;
   font-family: "Pretendard-ExtraBold";
   border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
   color: #252a2f;
   cursor: pointer;

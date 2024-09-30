@@ -37,7 +37,6 @@ const TravelItemContainer = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  /* margin-bottom: 20px; */
   gap: 10px;
   box-sizing: border-box;
 `;
@@ -51,13 +50,13 @@ const Day = styled.div`
   text-align: center;
   border-radius: 5px;
   padding: 5px 20px;  
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 `;
 
 const DayContainer = styled.div`
   display: flex;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   flex-direction: column;
   width: 100%;
 `;
@@ -129,12 +128,23 @@ const DestName = styled.div`
   color: #252a2f;
 `;
 
+const PriceInfo = styled.div`
+  font-family: "Pretendard-Medium";
+  font-size: 11px;
+  color: #757575;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+`;
+
 const FloatingButton = styled.button.attrs({
   className: 'no-capture'
 })`
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   padding: 10px 20px;
   background-color: #252a2f;
   border: none;
@@ -143,13 +153,27 @@ const FloatingButton = styled.button.attrs({
   cursor: pointer;
   font-family: "Pretendard-ExtraBold";
   font-size: 13px;
-  z-index: 1000;
+`;
+
+const HomeButton = styled.button.attrs({
+  className: 'no-capture'
+})`
+  padding: 10px 20px;
+  background-color: #252a2f;
+  border: none;
+  border-radius: 5px;
+  color: #fafafa;
+  cursor: pointer;
+  font-family: "Pretendard-ExtraBold";
+  font-size: 13px;
 `;
 
 const RouteFix = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { selectedRoute } = location.state;
+  const { itinerary } = location.state || {};
+
+  console.log(itinerary);
 
   const handleSaveImageClick = () => {
     html2canvas(document.querySelector("#route-fix-container"), {
@@ -166,9 +190,9 @@ const RouteFix = () => {
     return `${dayNumber}일차`;
   };
 
-  const handleDetailClick = (placeId) => {
-    navigate(`/detail/${placeId}`);
-  };
+  if (!itinerary || itinerary.length === 0) {
+    return <div>일정 정보가 없습니다.</div>;
+  }
 
   return (
     <Container id="route-fix-container">
@@ -177,33 +201,39 @@ const RouteFix = () => {
           src={process.env.PUBLIC_URL + '/asset/logo/logo.png'}
           alt='logo' />
       </LogoContainer>
+      <ButtonContainer>
+        <HomeButton onClick={() => navigate('/home')}>🏠 메인으로 돌아가기</HomeButton>
+        <FloatingButton onClick={handleSaveImageClick}>💾 저장</FloatingButton>
+      </ButtonContainer>
       <ContentContainer>
-        {selectedRoute.map((day) => (
-          <DayContainer key={day.dayNumber}>
+        {itinerary.map((day, dayIndex) => (
+          <DayContainer key={dayIndex}>
             <Day>{convertDayKeyToKorean(day.dayNumber)}</Day>
-            {day.itinerary.map((destination, index) => (
+            {day.places.map((destination, index) => (
               <React.Fragment key={destination.placeId}>
                 <TravelItemContainer>
                   <CircleContainer>
-                    <Circle>
-                      {destination.duration}분
-                    </Circle>
-                    {index < day.itinerary.length - 1}
+                    <Circle>{destination.duration}분</Circle>
                   </CircleContainer>
-                  <TravelDetails onClick={() => handleDetailClick(destination.placeId)}>
+                  <TravelDetails>
                     <DestName>{destination.placeName}</DestName>
-                    <MusicContainer>
-                      <img style={{ width: "14px" }} src={process.env.PUBLIC_URL + '/asset/musicplay.png'} />
-                        <MusicTitle>{destination.musicName}</MusicTitle>
-                        <MusicSinger>{destination.musicArtist}</MusicSinger>
-                    </MusicContainer>
+                    {destination.price > 0 && (
+                      <PriceInfo>예상 경비 | {destination.price.toLocaleString()}원</PriceInfo>
+                    )}
+                    {destination.music_bool && (
+                      <MusicContainer>
+                        <img style={{ width: "14px" }} src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'} alt="music-icon" />
+                        <MusicTitle>{destination.song_title}</MusicTitle>
+                        <MusicSinger>{destination.artist_name}</MusicSinger>
+                      </MusicContainer>
+                    )}
                   </TravelDetails>
                 </TravelItemContainer>
-                {index < day.itinerary.length - 1 && (
+                {index < day.places.length - 1 && (
                   <div style={{ display: 'flex', justifyContent: 'left', width: '100%', alignItems: 'center', marginLeft: '27px' }}>
                     <div style={{ height: '20px', width: '7px', backgroundColor: '#e7e7e7' }}></div>
                     <div style={{ marginLeft: '10px', fontFamily: 'Pretendard-Regular', fontSize: '10px', color: '#575757', justifyItems: 'center' }}>
-                      {day.travelSegments[index].distance.toFixed(2)}km
+                      {day.travelSegments[index]?.distance.toFixed(2)}km
                     </div>
                   </div>
                 )}
@@ -212,7 +242,6 @@ const RouteFix = () => {
           </DayContainer>
         ))}
       </ContentContainer>
-      <FloatingButton onClick={handleSaveImageClick}>💾 저장</FloatingButton>
     </Container>
   );
 };

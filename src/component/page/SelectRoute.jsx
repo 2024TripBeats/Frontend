@@ -45,7 +45,7 @@ const SelectRoute = () => {
                                     "top_musicId": "우리의 새벽은 낮보다 뜨겁다_7789",
                                     "song_title": "우리의 새벽은 낮보다 뜨겁다",
                                     "artist_name": "세븐틴 (SEVENTEEN)",
-                                    "spotify_id": "EGRE8lyfRRGuq7spra3eR",
+                                    "spotify_id": "2EGRE8lyfRRGuq7spra3eR",
                                     "price": 10000
                                 },
                                 {
@@ -364,7 +364,7 @@ const SelectRoute = () => {
                 <ButtonContainer>
                     <Notice>다른 여행코스를 추천받고 싶다면</Notice>
                     <Notice>아래 버튼을 눌러주세요!</Notice>
-                    <FixButton onClick={handleFixRouteClick}>🔄 이 루트로 여행 갈래요!</FixButton>
+                    <FixButton onClick={handleFixRouteClick}>🔄 다른 루트를 추천받을래요</FixButton>
                     <Notice onClick={showAverageCostInfo} style={{justifyContent: 'flex-end', cursor: 'pointer'}}>ⓘ 평균 제주 여행 경비</Notice>
                 </ButtonContainer>
             </ContentContainer>
