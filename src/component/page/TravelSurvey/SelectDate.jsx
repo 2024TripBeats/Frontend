@@ -15,34 +15,114 @@ const SelectDate = () => {
   const [ticketPrice, setTicketPrice] = useState(null); // 항공권 가격 상태 추가
 
   const prices = {
+    '2024-08-26': 80000,
+    '2024-08-27': 120000,
+    '2024-08-28': 100000,
+    '2024-08-29': 75000,
+    '2024-08-30': 32000,
+    '2024-08-31': 32000,
     '2024-09-01': 100000,
     '2024-09-02': 75000,
     '2024-09-03': 32000,
-    // 필요한 날짜별 데이터 추가
+    '2024-09-04': 45000,
+    '2024-09-05': 60000,
+    '2024-09-06': 80000,
+    '2024-09-07': 120000,
+    '2024-09-08': 100000,
+    '2024-09-09': 75000,
+    '2024-09-10': 32000,
+    '2024-09-11': 45000,
+    '2024-09-12': 60000,
+    '2024-09-13': 80000,
+    '2024-09-14': 120000,
+    '2024-09-15': 100000,
+    '2024-09-16': 75000,
+    '2024-09-17': 32000,
+    '2024-09-18': 45000,
+    '2024-09-19': 60000,
+    '2024-09-20': 80000,
+    '2024-09-21': 120000,
+    '2024-09-22': 100000,
+    '2024-09-23': 75000,
+    '2024-09-24': 32000,
+    '2024-09-25': 45000,
+    '2024-09-26': 60000,
+    '2024-09-27': 80000,
+    '2024-09-28': 120000,
+    '2024-09-29': 100000,
+    '2024-09-30': 75000,
+    '2024-10-01': 32000,
+    '2024-10-02': 45000,
+    '2024-10-03': 60000,
+    '2024-10-04': 80000,
+    '2024-10-05': 120000,
+    '2024-10-06': 100000,
+    '2024-10-07': 75000,
+    '2024-10-08': 32000,
+    '2024-10-09': 45000,
+    '2024-10-10': 60000,
+    '2024-10-11': 80000,
+    '2024-10-12': 120000,
+    '2024-10-13': 100000,
+    '2024-10-14': 75000,
+    '2024-10-15': 32000,
+    '2024-10-16': 45000,
+    '2024-10-17': 60000,
+    '2024-10-18': 80000,
+    '2024-10-19': 120000,
+    '2024-10-20': 100000,
+    '2024-10-21': 75000,
+    '2024-10-22': 32000,
+    '2024-10-23': 45000,
+    '2024-10-24': 60000,
+    '2024-10-25': 80000,
+    '2024-10-26': 120000,
+    '2024-10-27': 100000,
+    '2024-10-28': 75000,
+    '2024-10-29': 32000,
+    '2024-10-30': 45000,
+    '2024-10-31': 60000,
+    '2024-11-01': 80000,
+    '2024-11-02': 120000,
+    '2024-11-03': 100000
   };
 
-  // 비동기 함수로 항공권 가격을 가져옴
-  const fetchTicketPrice = async (startDate, endDate) => {
-    try {
-      const response = await fetch('https://api.example.com/ticket-price', { // 실제 API 엔드포인트로 대체
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ startDate, endDate }),
-      });
-      const data = await response.json();
-      setTicketPrice(data.price); // 서버에서 받은 가격을 상태에 저장
-    } catch (error) {
-      console.error('Error fetching ticket price:', error);
-    }
-  };
+// 비동기 함수로 항공권 가격을 가져옴
+const fetchTicketPrice = async (startDate, endDate) => {
+  try {
+    // startDate와 endDate를 "YYYY-MM-DD" 형식으로 변환
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
 
-  // 날짜가 변경될 때마다 서버에서 항공권 가격을 요청
+    // 포맷팅된 날짜를 콘솔에 출력
+    console.log("Formatted Start Date:", formattedStartDate);
+    console.log("Formatted End Date:", formattedEndDate);
+
+    const response = await fetch('https://api.example.com/ticket-price', { // 실제 API 엔드포인트로 대체
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ startDate: formattedStartDate, endDate: formattedEndDate }),
+    });
+    
+    const data = await response.json();
+    setTicketPrice(data.price); // 서버에서 받은 가격을 상태에 저장
+  } catch (error) {
+    console.error('Error fetching ticket price:', error);
+  }
+};
+
   useEffect(() => {
     if (startDate && endDate) {
       fetchTicketPrice(startDate, endDate);
-      setTravelSurveyData(prevData => ({ ...prevData, startDate, endDate })); // 선택한 날짜를 Context에 저장
+      const formattedStartDate = formatDate(startDate); // 포맷팅된 날짜
+      const formattedEndDate = formatDate(endDate); // 포맷팅된 날짜
+      setTravelSurveyData(prevData => ({ 
+        ...prevData, 
+        startDate: formattedStartDate, // 포맷팅된 데이터 저장
+        endDate: formattedEndDate      // 포맷팅된 데이터 저장
+      }));
     }
   }, [startDate, endDate, setTravelSurveyData]);
 
@@ -67,10 +147,16 @@ const SelectDate = () => {
     }
   };
 
+  // 날짜를 'YYYY-MM-DD' 형식으로 반환하는 함수
+  const formatDate = (date) => {
+    const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000); 
+    return adjustedDate.toISOString().split('T')[0];
+  };
+
   // 날짜별 가격 정보 표시
   const getTileContent = ({ date, view }) => {
     if (view === 'month') {
-      const dateString = date.toISOString().split('T')[0];
+      const dateString = formatDate(date); // 날짜를 'YYYY-MM-DD'로 포맷팅
       if (prices[dateString]) {
         const priceInManWon = (prices[dateString] / 10000).toFixed(1);
         return <PriceTag>{priceInManWon}만 원</PriceTag>;
@@ -97,7 +183,7 @@ const SelectDate = () => {
     return false;
   };
 
-  const isButtonActive = startDate && endDate;
+  const isButtonActive = startDate && endDate  ;
 
   return (
     <Container isScrollable={isScrollable}>
@@ -128,14 +214,15 @@ const SelectDate = () => {
       </DatePickerContainer>
       <ResetContainer>
         <ResetButton onClick={resetSelection}>
-          🔄
+          날짜 초기화 🔄
         </ResetButton>
       </ResetContainer>
 
       {/* 항공권 가격 출력 부분 */}
+      {/* 항공권 가격 출력 부분 */}
       {ticketPrice !== null && (
         <PriceMessage>
-          예측 왕복 항공권의 가격은 {ticketPrice.toLocaleString()}원 입니다
+          예측 왕복 항공권의 가격은 <PriceHighlight>{ticketPrice.toLocaleString()}</PriceHighlight>원 입니다
         </PriceMessage>
       )}
 
@@ -248,59 +335,6 @@ const BeforeButton = styled.button`
   cursor: pointer;
 `;
 
-const DayContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-`;
-
-const DayLabel = styled.div`
-  font-size: 16px;
-  font-family: "Pretendard-ExtraBold";
-  color: #252a2f;
-  margin-bottom: 5px;
-`;
-
-const RadioGroup = styled.div`
-  display: flex;
-  justify-content: space-around;
-  width: 70%;
-`;
-
-const LabelsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5%;
-  margin-bottom: 5%;
-  margin-left: 20%;
-  margin-right: 11%;
-`;
-
-const Divider = styled.hr`
-  border: none;
-  height: 0.5px;
-  background-color: #252a2f;
-  width: 50%;
-`;
-
-const HiddenRadioButton = styled.input.attrs({ type: 'radio' })`
-  display: none;
-`;
-
-const CustomRadioButton = styled.label`
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  border: none;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
-  background-color: ${props => (props.checked ? '#252a2f' : 'transparent')};
-  cursor: pointer;
-  transition: background-color 0.2s;
-`;
-
 const ProgressContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -411,16 +445,19 @@ const ResetContainer = styled.div`
 
 const ResetButton = styled.button`
   background-color: #FAFAFA; /* 리셋 버튼 배경색 */
-  border-radius: 50%;
-  font-family: "Pretendard-ExtraBold";
+  border-radius: 20px;
+  font-family: "Pretendard-Medium";
   border: none;
-  font-size: 16px;
-  box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.5);
-  color: #252a2f;
+  font-size: 13px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
+  color: #757575;
   cursor: pointer;
-  opacity: 0.8;
+  padding: 7px 20px;
+  
+`;
 
-  &:hover {
-    background-color: #e0e0e0; /* 호버 시 배경색 */
-  }
+const PriceHighlight = styled.span`
+  text-decoration: underline; /* 밑줄 */
+  color: #FF8A1D; /* 색상 변경 */
+  font-weight: bold; /* 굵은 글씨로 변경 (선택 사항) */
 `;

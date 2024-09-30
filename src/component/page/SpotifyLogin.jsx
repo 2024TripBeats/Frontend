@@ -60,3 +60,4 @@ const LoginButton = styled.button`
     background-color: #1ed760;
   }
 `;
+
