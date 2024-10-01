@@ -71,20 +71,20 @@ const TsEnd = () => {
   }, []);
 
   useEffect(() => {
-    const checkResponseReceived = () => {
-      const responseReceived = localStorage.getItem('surveyResponseReceived') === 'true';
-
-      if (responseReceived) {
-        localStorage.removeItem('surveyResponseReceived'); // Clean up the flag
-        navigate('/selectroute');
-      } else {
-        setTimeout(checkResponseReceived, 1000); // Check again after 1 second
-      }
+    const checkSurveyResponse = () => {
+        const responseReceived = localStorage.getItem('surveyResponseReceived');
+        if (responseReceived === 'true') {
+            // 설문 응답 완료, 데이터를 처리하고 /selectroute로 이동
+            localStorage.removeItem('surveyResponseReceived'); // 플래그 삭제
+            navigate('/selectroute');
+        } else {
+            // 아직 응답이 도착하지 않은 경우 1초 후 다시 확인
+            setTimeout(checkSurveyResponse, 1000);
+        }
     };
 
-    checkResponseReceived(); // Initial check
-
-  }, [navigate]);
+    checkSurveyResponse(); // 처음 호출
+}, [navigate]);
 
   return (
     <Container>

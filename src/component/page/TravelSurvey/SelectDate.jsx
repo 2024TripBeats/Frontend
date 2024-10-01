@@ -1,132 +1,74 @@
 import React, { useContext, useState, useEffect } from 'react';
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { addDays, differenceInDays } from 'date-fns';
+import { addDays } from 'date-fns';
 
 const SelectDate = () => {
   const navigate = useNavigate();
-  const { setTravelSurveyData } = useContext(TravelSurveyContext);
+  const location = useLocation();
+  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [isScrollable, setIsScrollable] = useState(false);
-  const [ticketPrice, setTicketPrice] = useState(null); // 항공권 가격 상태 추가
+  const [ticketPrice, setTicketPrice] = useState(null);
 
-  const prices = {
-    '2024-08-26': 80000,
-    '2024-08-27': 120000,
-    '2024-08-28': 100000,
-    '2024-08-29': 75000,
-    '2024-08-30': 32000,
-    '2024-08-31': 32000,
-    '2024-09-01': 100000,
-    '2024-09-02': 75000,
-    '2024-09-03': 32000,
-    '2024-09-04': 45000,
-    '2024-09-05': 60000,
-    '2024-09-06': 80000,
-    '2024-09-07': 120000,
-    '2024-09-08': 100000,
-    '2024-09-09': 75000,
-    '2024-09-10': 32000,
-    '2024-09-11': 45000,
-    '2024-09-12': 60000,
-    '2024-09-13': 80000,
-    '2024-09-14': 120000,
-    '2024-09-15': 100000,
-    '2024-09-16': 75000,
-    '2024-09-17': 32000,
-    '2024-09-18': 45000,
-    '2024-09-19': 60000,
-    '2024-09-20': 80000,
-    '2024-09-21': 120000,
-    '2024-09-22': 100000,
-    '2024-09-23': 75000,
-    '2024-09-24': 32000,
-    '2024-09-25': 45000,
-    '2024-09-26': 60000,
-    '2024-09-27': 80000,
-    '2024-09-28': 120000,
-    '2024-09-29': 100000,
-    '2024-09-30': 75000,
-    '2024-10-01': 32000,
-    '2024-10-02': 45000,
-    '2024-10-03': 60000,
-    '2024-10-04': 80000,
-    '2024-10-05': 120000,
-    '2024-10-06': 100000,
-    '2024-10-07': 75000,
-    '2024-10-08': 32000,
-    '2024-10-09': 45000,
-    '2024-10-10': 60000,
-    '2024-10-11': 80000,
-    '2024-10-12': 120000,
-    '2024-10-13': 100000,
-    '2024-10-14': 75000,
-    '2024-10-15': 32000,
-    '2024-10-16': 45000,
-    '2024-10-17': 60000,
-    '2024-10-18': 80000,
-    '2024-10-19': 120000,
-    '2024-10-20': 100000,
-    '2024-10-21': 75000,
-    '2024-10-22': 32000,
-    '2024-10-23': 45000,
-    '2024-10-24': 60000,
-    '2024-10-25': 80000,
-    '2024-10-26': 120000,
-    '2024-10-27': 100000,
-    '2024-10-28': 75000,
-    '2024-10-29': 32000,
-    '2024-10-30': 45000,
-    '2024-10-31': 60000,
-    '2024-11-01': 80000,
-    '2024-11-02': 120000,
-    '2024-11-03': 100000
+  // location.state.prices에서 받은 가격 데이터를 사용
+  const prices = location.state?.prices || {};
+
+  const fetchTicketPrice = async (startDate, endDate) => {
+    try {
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+      const { startAirport, endAirport, departureTime, returnTime } = travelsurveyData;
+      console.log("Formatted Start Date:", formattedStartDate);
+      console.log("Formatted End Date:", formattedEndDate);
+      console.log(JSON.stringify({ 
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        startAirport,
+        endAirport,
+        departureTime,
+        returnTime
+      }));
+
+      const response = await fetch('http://localhost:8888/flights/round-trip-fare', { // 실제 API 엔드포인트로 대체
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          startAirport,
+          endAirport,
+          departureTime,
+          returnTime
+        }),
+      });
+      
+      const data = await response.json();
+      setTicketPrice(data);
+    } catch (error) {
+      console.error('Error fetching ticket price:', error);
+    }
   };
-
-// 비동기 함수로 항공권 가격을 가져옴
-const fetchTicketPrice = async (startDate, endDate) => {
-  try {
-    // startDate와 endDate를 "YYYY-MM-DD" 형식으로 변환
-    const formattedStartDate = formatDate(startDate);
-    const formattedEndDate = formatDate(endDate);
-
-    // 포맷팅된 날짜를 콘솔에 출력
-    console.log("Formatted Start Date:", formattedStartDate);
-    console.log("Formatted End Date:", formattedEndDate);
-
-    const response = await fetch('https://api.example.com/ticket-price', { // 실제 API 엔드포인트로 대체
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ startDate: formattedStartDate, endDate: formattedEndDate }),
-    });
-    
-    const data = await response.json();
-    setTicketPrice(data.price); // 서버에서 받은 가격을 상태에 저장
-  } catch (error) {
-    console.error('Error fetching ticket price:', error);
-  }
-};
 
   useEffect(() => {
     if (startDate && endDate) {
       fetchTicketPrice(startDate, endDate);
-      const formattedStartDate = formatDate(startDate); // 포맷팅된 날짜
-      const formattedEndDate = formatDate(endDate); // 포맷팅된 날짜
+      const formattedStartDate = formatDate(startDate); 
+      const formattedEndDate = formatDate(endDate); 
       setTravelSurveyData(prevData => ({ 
         ...prevData, 
-        startDate: formattedStartDate, // 포맷팅된 데이터 저장
-        endDate: formattedEndDate      // 포맷팅된 데이터 저장
+        startDate: formattedStartDate,
+        endDate: formattedEndDate
       }));
     }
   }, [startDate, endDate, setTravelSurveyData]);
 
-  // 날짜 선택 로직
   const handleDateChange = (selectedDate) => {
     if (!startDate) {
       setStartDate(selectedDate);
@@ -147,16 +89,14 @@ const fetchTicketPrice = async (startDate, endDate) => {
     }
   };
 
-  // 날짜를 'YYYY-MM-DD' 형식으로 반환하는 함수
   const formatDate = (date) => {
     const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000); 
     return adjustedDate.toISOString().split('T')[0];
   };
 
-  // 날짜별 가격 정보 표시
   const getTileContent = ({ date, view }) => {
     if (view === 'month') {
-      const dateString = formatDate(date); // 날짜를 'YYYY-MM-DD'로 포맷팅
+      const dateString = formatDate(date);
       if (prices[dateString]) {
         const priceInManWon = (prices[dateString] / 10000).toFixed(1);
         return <PriceTag>{priceInManWon}만 원</PriceTag>;
@@ -168,7 +108,7 @@ const fetchTicketPrice = async (startDate, endDate) => {
   const resetSelection = () => {
     setStartDate(null);
     setEndDate(null);
-    setTicketPrice(null); // 리셋할 때 항공권 가격도 초기화
+    setTicketPrice(null);
   };
 
   const tileDisabled = ({ date }) => {
@@ -183,7 +123,8 @@ const fetchTicketPrice = async (startDate, endDate) => {
     return false;
   };
 
-  const isButtonActive = startDate && endDate  ;
+  const isButtonActive = startDate && endDate;
+
 
   return (
     <Container isScrollable={isScrollable}>
@@ -218,8 +159,6 @@ const fetchTicketPrice = async (startDate, endDate) => {
         </ResetButton>
       </ResetContainer>
 
-      {/* 항공권 가격 출력 부분 */}
-      {/* 항공권 가격 출력 부분 */}
       {ticketPrice !== null && (
         <PriceMessage>
           예측 왕복 항공권의 가격은 <PriceHighlight>{ticketPrice.toLocaleString()}</PriceHighlight>원 입니다

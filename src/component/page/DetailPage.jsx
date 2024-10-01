@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import detailData from './detail.json';
 
 const Container = styled.div`
   display: flex;
@@ -11,7 +10,6 @@ const Container = styled.div`
   box-sizing: border-box;
   align-items: center;
   max-width: 100%;
-  box-sizing: border-box;
   margin-bottom: 50px;
 `;
 
@@ -62,6 +60,13 @@ const InfoTitle = styled.div`
   margin-bottom: 10px;
 `;
 
+const InfoType = styled.div`
+  font-family: "Pretendard-Medium";
+  font-size: 16px;
+  margin: 5px 0;
+  color: #848484;
+`;
+
 const InfoText = styled.div`
   font-family: "Pretendard-Medium";
   font-size: 14px;
@@ -74,18 +79,34 @@ const Link = styled.div`
   font-family: "Pretendard-Medium";
 `;
 
-
 const DetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { destination } = location.state;
+  const { destination } = location.state || {};
 
   if (!destination) {
     return <p>Loading...</p>;
   }
 
-  const getAccessibilityText = (value) => (value ? '가능' : '불가능');
+  // 시간 정보를 파싱해서 평일과 주말 데이터를 각각 표시
+  const renderTime = () => {
+    if (destination.time && Array.isArray(destination.time)) {
+      return destination.time.map((time, index) => (
+        <InfoText key={index}>⏰ {time}</InfoText>
+      ));
+    }
+    return null;
+  };
 
+  // null 값이 아닌 경우만 렌더링하는 함수
+  const renderIfExists = (label, value, isContact) => {
+    if (value) {
+      return <InfoText>{label} {isContact ? <a href={`tel:${value}`}>{value}</a> : value}</InfoText>;
+    }
+    return null;
+  };
+
+  // 이미지 에러 처리 핸들러
   const handleImageError = (e) => {
     e.target.src = `${process.env.PUBLIC_URL}/asset/noimage.png`;
   };
@@ -93,22 +114,35 @@ const DetailPage = () => {
   return (
     <Container>
       <LogoContainer>
-        <img style={{ width: "30%" }} 
+        <img
+          style={{ width: "30%" }}
           src={process.env.PUBLIC_URL + '/asset/logo/logo.png'}
-          alt='logo' />
+          alt="logo"
+        />
       </LogoContainer>
       <ContentContainer>
         <BackButton onClick={() => navigate(-1)}>⬅️</BackButton>
-        <Image src={destination.imageUrl} alt={destination.name} onError={handleImageError} />
+        {destination.imageUrl && (
+          <Image
+            src={destination.imageUrl}
+            alt={destination.name}
+            onError={handleImageError}
+          />
+        )}
         <InfoContainer>
-          <InfoTitle>{destination.visitAreaNm}</InfoTitle>
-          <InfoText style={{marginBottom: '20px'}}>{destination.description}</InfoText>
-          <InfoText>📍 {destination.radNmAddr}</InfoText>
-          <InfoText>⏰ {destination.time}</InfoText>
-          <InfoText>🐕 {getAccessibilityText(destination.petAccess)}</InfoText>
-          <InfoText>🚗 {getAccessibilityText(destination.parking)}</InfoText>
-          <InfoText>📞 {destination.contact}</InfoText>
-          <InfoText>{destination.hashtags}</InfoText>
+          {destination.visitAreaNm && <InfoTitle>{destination.visitAreaNm}</InfoTitle>}
+          {destination.visitAreaTypeCd && <InfoType>{destination.visitAreaTypeCd}</InfoType>}
+          {destination.description && <InfoText style={{ marginBottom: '20px' }}>{destination.description}</InfoText>}
+          {renderIfExists("📍", destination.radNmAddr)}
+          {renderIfExists("💁🏻", destination.info)}
+          {renderIfExists("💰", destination.fare)}
+          {renderTime()}
+          {renderIfExists("📞", destination.contact, true)}
+          {destination.hashtags && (
+            <InfoText style={{ marginTop: '20px', color: '#2271d1' }}>
+              {destination.hashtags}
+            </InfoText>
+          )}
         </InfoContainer>
       </ContentContainer>
     </Container>

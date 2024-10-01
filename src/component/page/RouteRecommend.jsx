@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from "styled-components";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { TravelSurveyContext } from './TravelSurvey/TsContext';
+
 
 const RouteRecommend = () => {
   const location = useLocation();
@@ -9,6 +11,8 @@ const RouteRecommend = () => {
   // 처음에는 location.state에서 데이터를 가져오고, 이후에는 localStorage에서 복원
   const initialDestination = location.state?.selectedDestination || JSON.parse(localStorage.getItem('selectedDestination'));
   const [selectedDestination, setSelectedDestination] = useState(initialDestination);
+
+  const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
 
   const [name, setName] = useState("");
   const [id, setId] = useState("");
@@ -19,6 +23,8 @@ const RouteRecommend = () => {
   const [accessToken, setAccessToken] = useState(""); // 액세스 토큰 상태
   const [trackQueue, setTrackQueue] = useState([]); // Spotify 트랙들을 저장하는 상태
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 여부 상태
+
+  const tripName = localStorage.getItem('tripName');
 
   const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
   const REDIRECT_URI = "http://localhost:8000/callback"; // FastAPI 콜백 URL
@@ -34,6 +40,10 @@ const RouteRecommend = () => {
       'playlist-modify-private'
   ].join(' ');
 
+    // 추가된 일자별 식비 및 렌터카 비용
+    const foodCostPerDay = 53200; 
+    const carRentalCostPerDay = 45496; 
+
     // 자세히 보기 detail 페이지 이동
     const handleDetailClick = () => {
       if (currentPlace) {
@@ -47,23 +57,25 @@ const RouteRecommend = () => {
     };
 
     useEffect(() => {
+      // 페이지가 로드될 때 localStorage에서 name과 id를 가져오기
       const storedName = localStorage.getItem("name");
       const storedId = localStorage.getItem("id");
-      
+
       if (storedName && storedId) {
-        setName(storedName);
-        setId(storedId);
+          setName(storedName);
+          setId(storedId);
       } else {
-        console.error("No user data found in localStorage");
+          console.error("No user data found in localStorage");
+      }
+
+      // 만약 페이지 새로고침 후 location.state가 없으면 localStorage에서 복구
+      if (!selectedDestination) {
+          const savedDestination = localStorage.getItem('selectedDestination');
+          if (savedDestination) {
+              setSelectedDestination(JSON.parse(savedDestination));
+          }
       }
   
-      // selectedDestination이 처음에 없다면 로컬스토리지에서 복구
-      if (!selectedDestination) {
-        const storedDestination = localStorage.getItem("selectedDestination");
-        if (storedDestination) {
-          setSelectedDestination(JSON.parse(storedDestination));
-        }
-      }
   
       // URL에서 액세스 토큰을 추출하여 저장
       const params = new URLSearchParams(window.location.search);
@@ -82,11 +94,12 @@ const RouteRecommend = () => {
         // 첫 번째 장소를 기본 선택
         setCurrentPlace(selectedDestination.itinerary[0].places[0]);
   
-        // 총 비용 계산
-        const total = selectedDestination.itinerary.reduce((acc, day) => {
+        const totalDays = selectedDestination.itinerary.length;
+        const baseCost = selectedDestination.itinerary.reduce((acc, day) => {
           return acc + day.places.reduce((dayAcc, place) => dayAcc + place.price, 0);
         }, 0);
-        setTotalPrice(total);
+        const additionalCost = totalDays * (foodCostPerDay + carRentalCostPerDay); // 식비와 렌터카 비용 추가
+        setTotalPrice(baseCost + additionalCost);
   
         // 여행지의 모든 spotify_id를 모아서 trackQueue에 저장
         const allTracks = [];
@@ -223,21 +236,26 @@ const RouteRecommend = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: id, // 유저 ID
-          itinerary: selectedDestination.itinerary, // 여행 경로 데이터
+          accountId: id,  // `userId` 대신 `accountId`
+          tripName: tripName,
+          tripData: {
+            itinerary: selectedDestination.itinerary  // itinerary 필드로 감싸서 보냄
+          }
         }),
       });
 
-       console.log(JSON.stringify({
-        userId: id,
-        itinerary: selectedDestination.itinerary
+      console.log(JSON.stringify({
+        accountId: id,
+        tripName: tripName,
+        tripData: {
+          itinerary: selectedDestination.itinerary
+        }
       }));
 
       if (response.ok) {
         const data = await response.json();
         console.log('여행 경로 저장 성공:', data);
 
-  
         // 저장 성공 후 경로 이동
         navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
       } else {
@@ -248,7 +266,7 @@ const RouteRecommend = () => {
       navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
       console.error('서버 요청 중 오류 발생:', error);
     }
-  };
+};
 
   const handleImageError = (e) => {
     e.target.src = `${process.env.PUBLIC_URL}/asset/noimage.png`;
@@ -295,6 +313,10 @@ const RouteRecommend = () => {
         <RouteBox>
           <TotalPriceContainer>
             예상 경비 | {totalPrice.toLocaleString()}원
+            <AdditionalCosts>
+              식비: {foodCostPerDay.toLocaleString()}원/일<br />
+              렌터카: {carRentalCostPerDay.toLocaleString()}원/일
+            </AdditionalCosts>
           </TotalPriceContainer>
           {selectedDestination?.itinerary.map((day) => (
             <React.Fragment key={day.dayNumber}>
@@ -329,6 +351,14 @@ const RouteRecommend = () => {
 };
 
 export default RouteRecommend;
+
+const AdditionalCosts = styled.div`
+  font-size: 13px;
+  font-family: "Pretendard-SemiBold";
+  color: #7d7d7d;
+  text-align: center;
+  margin-top: 5px;
+`;
 
 const TotalPriceContainer = styled.div`
   font-size: 15px;

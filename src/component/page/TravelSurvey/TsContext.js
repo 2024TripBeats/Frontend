@@ -8,6 +8,12 @@ export const TravelSurveyProvider = ({ children }) => {
     tripName: '', // 여행 이름
     startDate: null, // 여행 시작일
     endDate: null, // 여행 종료일
+
+    departureTime: '', // 출발 시간
+    startAirport: '', // 출발 공항
+    returnTime: '', // 도착 시간
+    endAirport: '', // 도착 공항
+    
     intensity: [], // 각 날짜별 여행 강도
     accomodation: [], // 숙박 옵션
     requiredAccomText: '', // 추가로 필요한 숙박 옵션

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { TravelSurveyContext } from './TsContext';
 import 'react-calendar/dist/Calendar.css';
 
@@ -54,70 +54,54 @@ const Airport = () => {
     }));
   };
 
-  // 서버에 POST 요청 보내는 함수 (현재 주석 처리)
-  // const sendSurveyDataToServer = async () => {
-  //   setIsLoading(true); // 로딩 상태 시작
-  //   try {
-  //     const surveyData = {
-  //       startAirport,
-  //       endAirport,
-  //       departureTime,
-  //       returnTime
-  //     };
-
-  //     // 서버로 POST 요청 보내기
-  //     const response = await fetch('http://localhost:8888/airport', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(surveyData),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error('서버 응답에 실패했습니다.');
-  //     }
-
-  //     const data = await response.json(); // 서버에서 받은 응답 데이터
-
-  //     // 서버에서 받은 데이터를 travelsurveyData에 저장
-  //     setTravelSurveyData((prevData) => ({
-  //       ...prevData,
-  //       serverResponse: data, // 서버에서 받은 응답 데이터를 저장
-  //     }));
-
-  //     // 데이터를 성공적으로 받으면 다음 페이지로 이동
-  //     navigate('/selectdate', {
-  //       state: {
-  //         startAirport,
-  //         endAirport,
-  //         departureTime,
-  //         returnTime,
-  //         serverData: data, // 서버에서 받은 데이터를 함께 전달
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.error('서버 요청 실패:', error);
-  //   } finally {
-  //     setIsLoading(false); // 로딩 상태 종료
-  //   }
-  // };
-
   // 버튼 활성화 조건 확인: 모든 값이 선택된 경우만 버튼 활성화
   const isButtonActive = startAirport && endAirport && departureTime && returnTime;
 
   // 다음 페이지로 데이터를 넘기기 위한 함수
-  const handleNextPage = () => {
+  const handleNextPage = async () => {
     if (isButtonActive) {
-      // 서버로 데이터를 보내는 대신 바로 다음 페이지로 이동
-      navigate('/selectdate', {
-        state: {
+      setIsLoading(true); // 로딩 상태 시작
+  
+      try {
+        // 서버에 보낼 데이터
+        const surveyData = {
           startAirport,
-          endAirport,
-          departureTime,
-          returnTime,
-        },
-      });
+          departureTime
+        };
+  
+        console.log("Request Body:", surveyData); // 요청 전에 확인
+
+        // 서버에 데이터 전송
+        const response = await fetch('http://localhost:8888/flights/fare', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(surveyData),
+        });
+  
+        if (!response.ok) {
+          throw new Error('서버 응답에 실패했습니다.');
+        }
+  
+        const data = await response.json(); // 서버에서 받은 응답 데이터
+        console.log(data.prices);
+  
+        // 데이터를 성공적으로 받으면 다음 페이지로 이동
+        navigate('/selectdate', {
+          state: {
+            startAirport,
+            endAirport,
+            departureTime,
+            returnTime,
+            prices: data,  // 서버에서 받은 가격 정보를 함께 전달
+          },
+        });
+      } catch (error) {
+        console.error('서버 요청 실패:', error);
+      } finally {
+        setIsLoading(false); // 로딩 상태 종료
+      }
     }
   };
 
@@ -265,7 +249,7 @@ const Airport = () => {
         </BeforeButton>
         <Button 
           active={isButtonActive && !isLoading}
-          onClick={handleNextPage} // 다음 페이지로 넘기는 로직
+          onClick={handleNextPage}
         >
           {isLoading ? '로딩 중...' : '다음으로'}
         </Button>

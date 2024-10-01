@@ -24,6 +24,23 @@ const SelectRoute = () => {
         }
     }, []);
 
+    // useEffect(() => {
+    //     const storedRecommendations = localStorage.getItem('travelRecommendations');
+        
+    //     if (storedRecommendations) {
+    //         const recommendations = JSON.parse(storedRecommendations);
+    //         setTravelDestinations(recommendations);
+    //         console.log("Loaded travel recommendations:", recommendations);  // 데이터 로드 확인
+    
+    //         // DayIndexByRoute 설정
+    //         const initialDayIndex = {};
+    //         recommendations.forEach((_, idx) => {
+    //             initialDayIndex[idx] = 0;
+    //         });
+    //         setDayIndexByRoute(initialDayIndex);
+    //     }
+    // }, []);
+
     useEffect(() => {
         const dummyData = {
             "recommendations": [
@@ -268,19 +285,52 @@ const SelectRoute = () => {
     }, []);
 
     const calculateTotalPrice = (itinerary) => {
-        return itinerary.reduce((total, day) => {
+        const basePrice = itinerary.reduce((total, day) => {
             const dayTotal = day.places.reduce((sum, place) => sum + place.price, 0);
             return total + dayTotal;
         }, 0);
+    
+        const additionalCostPerDay = 98696;
+        const totalDays = itinerary.length;
+        
+        // 기본 가격에 추가 비용(일자별 추가 비용) 더하기
+        return basePrice + (additionalCostPerDay * totalDays);
     };
 
-    const handleFixRouteClick = () => {
-        const selectedRoute = travelDestinations.map(route => {
-            return {
-                itinerary: route.itinerary
-            };
-        });
-        navigate('/routefix', { state: { selectedRoute } });
+    const handleFixRouteClick = async () => {
+        try {
+            // 기존 설문 데이터를 가져옴
+            const surveyData = JSON.parse(localStorage.getItem("surveyData"));
+            if (!surveyData) {
+                console.error("No survey data found");
+                return;
+            }
+
+            // 서버로 데이터 전송
+            const response = await fetch('http://localhost:8888/recommend/getAllFinalRecommendation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(surveyData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+            // 추천 데이터를 localStorage에 저장
+            localStorage.setItem('travelRecommendations', JSON.stringify(result));
+            localStorage.setItem('surveyResponseReceived', 'true');
+
+            // 이동하면서 새로운 추천 경로를 로딩
+            navigate('/travelsurveyend');
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     const handleDayChange = (candidateIndex, newDayIndex) => {

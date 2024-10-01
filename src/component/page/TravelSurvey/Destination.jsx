@@ -19,6 +19,7 @@ const Destination = () => {
     }
   };
 
+
   const handleNextClick = () => {
     if (selectedDestination) {
       setModalOpen(true);
@@ -28,6 +29,7 @@ const Destination = () => {
   const handleModalClose = () => {
     const finalTripName = tripName.trim() || `나의 ${destinationLocation} 여행`;
     setTravelSurveyData({ ...travelsurveyData, tripName: finalTripName });
+    localStorage.setItem('tripName', finalTripName);
     setModalOpen(false);
     navigate('/airport');
   };

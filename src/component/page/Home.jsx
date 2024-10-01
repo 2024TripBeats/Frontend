@@ -62,7 +62,7 @@ const Home = () => {
   return (
     <Container>
       <LogoContainer>
-        <LogoMessage style={{marginBottom:"4%"}}>당신을 위한 사운드 트립 큐레이션 서비스</LogoMessage>
+        <LogoMessage style={{marginBottom:"4%"}}>당신을 위한 사운드 트립 서비스</LogoMessage>
         <img style={{width: "55%"}} 
           src={process.env.PUBLIC_URL + `asset/logo/logo.png`}
           alt='logo'/>

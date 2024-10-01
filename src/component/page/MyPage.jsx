@@ -2,244 +2,48 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 
 const MyPage = () => {
-  // 임시 데이터
-  const [travelRecords, setTravelRecords] = useState({
-    accountId: '333333',
-    route: [
-      {
-        tripName: '서울 여행',
-        location: '서울',
-        itinerary: [
-          {
-            dayNumber: 1,
-            places: [
-              {
-                placeId: '791',
-                placeName: '남산공원',
-                category: '공원',
-                duration: 120,
-                music_bool: true,
-                song_title: '크리스마스 노래',
-                artist_name: '4minute',
-                price: 0
-              },
-              {
-                placeId: '1194',
-                placeName: '롯데면세점 명동본점',
-                category: '상업지구',
-                duration: 120,
-                music_bool: true,
-                song_title: 'Bright Blue Skies',
-                artist_name: 'Mitch James',
-                price: 0
-              }
-            ],
-            travelSegments: [{ distance: 2.5 }]
-          },
-          {
-            dayNumber: 2,
-            places: [
-              {
-                placeId: '878',
-                placeName: '인사동 문화의거리',
-                category: '전통 문화 거리',
-                duration: 120,
-                music_bool: false,
-                price: 0
-              },
-              {
-                placeId: '903',
-                placeName: '청계천헌책방거리',
-                category: '산책로',
-                duration: 120,
-                music_bool: false,
-                price: 0
-              },
-              {
-                placeId: '920',
-                placeName: '동대문 디자인 플라자',
-                category: '전시관',
-                duration: 90,
-                music_bool: true,
-                song_title: 'Design Symphony',
-                artist_name: 'Jazztronik',
-                price: 5000
-              }
-            ],
-            travelSegments: [{ distance: 3.9 }]
-          },
-          {
-            dayNumber: 3,
-            places: [
-              {
-                placeId: '786',
-                placeName: '난지한강공원',
-                category: '공원',
-                duration: 120,
-                music_bool: true,
-                song_title: '이 노래',
-                artist_name: '2AM',
-                price: 0
-              },
-              {
-                placeId: '923',
-                placeName: '전쟁기념관 어린이박물관',
-                category: '역사 유적지',
-                duration: 120,
-                music_bool: true,
-                song_title: 'Let Me Know',
-                artist_name: 'LANY',
-                price: 0
-              },
-              {
-                placeId: '922',
-                placeName: '국립중앙박물관',
-                category: '박물관',
-                duration: 120,
-                music_bool: false,
-                price: 3000
-              }
-            ],
-            travelSegments: [{ distance: 4.8 }, { distance: 3.3 }]
+  const [name, setName] = useState("");
+  const [id, setId] = useState("");
+  const [travelRecords, setTravelRecords] = useState([]); // 여행 기록을 저장하는 배열
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("name");
+    const storedId = localStorage.getItem("id");
+
+    if (storedName && storedId) {
+      setName(storedName);
+      setId(storedId);
+    } else {
+      console.error("No user data found in localStorage");
+    }
+  }, []);
+
+  // 접속 시 데이터 요청
+  useEffect(() => {
+    if (id) {
+      fetch(`http://localhost:8888/trips/account/${id}/all`)
+        .then(response => {
+          console.log('Raw response:', response);
+          return response.json(); // JSON으로 변환
+        })
+        .then(data => {
+          console.log('Parsed data:', data); // 파싱된 데이터 확인
+          if (Array.isArray(data) && data.length > 0) {
+            setTravelRecords(data); // 배열 데이터를 그대로 저장
+          } else {
+            console.error("No valid travel records found");
           }
-        ]
-      },
-      {
-        tripName: '부산 여행',
-        location: '부산',
-        itinerary: [
-          {
-            dayNumber: 1,
-            places: [
-              {
-                placeId: '105',
-                placeName: '해운대 해수욕장',
-                category: '해변',
-                duration: 90,
-                music_bool: true,
-                song_title: '여름바다',
-                artist_name: '태연',
-                price: 5000
-              },
-              {
-                placeId: '106',
-                placeName: '광안리 해변',
-                category: '해변',
-                duration: 120,
-                music_bool: true,
-                song_title: '바다의 노래',
-                artist_name: '이문세',
-                price: 0
-              }
-            ],
-            travelSegments: [{ distance: 1.2 }]
-          },
-          {
-            dayNumber: 2,
-            places: [
-              {
-                placeId: '107',
-                placeName: '부산 타워',
-                category: '전망대',
-                duration: 60,
-                music_bool: false,
-                price: 10000
-              },
-              {
-                placeId: '108',
-                placeName: '자갈치 시장',
-                category: '시장',
-                duration: 120,
-                music_bool: false,
-                price: 2000
-              },
-              {
-                placeId: '109',
-                placeName: '부산 영화의 전당',
-                category: '극장',
-                duration: 150,
-                music_bool: true,
-                song_title: '영화 속의 주인공',
-                artist_name: '김동률',
-                price: 15000
-              }
-            ],
-            travelSegments: [{ distance: 3.0 }]
-          }
-        ]
-      },
-      {
-        tripName: '제주 여행',
-        location: '제주',
-        itinerary: [
-          {
-            dayNumber: 1,
-            places: [
-              {
-                placeId: '201',
-                placeName: '성산 일출봉',
-                category: '자연',
-                duration: 180,
-                music_bool: false,
-                price: 2000
-              },
-              {
-                placeId: '202',
-                placeName: '섭지코지',
-                category: '해안지형',
-                duration: 120,
-                music_bool: true,
-                song_title: '섬으로 떠나는 여행',
-                artist_name: '정승환',
-                price: 3000
-              }
-            ],
-            travelSegments: [{ distance: 5.0 }]
-          },
-          {
-            dayNumber: 2,
-            places: [
-              {
-                placeId: '203',
-                placeName: '한라산 등반',
-                category: '산',
-                duration: 360,
-                music_bool: false,
-                price: 0
-              },
-              {
-                placeId: '204',
-                placeName: '우도',
-                category: '섬',
-                duration: 300,
-                music_bool: false,
-                price: 3000
-              },
-              {
-                placeId: '205',
-                placeName: '제주 돌문화공원',
-                category: '박물관',
-                duration: 120,
-                music_bool: true,
-                song_title: '바람과 돌',
-                artist_name: '박효신',
-                price: 4000
-              }
-            ],
-            travelSegments: [{ distance: 1.5 }]
-          }
-        ]
-      }
-    ]
-  });
+        })
+        .catch(error => console.error("Error fetching travel records:", error));
+    }
+  }, [id]);
 
   const toggleDetails = (index) => {
-    setTravelRecords((prevRecords) => ({
-      ...prevRecords,
-      route: prevRecords.route.map((record, i) =>
+    setTravelRecords((prevRecords) =>
+      prevRecords.map((record, i) =>
         i === index ? { ...record, showDetails: !record.showDetails } : record
       )
-    }));
+    );
   };
 
   return (
@@ -259,24 +63,23 @@ const MyPage = () => {
       </Header>
       <Content>
         <TravelCount>
-          총 <Highlight>{travelRecords.route.length}</Highlight>번 여행을 다녀왔어요
+          총 <Highlight>{travelRecords.length}</Highlight>번 여행을 다녀왔어요
         </TravelCount>
-        {travelRecords.route.map((record, index) => (
+        {travelRecords.map((record, index) => (
           <TravelRecord key={index}>
             <TravelSummary>
               <TravelInfo>
-                <TravelName>
-                  <Location>{record.location}</Location> {record.tripName}
-                </TravelName>
+                <TravelName>{record.tripName}</TravelName> {/* 여행 이름 표시 */}
               </TravelInfo>
               <MoreButton onClick={() => toggleDetails(index)}>
                 {record.showDetails ? '닫기' : '더보기'}
               </MoreButton>
             </TravelSummary>
-  
-            {record.showDetails && (
+
+            {/* 여행의 상세 정보 표시 */}
+            {record.showDetails && record.tripData?.itinerary && (
               <DayBox>
-                {record.itinerary.map((day, dayIndex) => (
+                {record.tripData.itinerary.map((day, dayIndex) => (
                   <DayContainer key={dayIndex}>
                     <Day>{day.dayNumber}일차</Day>
                     {day.places.map((place, placeIndex) => (
@@ -323,7 +126,6 @@ const MyPage = () => {
 };
 
 export default MyPage;
-
 
 const Container = styled.div`
   display: flex;

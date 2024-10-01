@@ -33,7 +33,7 @@ const InitialPage = () => {
 
     return (
         <Container>
-            <Message style={{marginBottom:"7%"}}>당신을 위한 사운드 트립 큐레이션 서비스</Message>
+            <Message style={{marginBottom:"7%"}}>당신을 위한 사운드 트립 서비스</Message>
             <img
                 style={{width: "55%", marginBottom:"20%"}}
                 src={process.env.PUBLIC_URL + `asset/logo/logo.png`}
