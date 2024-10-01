@@ -8,9 +8,11 @@ const RouteRecommend = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
+  
   // 처음에는 location.state에서 데이터를 가져오고, 이후에는 localStorage에서 복원
   const initialDestination = location.state?.selectedDestination || JSON.parse(localStorage.getItem('selectedDestination'));
   const [selectedDestination, setSelectedDestination] = useState(initialDestination);
+  const [flightPrice, setFlightPrice] = useState(location.state?.flightPrice || 0);
 
   const { travelsurveyData, setTravelSurveyData } = useContext(TravelSurveyContext);
 
@@ -60,10 +62,12 @@ const RouteRecommend = () => {
       // 페이지가 로드될 때 localStorage에서 name과 id를 가져오기
       const storedName = localStorage.getItem("name");
       const storedId = localStorage.getItem("id");
+      const flightPrice = Number(localStorage.getItem("flightprice"));
 
       if (storedName && storedId) {
           setName(storedName);
           setId(storedId);
+          setFlightPrice(flightPrice);
       } else {
           console.error("No user data found in localStorage");
       }
@@ -98,8 +102,8 @@ const RouteRecommend = () => {
         const baseCost = selectedDestination.itinerary.reduce((acc, day) => {
           return acc + day.places.reduce((dayAcc, place) => dayAcc + place.price, 0);
         }, 0);
-        const additionalCost = totalDays * (foodCostPerDay + carRentalCostPerDay); // 식비와 렌터카 비용 추가
-        setTotalPrice(baseCost + additionalCost);
+        const additionalCost = totalDays * (foodCostPerDay + carRentalCostPerDay) + flightPrice; // 식비와 렌터카 비용 추가
+        setTotalPrice(baseCost + additionalCost); // 총 여행 경비 계산
   
         // 여행지의 모든 spotify_id를 모아서 trackQueue에 저장
         const allTracks = [];
@@ -230,20 +234,20 @@ const RouteRecommend = () => {
 
   const handleFixRouteClick = async () => {
     try {
-      const response = await fetch('http://localhost:8888/saveItinerary', { // 서버 URL을 적절히 변경
+      const response = await fetch('http://localhost:8888/trips/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          accountId: id,  // `userId` 대신 `accountId`
+          accountId: id,
           tripName: tripName,
           tripData: {
-            itinerary: selectedDestination.itinerary  // itinerary 필드로 감싸서 보냄
+            itinerary: selectedDestination.itinerary
           }
         }),
       });
-
+  
       console.log(JSON.stringify({
         accountId: id,
         tripName: tripName,
@@ -251,22 +255,23 @@ const RouteRecommend = () => {
           itinerary: selectedDestination.itinerary
         }
       }));
-
+  
+      // 응답이 성공적이고, 응답 본문이 있으면 처리
       if (response.ok) {
-        const data = await response.json();
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};  // 응답이 비어있으면 빈 객체로 처리
         console.log('여행 경로 저장 성공:', data);
-
+  
         // 저장 성공 후 경로 이동
         navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
       } else {
-        navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
         console.error('여행 경로 저장 실패:', response.statusText);
+        navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
       }
     } catch (error) {
-      navigate('/routefix', { state: { itinerary: selectedDestination.itinerary } });
       console.error('서버 요청 중 오류 발생:', error);
     }
-};
+  };
 
   const handleImageError = (e) => {
     e.target.src = `${process.env.PUBLIC_URL}/asset/noimage.png`;
@@ -293,6 +298,7 @@ const RouteRecommend = () => {
             <>
               <Image src={imageUrl} alt={currentPlace.placeName} onError={handleImageError} />
               <DetailsContainer>
+                <Category>{currentPlace.category}</Category>
                 <DestName>{currentPlace.placeName}</DestName>
                 <DetailButton onClick={handleDetailClick}>
                   자세히 보기
@@ -315,7 +321,8 @@ const RouteRecommend = () => {
             예상 경비 | {totalPrice.toLocaleString()}원
             <AdditionalCosts>
               식비: {foodCostPerDay.toLocaleString()}원/일<br />
-              렌터카: {carRentalCostPerDay.toLocaleString()}원/일
+              렌터카: {carRentalCostPerDay.toLocaleString()}원/일<br />
+              항공권: {flightPrice.toLocaleString()}원
             </AdditionalCosts>
           </TotalPriceContainer>
           {selectedDestination?.itinerary.map((day) => (
@@ -324,12 +331,16 @@ const RouteRecommend = () => {
                 <Day>{`${day.dayNumber}일차`}</Day>
                 <TravelPathContainer>
                   <PathLine>
-                    {day.places.map((place, index) => (
-                      <React.Fragment key={place.placeId}>
+                  {day.places.map((place, index) => (
+                    <React.Fragment key={`${place.placeId}-${index}`}>
                         <Circle onClick={() => handleCircleClick(day.dayNumber, place)} isSelected={place.placeId === currentPlace?.placeId}>
-                          <VisitTime isSelected={place.placeId === currentPlace?.placeId}>{place.duration}분</VisitTime>
-                          <div>{place.placeName}</div>
-                          <PriceTag>{place.price.toLocaleString()}원</PriceTag>
+                            {place.duration !== null && (
+                                <VisitTime isSelected={place.placeId === currentPlace?.placeId}>
+                                    {place.duration}분
+                                </VisitTime>
+                            )}
+                            <div>{place.placeName}</div>
+                            <PriceTag>{place.price}원</PriceTag>
                         </Circle>
                         {index < day.places.length - 1 && (
                           <Line>{day.travelSegments[index]?.distance.toFixed(2)}km</Line>
@@ -442,6 +453,13 @@ const DestName = styled.div`
   font-family: "Pretendard-ExtraBold";
   font-size: 18px;
   color: #252a2f;
+`;
+
+const Category = styled.div`
+  font-family: "Pretendard-Bold";
+  font-size: 15px;
+  color: #FF8A1D;
+  border-radius: 15px;
 `;
 
 const DetailButton = styled.button`
@@ -574,6 +592,7 @@ const Circle = styled.div`
   color: ${props => (props.isSelected ? '#FAFAFA' : '#252a2f')};
   border: none;
   font-family: "Pretendard-Bold";
+  min-height: 70px;
   font-size: 13px;
   flex-shrink: 0;
   padding: 12px;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import { set } from 'date-fns';
 
 const SelectRoute = () => {
     const [travelDestinations, setTravelDestinations] = useState([]);
@@ -9,279 +10,39 @@ const SelectRoute = () => {
     const [name, setName] = useState("");
     const [id, setId] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [flightPrice, setFlightPrice] = useState(0);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedName = localStorage.getItem("name");
-        const storedId = localStorage.getItem("id");
-
-        if (storedName && storedId) {
-            setName(storedName);
-            setId(storedId);
-        } else {
-            console.error("No user data found in localStorage");
-        }
-    }, []);
-
-    // useEffect(() => {
-    //     const storedRecommendations = localStorage.getItem('travelRecommendations');
-        
-    //     if (storedRecommendations) {
-    //         const recommendations = JSON.parse(storedRecommendations);
-    //         setTravelDestinations(recommendations);
-    //         console.log("Loaded travel recommendations:", recommendations);  // 데이터 로드 확인
-    
-    //         // DayIndexByRoute 설정
-    //         const initialDayIndex = {};
-    //         recommendations.forEach((_, idx) => {
-    //             initialDayIndex[idx] = 0;
-    //         });
-    //         setDayIndexByRoute(initialDayIndex);
-    //     }
-    // }, []);
+      const storedName = localStorage.getItem("name");
+      const storedId = localStorage.getItem("id");
+      const flightPrice = Number(localStorage.getItem("flightprice")); // flightPrice를 숫자로 변환
+  
+      if (storedName && storedId) {
+          setName(storedName);
+          setId(storedId);
+          setFlightPrice(flightPrice);
+      } else {
+          console.error("No user data found in localStorage");
+      }
+  }, []);
 
     useEffect(() => {
-        const dummyData = {
-            "recommendations": [
-                {
-                    "candidates": 1,
-                    "itinerary": [
-                        {
-                            "dayNumber": 1,
-                            "places": [
-                                {
-                                    "placeId": "802",
-                                    "placeName": "남산서울타워",
-                                    "category": "관광지",
-                                    "duration": 120,
-                                    "order": 1,
-                                    "new_order": 1,
-                                    "timeOfDay": "아침",
-                                    "music_bool": true,
-                                    "top_musicId": "우리의 새벽은 낮보다 뜨겁다_7789",
-                                    "song_title": "우리의 새벽은 낮보다 뜨겁다",
-                                    "artist_name": "세븐틴 (SEVENTEEN)",
-                                    "spotify_id": "2EGRE8lyfRRGuq7spra3eR",
-                                    "price": 10000
-                                },
-                                {
-                                    "placeId": "777",
-                                    "placeName": "경복궁",
-                                    "category": "역사 유적지",
-                                    "duration": 120,
-                                    "order": 2,
-                                    "new_order": 2,
-                                    "timeOfDay": "오후",
-                                    "music_bool": true,
-                                    "top_musicId": "obonda_6088",
-                                    "song_title": "obonda",
-                                    "artist_name": "Tusken",
-                                    "spotify_id": "2kmjwoyyDF3FGVbuXmLens",
-                                    "price": 3000
-                                }
-                            ],
-                            "travelSegments": [
-                                {
-                                    "distance": 3.2
-                                }
-                            ]
-                        },
-                        {
-                            "dayNumber": 2,
-                            "places": [
-                                {
-                                    "placeId": "829",
-                                    "placeName": "북촌한옥마을",
-                                    "category": "전통 마을",
-                                    "duration": 120,
-                                    "order": 3,
-                                    "new_order": 3,
-                                    "timeOfDay": "밤",
-                                    "music_bool": true,
-                                    "top_musicId": "Peaceful Wood_3994",
-                                    "song_title": "Peaceful Wood",
-                                    "artist_name": "Graig Camewell",
-                                    "spotify_id": "77IwPfYgetVTqvF1CBoNO9",
-                                    "price": 0
-                                },
-                                {
-                                    "placeId": "808",
-                                    "placeName": "동대문디자인플라자(DDP",
-                                    "category": "문화시설",
-                                    "duration": 120,
-                                    "order": 4,
-                                    "new_order": null,
-                                    "timeOfDay": "밤",
-                                    "music_bool": false,
-                                    "top_musicId": null,
-                                    "song_title": null,
-                                    "artist_name": null,
-                                    "spotify_id": null,
-                                    "price": 15000
-                                }
-                            ],
-                            "travelSegments": [
-                                {
-                                    "distance": 4.7
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "candidates": 2,
-                    "itinerary": [
-                        {
-                            "dayNumber": 1,
-                            "places": [
-                                {
-                                    "placeId": "791",
-                                    "placeName": "남산공원",
-                                    "category": "공원",
-                                    "duration": 120,
-                                    "order": 1,
-                                    "new_order": 1,
-                                    "timeOfDay": "오후",
-                                    "music_bool": true,
-                                    "top_musicId": "크리스마스 노래_8138",
-                                    "song_title": "크리스마스 노래",
-                                    "artist_name": "4minute",
-                                    "spotify_id": "0k0FrlcGxU31Ibwi3ZKcne",
-                                    "price": 0
-                                },
-                                {
-                                    "placeId": "1194",
-                                    "placeName": "롯데면세점 명동본점",
-                                    "category": "상업지구",
-                                    "duration": 120,
-                                    "order": 2,
-                                    "new_order": 2,
-                                    "timeOfDay": "오후",
-                                    "music_bool": true,
-                                    "top_musicId": "Bright Blue Skies_736",
-                                    "song_title": "Bright Blue Skies",
-                                    "artist_name": "Mitch James",
-                                    "spotify_id": "5zxwumO0laRosoeOvbVSvc",
-                                    "price": 0
-                                }
-                            ],
-                            "travelSegments": [
-                                {
-                                    "distance": 2.5
-                                }
-                            ]
-                        },
-                        {
-                            "dayNumber": 2,
-                            "places": [
-                                {
-                                    "placeId": "878",
-                                    "placeName": "인사동 문화의거리",
-                                    "category": "전통 문화 거리",
-                                    "duration": 120,
-                                    "order": 3,
-                                    "new_order": 3,
-                                    "timeOfDay": "오후",
-                                    "music_bool": true,
-                                    "top_musicId": null,
-                                    "song_title": null,
-                                    "artist_name": null,
-                                    "spotify_id": null,
-                                    "price": 0
-                                },
-                                {
-                                    "placeId": "903",
-                                    "placeName": "청계천헌책방거리",
-                                    "category": "산책로",
-                                    "duration": 120,
-                                    "order": 4,
-                                    "new_order": null,
-                                    "timeOfDay": "밤",
-                                    "music_bool": false,
-                                    "top_musicId": null,
-                                    "song_title": null,
-                                    "artist_name": null,
-                                    "spotify_id": null,
-                                    "price": 0
-                                }
-                            ],
-                            "travelSegments": [
-                                {
-                                    "distance": 3.9
-                                }
-                            ]
-                        },
-                        {
-                            "dayNumber": 3,
-                            "places": [
-                                {
-                                    "placeId": "786",
-                                    "placeName": "난지한강공원",
-                                    "category": "공원",
-                                    "duration": 120,
-                                    "order": 1,
-                                    "new_order": 1,
-                                    "timeOfDay": "아침",
-                                    "music_bool": true,
-                                    "top_musicId": "이 노래_5012",
-                                    "song_title": "이 노래",
-                                    "artist_name": "2AM",
-                                    "spotify_id": "26T2nw3lmciAUmk43Yimih",
-                                    "price": 0
-                                },
-                                {
-                                    "placeId": "923",
-                                    "placeName": "전쟁기념관 어린이박물관",
-                                    "category": "역사 유적지",
-                                    "duration": 120,
-                                    "order": 2,
-                                    "new_order": 2,
-                                    "timeOfDay": "오전",
-                                    "music_bool": true,
-                                    "top_musicId": "역사 속으로_7789",
-                                    "song_title": "Let Me Know",
-                                    "artist_name": "LANY",
-                                    "spotify_id": "7DMPq3XndRJaj6NTINsLOz",
-                                    "price": 0
-                                },
-                                {
-                                    "placeId": "922",
-                                    "placeName": "국립중앙박물관",
-                                    "category": "박물관",
-                                    "duration": 120,
-                                    "order": 3,
-                                    "new_order": 3,
-                                    "timeOfDay": "오후",
-                                    "music_bool": true,
-                                    "top_musicId": null,
-                                    "song_title": null,
-                                    "artist_name": null,
-                                    "spotify_id": null,
-                                    "price": 3000
-                                }
-                            ],
-                            "travelSegments": [
-                                {
-                                    "distance": 4.8
-                                },
-                                {
-                                    "distance": 3.3
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
-
-        setTravelDestinations(dummyData.recommendations);
-
-        const initialDayIndex = {};
-        dummyData.recommendations.forEach((_, idx) => {
-            initialDayIndex[idx] = 0; // 각 후보(candidates)의 1일차를 기본값으로 설정
-        });
-        setDayIndexByRoute(initialDayIndex);
+        const storedRecommendations = localStorage.getItem('travelRecommendations');
+        
+        if (storedRecommendations) {
+            const recommendations = JSON.parse(storedRecommendations);
+            setTravelDestinations(recommendations);
+            console.log("Loaded travel recommendations:", recommendations);  // 데이터 로드 확인
+    
+            // DayIndexByRoute 설정
+            const initialDayIndex = {};
+            recommendations.forEach((_, idx) => {
+                initialDayIndex[idx] = 0;
+            });
+            setDayIndexByRoute(initialDayIndex);
+        }
     }, []);
 
     const calculateTotalPrice = (itinerary) => {
@@ -294,7 +55,7 @@ const SelectRoute = () => {
         const totalDays = itinerary.length;
         
         // 기본 가격에 추가 비용(일자별 추가 비용) 더하기
-        return basePrice + (additionalCostPerDay * totalDays);
+        return basePrice + (additionalCostPerDay * totalDays) + flightPrice;
     };
 
     const handleFixRouteClick = async () => {
@@ -349,9 +110,11 @@ const SelectRoute = () => {
     };
 
     const handleDetailClick = (candidateIndex) => {
-        navigate('/recommend', { state: { selectedDestination: travelDestinations[candidateIndex] } });
-        console.log(travelDestinations[candidateIndex]);
-    };
+      const destination = travelDestinations[candidateIndex];
+      const storedFlightPrice = Number(localStorage.getItem('flightprice'));
+  
+      navigate('/recommend', { state: { selectedDestination: destination, flightPrice: storedFlightPrice } });
+  };
 
     return (
         <Container>
@@ -391,7 +154,9 @@ const SelectRoute = () => {
                                     {route.itinerary[dayIndexByRoute[candidateIndex]]?.places?.map((destination, i) => (
                                         <React.Fragment key={destination.placeId}>
                                             <Circle>
+                                            {destination.duration !== null && (
                                                 <VisitTime>{destination.duration}분</VisitTime>
+                                            )}
                                                 <div>{destination.placeName}</div>
                                             </Circle>
                                             {i < route.itinerary[dayIndexByRoute[candidateIndex]].places.length - 1 && (

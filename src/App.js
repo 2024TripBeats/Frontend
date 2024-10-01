@@ -46,9 +46,6 @@ import DetailPage from './component/page/DetailPage';
 import RouteFix from './component/page/RouteFix';
 import SelectRoute from './component/page/SelectRoute';
 
-import Spotify from './component/page/Spotify';
-import SpotifyLogin from './component/page/SpotifyLogin';
-
 const AllGlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Pretendard-ExtraBold';
@@ -155,8 +152,6 @@ const App = () => {
                   <Route path="/community" element={<Community />} />
                   <Route path="/write" element={<CommunityWrite />} />
                   <Route path="/post/:postId" element={<CommunityPost />} />
-                  <Route path="spotify" element={<Spotify />} />
-                  <Route path="spotifylogin" element={<SpotifyLogin />} />
                   <Route path="/selectroute" element={<SelectRoute />} />
                 </Routes>
               </Content>

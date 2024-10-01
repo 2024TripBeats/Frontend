@@ -73,8 +73,8 @@ const Home = () => {
           <Image src={process.env.PUBLIC_URL + `asset/ad/myeongdong.png`} />
         </ImageContainer>
         <DotsContainer>
-          <Dot active={currentImageIndex === 0} onClick={() => handleDotClick(0)} />
-          <Dot active={currentImageIndex === 1} onClick={() => handleDotClick(1)} />
+          <Dot active={currentImageIndex === 0 ? "true" : "false"} onClick={() => handleDotClick(0)} />
+          <Dot active={currentImageIndex === 1 ? "true" : "false"} onClick={() => handleDotClick(1)} />
         </DotsContainer>
       </AdContainer>
       <Message>{name}님, 여행을 시작해볼까요?</Message>
@@ -162,11 +162,14 @@ const DotsContainer = styled.div`
   align-items: center;
 `;
 
-const Dot = styled.div`
+const Dot = styled.div.attrs(props => ({
+  // 'active'를 DOM에 전달하지 않도록 설정
+  active: props.active ? undefined : undefined,
+}))`
   width: 10px;
   height: 10px;
   margin: 0 5px;
-  background-color: ${props => (props.active ? "#FF8A1D" : "#ddd")};
+  background-color: ${props => (props.active ? "#FF8A1D" : "#ddd")}; /* active에 따라 색상 변경 */
   border-radius: 50%;
   cursor: pointer;
 `;

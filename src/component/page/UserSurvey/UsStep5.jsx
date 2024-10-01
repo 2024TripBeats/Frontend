@@ -81,7 +81,6 @@ const UsStep5 = () => {
             tagOpenness: tagOpenness,
         };
 
-        console.log(surveyDataWithId);
         setUserSurveyData(surveyDataWithId);
 
         if (isButtonActive) {

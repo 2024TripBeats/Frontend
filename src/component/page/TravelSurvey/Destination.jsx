@@ -66,10 +66,10 @@ const Destination = () => {
           <DestinationName selected={selectedDestination === '제주'}>제주</DestinationName>
         </ImgContainer>
       </PickerContainer>
-      <Button 
-        active={isButtonActive}
-        onClick={handleNextClick}
-      >
+      <Button
+      active={isButtonActive ? true : undefined}  // undefined로 설정하여 DOM으로 전달되지 않도록 함
+      onClick={handleNextClick}
+    >
         다음으로
       </Button>
 
@@ -196,6 +196,7 @@ const Button = styled.button`
   color: #FAFAFA;
   cursor: ${props => (props.active ? 'pointer' : 'not-allowed')};
 `;
+
 
 const Overlay = styled.div`
   position: fixed;

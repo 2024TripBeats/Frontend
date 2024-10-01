@@ -23,11 +23,9 @@ const MyPage = () => {
     if (id) {
       fetch(`http://localhost:8888/trips/account/${id}/all`)
         .then(response => {
-          console.log('Raw response:', response);
           return response.json(); // JSON으로 변환
         })
         .then(data => {
-          console.log('Parsed data:', data); // 파싱된 데이터 확인
           if (Array.isArray(data) && data.length > 0) {
             setTravelRecords(data); // 배열 데이터를 그대로 저장
           } else {

@@ -72,7 +72,7 @@ const Community = () => {
         </ImageContainer>
         <AdText>서울 서비스<br />11월 Coming Soon!</AdText>
         <DotsContainer>
-          <Dot active={currentImageIndex === 0} onClick={() => handleDotClick(0)} />
+          <Dot active={currentImageIndex === 0 ? "true" : "false"} onClick={() => handleDotClick(0)} />
         </DotsContainer>
       </AdContainer>
 
@@ -197,7 +197,10 @@ const DotsContainer = styled.div`
   align-items: center;
 `;
 
-const Dot = styled.div`
+const Dot = styled.div.attrs(props => ({
+  // active 속성을 DOM에 전달하지 않음
+  active: props.active ? undefined : undefined,
+}))`
   width: 7px;
   height: 7px;
   margin: 0 5px;

@@ -6,7 +6,7 @@ import styled from "styled-components";
 const LoginHandler = (props) => {
   const navigate = useNavigate();
   const code = new URL(window.location.href).searchParams.get("code");
-  const KAKAO_AUTH_BACK = `http://localhost:8888/login/oauth2/callback/kakao`;
+  const KAKAO_AUTH_BACK = process.env.REACT_APP_KAKAO_AUTH_BACK || `http://localhost:8888/login/oauth2/callback/kakao`;
 
   useEffect(() => {
     const kakaoLogin = async () => {

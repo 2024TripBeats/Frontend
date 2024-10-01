@@ -54,8 +54,6 @@ const UsStep2 = () => {
 
   const allSelected = desranks.every(rank => rank !== null);
 
-  console.log(desranks)
-
   return (
     <Container>
       <LogoContainer>
@@ -74,27 +72,27 @@ const UsStep2 = () => {
       <PickerContainer>
         <ImgContainer>
           <ImgPicker onClick={() => handleClick(0)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img1.png`} />
+            <Img src={process.env.PUBLIC_URL + `https://api.cdn.visitjeju.net/photomng/thumbnailpath/202012/16/5975e5f4-541b-4549-9048-d25f017d8caa.jpg`} />
             {desranks[0] && <RankBadge>{desranks[0]}</RankBadge>}
           </ImgPicker>
           <ImgPicker onClick={() => handleClick(1)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img2.png`} />
+            <Img src={process.env.PUBLIC_URL + `https://api.cdn.visitjeju.net/photomng/thumbnailpath/202111/18/4717f6a8-b2c2-48ce-a7f1-220eb36ca05d.jpg`} />
             {desranks[1] && <RankBadge>{desranks[1]}</RankBadge>}
           </ImgPicker>
         </ImgContainer>
         <ImgContainer>
           <ImgPicker onClick={() => handleClick(2)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img3.png`} />
+            <Img src={process.env.PUBLIC_URL + `https://api.cdn.visitjeju.net/photomng/thumbnailpath/202304/06/d374c397-e147-4a01-932d-f5004de0adc3.JPG`} />
             {desranks[2] && <RankBadge>{desranks[2]}</RankBadge>}
           </ImgPicker>
           <ImgPicker onClick={() => handleClick(3)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img4.png`} />
+            <Img src={process.env.PUBLIC_URL + `https://api.cdn.visitjeju.net/photomng/thumbnailpath/202002/24/8969daee-4c0b-42af-945a-0da772cd3cb4.JPG`} />
             {desranks[3] && <RankBadge>{desranks[3]}</RankBadge>}
           </ImgPicker>
         </ImgContainer>
         <ImgContainer>
           <ImgPicker onClick={() => handleClick(4)}>
-            <Img src={process.env.PUBLIC_URL + `/asset/survey/img5.png`} />
+            <Img src={process.env.PUBLIC_URL + `https://api.cdn.visitjeju.net/photomng/thumbnailpath/201804/30/01709868-685e-4fc2-b2ef-728ccdde9fc6.jpg`} />
             {desranks[4] && <RankBadge>{desranks[4]}</RankBadge>}
           </ImgPicker>
           <ImgPicker style={{ visibility: "hidden" }}>
@@ -148,6 +146,8 @@ const ImgPicker = styled.div`
   display: flex;
   position: relative;
   flex: 1;
+  width: 150px;  // 원하는 고정 크기 설정
+  height: 120px; // 원하는 고정 크기 설정
 `;
 
 const ImgContainer = styled.div`
@@ -163,9 +163,11 @@ const ImgContainer = styled.div`
 
 const Img = styled.img`
   width: 100%;
+  height: 100%;
   border-radius: 5%;
   position: relative;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  object-fit: cover;  // 이미지를 잘라서 고정 크기에 맞춤
 `;
 
 const RankBadge = styled.div`

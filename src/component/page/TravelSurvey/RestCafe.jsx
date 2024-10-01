@@ -30,7 +30,7 @@ const RestCafe = () => {
     if (selectedRestaurants.length > 0 && selectedCafes.length > 0) {
       setTravelSurveyData({
         ...travelsurveyData,
-        requiredRestText: requiredRestText || null,
+        requiredRestText: requiredRestText || "",
         cafe: selectedCafes,
       });
       navigate('/preferlocation');

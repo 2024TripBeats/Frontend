@@ -51,6 +51,9 @@ const SelectDate = () => {
       
       const data = await response.json();
       setTicketPrice(data);
+      localStorage.setItem('flightprice', data);
+      console.log(data)
+
     } catch (error) {
       console.error('Error fetching ticket price:', error);
     }
@@ -201,13 +204,16 @@ const PriceTag = styled.div`
 `;
 
 /* 나머지 스타일은 그대로 유지 */
-const Container = styled.div`
+const Container = styled.div.attrs(props => ({
+  isScrollable: undefined // DOM에 전달되지 않도록 undefined로 설정
+}))`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: #FAFAFA;
   box-sizing: border-box;
   margin-bottom: 70px;
+  overflow-y: ${props => (props.isScrollable ? 'scroll' : 'hidden')}; /* isScrollable 사용 */
 `;
 
 const LogoContainer = styled.div`

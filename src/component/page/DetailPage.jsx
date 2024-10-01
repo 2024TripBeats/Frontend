@@ -90,12 +90,20 @@ const DetailPage = () => {
 
   // 시간 정보를 파싱해서 평일과 주말 데이터를 각각 표시
   const renderTime = () => {
-    if (destination.time && Array.isArray(destination.time)) {
-      return destination.time.map((time, index) => (
-        <InfoText key={index}>⏰ {time}</InfoText>
+    if (destination.time && destination.time !== 'None') {  // 'None'을 확인하는 조건 추가
+      // 문자열에서 불필요한 부분을 제거 (예: 대괄호와 따옴표)
+      const cleanedTime = destination.time
+        .replace(/[\[\]']/g, '') // 대괄호와 작은따옴표 제거
+        .split(', '); // 항목별로 나누기
+  
+      // 각 항목을 줄바꿈해서 렌더링
+      return cleanedTime.map((time, index) => (
+        <InfoText key={index}>
+          ⏰ {time}
+        </InfoText>
       ));
     }
-    return null;
+    return null;  // 'None'이거나 데이터가 없으면 렌더링하지 않음
   };
 
   // null 값이 아닌 경우만 렌더링하는 함수

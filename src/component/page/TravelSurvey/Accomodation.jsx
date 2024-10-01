@@ -22,7 +22,7 @@ const Accomodation = () => {
     if (selectedAccommodations.length > 0 && accomPriority) {
       setTravelSurveyData({
         ...travelsurveyData,
-        requiredAccomText: requiredAccomText || null,
+        requiredAccomText: requiredAccomText || "",
         accompriority: accomPriority,
       });
       navigate('/restcafe');
