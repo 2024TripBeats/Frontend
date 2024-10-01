@@ -98,8 +98,8 @@ const MyPage = () => {
                                   src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'}
                                   alt='music-icon'
                                 />
-                                <MusicTitle>{place.song_title}</MusicTitle>
-                                <MusicSinger>{place.artist_name}</MusicSinger>
+                                <MusicTitle>{place.musicName}</MusicTitle>
+                                <MusicSinger>{place.musicArtist}</MusicSinger>
                               </MusicContainer>
                             )}
                           </TravelDetails>

@@ -220,7 +220,7 @@ const RouteFix = () => {
                     {destination.price > 0 && (
                       <PriceInfo>예상 경비 | {destination.price.toLocaleString()}원</PriceInfo>
                     )}
-                    {destination.musicBool && (
+                    {destination.music_bool && (
                       <MusicContainer>
                         <img style={{ width: "14px" }} src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'} alt="music-icon" />
                         <MusicTitle>{destination.musicName}</MusicTitle>

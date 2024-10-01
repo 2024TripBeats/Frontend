@@ -30,6 +30,7 @@ const SelectRoute = () => {
     // 추천 경로 가져오기
     useEffect(() => {
         const storedRecommendations = localStorage.getItem('travelRecommendations');
+        console.log(storedRecommendations);
         
         if (storedRecommendations) {
             const parsedData = JSON.parse(storedRecommendations);

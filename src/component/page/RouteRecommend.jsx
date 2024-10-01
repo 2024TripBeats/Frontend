@@ -109,8 +109,8 @@ const RouteRecommend = () => {
         const allTracks = [];
         selectedDestination.itinerary.forEach(day => {
           day.places.forEach(place => {
-            if (place.spotifyId && place.spotifyId.length === 22) {
-              allTracks.push(`spotify:track:${place.spotifyId}`);
+            if (place.spotify_id && place.spotify_id.length === 22) {
+              allTracks.push(`spotify:track:${place.spotify_id}`);
             }
           });
         });
@@ -302,7 +302,7 @@ const RouteRecommend = () => {
                 <DetailButton onClick={handleDetailClick}>
                   자세히 보기
                 </DetailButton>
-                {currentPlace.spotifyId && (
+                {currentPlace.spotify_id && (
                   <MusicContainer>
                     <img style={{ width: "20px" }} src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'} alt='music play icon' />
                     <MusicBox>
