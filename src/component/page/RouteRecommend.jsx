@@ -29,7 +29,7 @@ const RouteRecommend = () => {
   const tripName = localStorage.getItem('tripName');
 
   const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-  const REDIRECT_URI = "http://localhost:8000/callback"; // FastAPI 콜백 URL
+  const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI; // FastAPI 콜백 URL
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
   const RESPONSE_TYPE = "code";
   const SCOPES = [
@@ -49,10 +49,10 @@ const RouteRecommend = () => {
     // 자세히 보기 detail 페이지 이동
     const handleDetailClick = () => {
       if (currentPlace) {
-        fetch(`http://localhost:8888/spots/${currentPlace.placeName}`)
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/spots/${currentPlace.placeId}/detail-v2`)
           .then((response) => response.json()) // Already parsed JSON
           .then((data) => {
-            navigate(`/detail/${currentPlace.placeName}`, { state: { destination: data } });
+            navigate(`/detail/${currentPlace.placeId}`, { state: { destination: data } });
           })
           .catch((error) => console.error('Error fetching destination details:', error));
       }
@@ -105,12 +105,12 @@ const RouteRecommend = () => {
         const additionalCost = totalDays * (foodCostPerDay + carRentalCostPerDay) + flightPrice; // 식비와 렌터카 비용 추가
         setTotalPrice(baseCost + additionalCost); // 총 여행 경비 계산
   
-        // 여행지의 모든 spotify_id를 모아서 trackQueue에 저장
+        // 여행지의 모든 spotifyId를 모아서 trackQueue에 저장
         const allTracks = [];
         selectedDestination.itinerary.forEach(day => {
           day.places.forEach(place => {
-            if (place.spotify_id && place.spotify_id.length === 22) {
-              allTracks.push(`spotify:track:${place.spotify_id}`);
+            if (place.spotifyId && place.spotifyId.length === 22) {
+              allTracks.push(`spotify:track:${place.spotifyId}`);
             }
           });
         });
@@ -210,10 +210,9 @@ const RouteRecommend = () => {
       }
     };
   
-
   useEffect(() => {
     if (currentPlace) {
-      fetch(`http://localhost:8888/spots/${currentPlace.placeName}/image`)
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/spots/${currentPlace.placeId}/image-v2`)
         .then((response) => response.text())
         .then((data) => setImageUrl(data))
         .catch((error) => console.error('Error fetching destination image:', error));
@@ -234,7 +233,7 @@ const RouteRecommend = () => {
 
   const handleFixRouteClick = async () => {
     try {
-      const response = await fetch('http://localhost:8888/trips/', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/trips/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -303,12 +302,12 @@ const RouteRecommend = () => {
                 <DetailButton onClick={handleDetailClick}>
                   자세히 보기
                 </DetailButton>
-                {currentPlace.spotify_id && (
+                {currentPlace.spotifyId && (
                   <MusicContainer>
                     <img style={{ width: "20px" }} src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'} alt='music play icon' />
                     <MusicBox>
-                      <MusicTitle>{currentPlace.song_title}</MusicTitle>
-                      <MusicSinger>{currentPlace.artist_name}</MusicSinger>
+                      <MusicTitle>{currentPlace.musicName}</MusicTitle>
+                      <MusicSinger>{currentPlace.musicArtist}</MusicSinger>
                     </MusicBox>
                   </MusicContainer>
                 )}
@@ -340,7 +339,7 @@ const RouteRecommend = () => {
                                 </VisitTime>
                             )}
                             <div>{place.placeName}</div>
-                            <PriceTag>{place.price}원</PriceTag>
+                            {place.price > 0 && <PriceTag>{place.price.toLocaleString()}원</PriceTag>}
                         </Circle>
                         {index < day.places.length - 1 && (
                           <Line>{day.travelSegments[index]?.distance.toFixed(2)}km</Line>

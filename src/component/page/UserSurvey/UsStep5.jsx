@@ -85,7 +85,7 @@ const UsStep5 = () => {
 
         if (isButtonActive) {
             try {
-                const response = await fetch('http://localhost:8888/surveys', {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/surveys`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

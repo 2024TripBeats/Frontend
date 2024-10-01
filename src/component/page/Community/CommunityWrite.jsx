@@ -37,7 +37,7 @@ const CommunityWrite = () => {
       setIsEditMode(true);
       const fetchPostData = async () => {
         try {
-          const response = await axios.get(`http://localhost:8888/posts/${postId}`);
+          const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/posts/${postId}`);
           const post = response.data.post || response.data;  // 응답 구조에 맞춰서 변경
           setCategory(post.category);
           setImage(post.image);
@@ -91,7 +91,7 @@ const CommunityWrite = () => {
 
   const handleEditPost = (formData) => {
     axios
-      .put(`http://localhost:8888/posts/${postId}`, formData)  // PATCH 대신 PUT 사용
+      .put(`${process.env.REACT_APP_API_BASE_URL}/posts/${postId}`, formData)  // PATCH 대신 PUT 사용
       .then(() => {
         navigate("/community");
       })
@@ -102,7 +102,7 @@ const CommunityWrite = () => {
 
   const handleCreatePost = (formData) => {
     axios
-      .post("http://localhost:8888/posts", formData)
+      .post(`${process.env.REACT_APP_API_BASE_URL}/posts`, formData)
       .then(() => {
         navigate("/community");
       })

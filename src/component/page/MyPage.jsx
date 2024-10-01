@@ -21,7 +21,7 @@ const MyPage = () => {
   // 접속 시 데이터 요청
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:8888/trips/account/${id}/all`)
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/trips/account/${id}/all`)
         .then(response => {
           return response.json(); // JSON으로 변환
         })

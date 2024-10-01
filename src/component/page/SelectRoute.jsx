@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
-import { set } from 'date-fns';
 
 const SelectRoute = () => {
     const [travelDestinations, setTravelDestinations] = useState([]);
-    const [selectedDestination, setSelectedDestination] = useState(null);
-    const [dayIndexByRoute, setDayIndexByRoute] = useState({});
+    const [selectedDayIndex, setSelectedDayIndex] = useState({}); // 각 경로의 선택된 날짜를 추적
     const [name, setName] = useState("");
     const [id, setId] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,37 +12,55 @@ const SelectRoute = () => {
 
     const navigate = useNavigate();
 
+    // 유저 정보 및 항공 가격 가져오기
     useEffect(() => {
-      const storedName = localStorage.getItem("name");
-      const storedId = localStorage.getItem("id");
-      const flightPrice = Number(localStorage.getItem("flightprice")); // flightPrice를 숫자로 변환
-  
-      if (storedName && storedId) {
-          setName(storedName);
-          setId(storedId);
-          setFlightPrice(flightPrice);
-      } else {
-          console.error("No user data found in localStorage");
-      }
-  }, []);
+        const storedName = localStorage.getItem("name");
+        const storedId = localStorage.getItem("id");
+        const flightPrice = Number(localStorage.getItem("flightprice"));
+    
+        if (storedName && storedId) {
+            setName(storedName);
+            setId(storedId);
+            setFlightPrice(flightPrice);
+        } else {
+            console.error("No user data found in localStorage");
+        }
+    }, []);
 
+    // 추천 경로 가져오기
     useEffect(() => {
         const storedRecommendations = localStorage.getItem('travelRecommendations');
         
         if (storedRecommendations) {
-            const recommendations = JSON.parse(storedRecommendations);
-            setTravelDestinations(recommendations);
-            console.log("Loaded travel recommendations:", recommendations);  // 데이터 로드 확인
-    
-            // DayIndexByRoute 설정
-            const initialDayIndex = {};
-            recommendations.forEach((_, idx) => {
-                initialDayIndex[idx] = 0;
-            });
-            setDayIndexByRoute(initialDayIndex);
+            const parsedData = JSON.parse(storedRecommendations);
+            const recommendations = parsedData.recommendations;
+
+            if (Array.isArray(recommendations)) {
+                setTravelDestinations(recommendations);
+
+                // 각 코스마다 0일차로 초기화
+                const initialDayIndex = recommendations.reduce((acc, _, idx) => {
+                    acc[idx] = 0; // 각 코스의 첫 번째 날짜로 초기화
+                    return acc;
+                }, {});
+                setSelectedDayIndex(initialDayIndex);
+            } else {
+                console.error("Recommendations is not an array");
+            }
         }
     }, []);
 
+    useEffect(() => {
+        // travelDestinations와 selectedDayIndex가 있을 때 데이터를 확인
+        if (travelDestinations.length > 0 && Object.keys(selectedDayIndex).length > 0) {
+            travelDestinations.forEach((route, routeIndex) => {
+                const selectedDay = selectedDayIndex[routeIndex];
+                console.log(`Route ${routeIndex + 1}, Day ${selectedDay + 1}:`, route.itinerary[selectedDay]);
+            });
+        }
+    }, [travelDestinations, selectedDayIndex]);
+
+    // 비용 계산
     const calculateTotalPrice = (itinerary) => {
         const basePrice = itinerary.reduce((total, day) => {
             const dayTotal = day.places.reduce((sum, place) => sum + place.price, 0);
@@ -54,67 +70,66 @@ const SelectRoute = () => {
         const additionalCostPerDay = 98696;
         const totalDays = itinerary.length;
         
-        // 기본 가격에 추가 비용(일자별 추가 비용) 더하기
         return basePrice + (additionalCostPerDay * totalDays) + flightPrice;
     };
 
-    const handleFixRouteClick = async () => {
+    // 코스 재추천 받기
+    const handleAgainClick = async () => {
         try {
-            // 기존 설문 데이터를 가져옴
-            const surveyData = JSON.parse(localStorage.getItem("surveyData"));
-            if (!surveyData) {
-                console.error("No survey data found");
-                return;
-            }
-
-            // 서버로 데이터 전송
-            const response = await fetch('http://localhost:8888/recommend/getAllFinalRecommendation', {
+            // localStorage에서 데이터를 가져와 JSON.parse()로 변환
+            const storedSurveyData = JSON.parse(localStorage.getItem('surveyData'));
+            console.log(storedSurveyData);  // 객체로 제대로 불러와졌는지 확인
+    
+            // 서버에 POST 요청을 보내서 새로운 추천 데이터 요청
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/recommend/getAllRecommendation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(surveyData),
+                body: JSON.stringify(storedSurveyData),  // 저장된 설문 데이터를 다시 서버로 보냄
             });
-
+    
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
+    
+            // 서버로부터 받은 새로운 추천 데이터를 로컬스토리지에 저장
             const result = await response.json();
-            console.log('Success:', result);
-
-            // 추천 데이터를 localStorage에 저장
+            console.log('Success:', result); 
+    
+            // 새로운 추천 데이터를 다시 로컬스토리지에 저장
             localStorage.setItem('travelRecommendations', JSON.stringify(result));
             localStorage.setItem('surveyResponseReceived', 'true');
-
-            // 이동하면서 새로운 추천 경로를 로딩
+    
+            // 새로운 추천 데이터로 페이지 이동
             navigate('/travelsurveyend');
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
-    const handleDayChange = (candidateIndex, newDayIndex) => {
-        setDayIndexByRoute((prev) => ({
+    // 특정 경로의 날짜 선택 시 호출
+    const handleDayChange = (routeIndex, newDayIndex) => {
+        setSelectedDayIndex((prev) => ({
             ...prev,
-            [candidateIndex]: newDayIndex,
+            [routeIndex]: newDayIndex, // 선택된 코스의 날짜를 갱신
         }));
     };
 
     const showAverageCostInfo = () => {
-        setIsModalOpen(true);  // 모달 열기
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
-        setIsModalOpen(false);  // 모달 닫기
+        setIsModalOpen(false);
     };
 
-    const handleDetailClick = (candidateIndex) => {
-      const destination = travelDestinations[candidateIndex];
-      const storedFlightPrice = Number(localStorage.getItem('flightprice'));
-  
-      navigate('/recommend', { state: { selectedDestination: destination, flightPrice: storedFlightPrice } });
-  };
+    const handleDetailClick = (routeIndex) => {
+        const destination = travelDestinations[routeIndex];
+        const storedFlightPrice = Number(localStorage.getItem('flightprice'));
+
+        navigate('/recommend', { state: { selectedDestination: destination, flightPrice: storedFlightPrice } });
+    };
 
     return (
         <Container>
@@ -123,24 +138,24 @@ const SelectRoute = () => {
             </LogoContainer>
             <ContentContainer>
                 <Message>{name}님을 위한 여행코스가 추천되었어요!</Message>
-                <Message style={{marginBottom:"10px"}}>원하는 코스를 선택해주세요</Message>
+                <Message style={{ marginBottom: "10px" }}>원하는 코스를 선택해주세요</Message>
 
-                {travelDestinations.map((route, candidateIndex) => (
-                    <RouteBox key={candidateIndex}>
-                        <Message style={{marginBottom:"10px", fontSize:"16px"}}>여행 코스 {candidateIndex + 1}</Message>
+                {travelDestinations.map((route, routeIndex) => (
+                    <RouteBox key={routeIndex}>
+                        <Message style={{ marginBottom: "10px", fontSize: "16px" }}>여행 코스 {routeIndex + 1}</Message>
                         <DaySelector>
                             <DayButtonContainer>
-                                {route.itinerary.map((day, i) => (
+                                {route.itinerary.map((_, dayIndex) => (
                                     <DayButton
-                                        key={i}
-                                        onClick={() => handleDayChange(candidateIndex, i)}
-                                        isSelected={dayIndexByRoute[candidateIndex] === i}
+                                        key={dayIndex}
+                                        onClick={() => handleDayChange(routeIndex, dayIndex)}
+                                        isSelected={selectedDayIndex[routeIndex] === dayIndex}
                                     >
-                                        {day.dayNumber}일차
+                                        {dayIndex + 1}일차
                                     </DayButton>
                                 ))}
                             </DayButtonContainer>
-                            <DetailContainer onClick={() => handleDetailClick(candidateIndex)}>
+                            <DetailContainer onClick={() => handleDetailClick(routeIndex)}>
                                 자세히 보기
                                 <DetailButton>
                                     <img src={process.env.PUBLIC_URL + '/asset/icon/passover.png'} alt='detail' />
@@ -150,22 +165,25 @@ const SelectRoute = () => {
                         <RouteContainer>
                             <TravelPathContainer>
                                 <PathLine>
-                                    {/* 안전하게 places 접근하기 위해 조건부 렌더링 추가 */}
-                                    {route.itinerary[dayIndexByRoute[candidateIndex]]?.places?.map((destination, i) => (
-                                        <React.Fragment key={destination.placeId}>
-                                            <Circle>
-                                            {destination.duration !== null && (
-                                                <VisitTime>{destination.duration}분</VisitTime>
-                                            )}
-                                                <div>{destination.placeName}</div>
-                                            </Circle>
-                                            {i < route.itinerary[dayIndexByRoute[candidateIndex]].places.length - 1 && (
-                                                <Line>
-                                                    {route.itinerary[dayIndexByRoute[candidateIndex]].travelSegments[i].distance.toFixed(2)}km
-                                                </Line>
-                                            )}
-                                        </React.Fragment>
-                                    ))}
+                                {/* 선택된 날짜의 places만 렌더링 */}
+                                {route.itinerary[selectedDayIndex[routeIndex]]?.places.map((destination, i) => (
+                                    <React.Fragment key={destination.placeId + i}> {/* key를 고유하게 설정 */}
+                                    <Circle>
+                                        {destination.duration !== null && (
+                                        <VisitTime>{destination.duration}분</VisitTime>
+                                        )}
+                                        <div>{destination.placeName}</div>
+                                    </Circle>
+                                    {i < route.itinerary[selectedDayIndex[routeIndex]].places.length - 1 &&
+                                        route.itinerary[selectedDayIndex[routeIndex]].travelSegments && (
+                                        <Line>
+                                        {route.itinerary[selectedDayIndex[routeIndex]].travelSegments[i]?.distance
+                                            ? `${route.itinerary[selectedDayIndex[routeIndex]].travelSegments[i].distance.toFixed(2)}km`
+                                            : 'N/A'}
+                                        </Line>
+                                    )}
+                                    </React.Fragment>
+                                ))}
                                 </PathLine>
                             </TravelPathContainer>
                             <CostContainer>
@@ -179,12 +197,11 @@ const SelectRoute = () => {
                 <ButtonContainer>
                     <Notice>다른 여행코스를 추천받고 싶다면</Notice>
                     <Notice>아래 버튼을 눌러주세요!</Notice>
-                    <FixButton onClick={handleFixRouteClick}>🔄 다른 루트를 추천받을래요</FixButton>
-                    <Notice onClick={showAverageCostInfo} style={{justifyContent: 'flex-end', cursor: 'pointer'}}>ⓘ 평균 제주 여행 경비</Notice>
+                    <FixButton onClick={handleAgainClick}>🔄 다른 루트를 추천받을래요</FixButton>
+                    <Notice onClick={showAverageCostInfo} style={{ justifyContent: 'flex-end', cursor: 'pointer' }}>ⓘ 평균 제주 여행 경비</Notice>
                 </ButtonContainer>
             </ContentContainer>
 
-            {/* 모달 창 */}
             {isModalOpen && (
                 <ModalOverlay>
                     <ModalContent>
@@ -194,9 +211,9 @@ const SelectRoute = () => {
                         </ModalHeader>
                         <ModalBody>
                             <Notice>이 수치는 2023년 제주특별자치도 방문관광객 실태조사를 바탕으로 계산된 1인당 제주 여행 경비를 나타냅니다.</Notice>
-                            <Notice style={{fontFamily:"Pretendard-Bold", marginTop:"10px"}}>1. 연평균 1인 제주 여행 경비</Notice>
+                            <Notice style={{ fontFamily: "Pretendard-Bold", marginTop: "10px" }}>1. 연평균 1인 제주 여행 경비</Notice>
                             <Notice>- 전체 평균: 663,705원</Notice>
-                            <Notice style={{fontFamily:"Pretendard-Bold", marginTop:"10px"}}>2. 연령별 평균 경비:</Notice>
+                            <Notice style={{ fontFamily: "Pretendard-Bold", marginTop: "10px" }}>2. 연령별 평균 경비:</Notice>
                             <Notice>- 15세 ~ 19세: 662,318원</Notice>
                             <Notice>- 20세 ~ 29세: 656,005원</Notice>
                             <Notice>- 30세 ~ 39세: 668,651원</Notice>

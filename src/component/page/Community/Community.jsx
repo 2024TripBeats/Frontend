@@ -18,7 +18,7 @@ const Community = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8888/posts/all'); // 실제 API 경로로 수정
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/posts/all`); // 실제 API 경로로 수정
         
         // posts를 timestamp 기준으로 정렬 (최신 글이 맨 위로 오도록)
         const sortedPosts = response.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));

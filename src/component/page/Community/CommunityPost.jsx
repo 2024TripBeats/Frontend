@@ -17,7 +17,7 @@ const CommunityPost = () => {
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8888/posts/${postId}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/posts/${postId}`);
         setPostData(response.data);  // 데이터를 상태에 저장
       } catch (error) {
         console.error("Error fetching post data:", error);
@@ -43,7 +43,7 @@ const CommunityPost = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8888/posts/${postId}`);
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/posts/${postId}`);
       navigate('/community'); // 삭제 후 커뮤니티 페이지로 이동
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -81,13 +81,13 @@ const CommunityPost = () => {
       };
 
       // 댓글을 서버에 전송
-      await axios.post('http://localhost:8888/comments', commentData);
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/comments`, commentData);
 
       // 전송 후 입력 필드 초기화
       setNewComment("");
 
       // 댓글 전송 후 최신 데이터를 불러오기
-      const response = await axios.get(`http://localhost:8888/posts/${postId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/posts/${postId}`);
       setPostData(response.data);  // 댓글 전송 후 게시글 데이터 갱신
     } catch (error) {
       console.error("Error submitting comment:", error);
@@ -97,9 +97,9 @@ const CommunityPost = () => {
   // 댓글 삭제 함수 작성
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`http://localhost:8888/comments/${commentId}`);
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/comments/${commentId}`);
       // 댓글 삭제 후 최신 데이터를 불러오기
-      const response = await axios.get(`http://localhost:8888/posts/${postId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/posts/${postId}`);
       setPostData(response.data);  // 삭제 후 게시글 데이터 갱신
     } catch (error) {
       console.error("Error deleting comment:", error);

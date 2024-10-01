@@ -25,7 +25,7 @@ const Home = () => {
   // 초기 설문 진행 여부에 따라 모달 열림 상태 변경
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:8888/accounts/${id}/doneSurvey`)
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/accounts/${id}/doneSurvey`)
         .then(response => response.json())
         .then(data => {
           if (data === false) { // doneSurvey가 false이면 모달 열기

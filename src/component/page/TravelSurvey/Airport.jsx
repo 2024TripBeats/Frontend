@@ -72,7 +72,7 @@ const Airport = () => {
         console.log("Request Body:", surveyData); // 요청 전에 확인
 
         // 서버에 데이터 전송
-        const response = await fetch('http://localhost:8888/flights/fare', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/flights/fare`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

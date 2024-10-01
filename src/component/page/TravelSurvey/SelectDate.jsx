@@ -34,7 +34,7 @@ const SelectDate = () => {
         returnTime
       }));
 
-      const response = await fetch('http://localhost:8888/flights/round-trip-fare', { // 실제 API 엔드포인트로 대체
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/flights/round-trip-fare`, { // 실제 API 엔드포인트로 대체
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

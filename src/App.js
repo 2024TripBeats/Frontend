@@ -147,7 +147,7 @@ const App = () => {
                   <Route path="/travelsurveyend" element={<TsEnd />} />
                   <Route path="/recommend" element={<RouteRecommend />} />
                   <Route path="/routefix" element={<RouteFix />} />
-                  <Route path="/detail/:placeName" element={<DetailPage />} />
+                  <Route path="/detail/:placeId" element={<DetailPage />} />
                   <Route path="/login/oauth2/callback/kakao" element={<LoginHandeler />} />
                   <Route path="/community" element={<Community />} />
                   <Route path="/write" element={<CommunityWrite />} />

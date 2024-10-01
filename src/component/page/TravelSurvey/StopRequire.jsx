@@ -38,44 +38,39 @@ const StopRequire = () => {
 
   const handleSubmit = async () => {
     const surveyDataWithId = {
-      ...travelsurveyData, // 기존 context에 있는 모든 데이터
-      accountId: id,
-      stopwords: stopwordsText,
-      requirewords: mandatoryText,
+        ...travelsurveyData,
+        accountId: id,
+        stopwords: stopwordsText,
+        requirewords: mandatoryText,
     };
-
+  
     setTravelSurveyData(surveyDataWithId);
+    localStorage.setItem('surveyData', JSON.stringify(surveyDataWithId));
   
-    // 데이터 전송 후 즉시 다음 페이지로 이동
+    // 데이터를 서버에 보내기 전에 페이지를 이동
     navigate('/travelsurveyend');
-    console.log(surveyDataWithId)
-  
+    console.log(surveyDataWithId);
   
     try {
-      const response = await fetch('http://localhost:8888/recommend/getAllFinalRecommendation', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(surveyDataWithId),
-      });
-
-      if (!response.ok) {
-          throw new Error('Network response was not ok');
-      }
-
-      const result = await response.json();
-      console.log('Success:', result); // 서버로부터 받은 추천 결과 확인
-
-      // 추천 데이터를 localStorage에 저장
-      localStorage.setItem('travelRecommendations', JSON.stringify(result));
-      localStorage.setItem('surveyResponseReceived', 'true');
-      
-      navigate('/travelsurveyend');  // /travelsurveyend로 이동
-  } catch (error) {
-      console.error('Error:', error);
-  }
-};
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/recommend/getAllRecommendation`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(surveyDataWithId),
+        });
+  
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+  
+        const result = await response.json();
+        localStorage.setItem('travelRecommendations', JSON.stringify(result));
+        localStorage.setItem('surveyResponseReceived', 'true');
+    } catch (error) {
+        console.error('Error:', error);
+    }
+  };
 
   return (
     <Container>
