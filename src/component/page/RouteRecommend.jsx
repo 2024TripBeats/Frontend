@@ -643,7 +643,7 @@ const SpotifyContainer = styled.div`
 const LoginButton = styled.button`
   width: 150px;
   height: 30px;
-  font-size: 14px;
+  font-size: 11px;
   background-color: ${props => (props.disabled ? '#b0b0b0' : '#1ED760')}; /* 비활성화 상태일 때 회색 처리 */
   color: #252a2f;
   gap: 5px;
@@ -665,7 +665,7 @@ const SpotifyImg = styled.img`
 const MusicButton = styled.button`
   width: 220px;
   height: 30px;
-  font-size: 14px;
+  font-size: 11px;
   font-family: "Pretendard-Bold";
   background-color: #252a2f;
   color: #1ED760;
