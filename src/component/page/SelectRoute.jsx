@@ -171,8 +171,8 @@ const SelectRoute = () => {
                                 {route.itinerary[selectedDayIndex[routeIndex]]?.places.map((destination, i) => (
                                     <React.Fragment key={destination.placeId + i}> {/* key를 고유하게 설정 */}
                                     <Circle>
-                                        {destination.duration !== null && (
-                                        <VisitTime>{destination.duration}분</VisitTime>
+                                        {destination.category !== '숙소' && destination.duration !== null && (
+                                            <VisitTime>{destination.duration}분</VisitTime>
                                         )}
                                         <div>{destination.placeName}</div>
                                     </Circle>
