@@ -234,10 +234,24 @@ const SelectRoute = () => {
 
 export default SelectRoute;
 
-const fadeInOut = keyframes`
-  0%, 20%, 80%, 100% { opacity: 0; }
-  30%, 70% { opacity: 1; }
+// 애니메이션 정의
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 `;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+  `;
 
 const Container = styled.div`
   display: flex;
