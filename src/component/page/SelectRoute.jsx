@@ -83,6 +83,10 @@ const SelectRoute = () => {
 
             const storedSurveyData = JSON.parse(localStorage.getItem('surveyData'));
 
+            // 즉시 travelsurveyend 페이지로 이동
+            navigate('/travelsurveyend'); 
+
+            // 비동기로 서버 요청을 보내고 응답을 처리함
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/recommend/getAllRecommendation`, {
                 method: 'POST',
                 headers: {
@@ -97,10 +101,9 @@ const SelectRoute = () => {
 
             const result = await response.json();
             localStorage.setItem('travelRecommendations', JSON.stringify(result));
-            localStorage.setItem('surveyResponseReceived', 'true');
+            localStorage.setItem('surveyResponseReceived', 'true'); // 추천이 완료되었음을 표시
 
             setIsRecommending(false); // 추천 완료 후 상태 해제
-            navigate('/travelsurveyend');
         } catch (error) {
             console.error('Error:', error);
             setIsRecommending(false); // 오류가 발생해도 상태 해제
@@ -196,12 +199,7 @@ const SelectRoute = () => {
                 <ButtonContainer>
                     <Notice>다른 여행코스를 추천받고 싶다면</Notice>
                     <Notice>아래 버튼을 눌러주세요!</Notice>
-                    
-                     {isRecommending ? (
-                        <FixButton $fadeIn>🔄 다른 루트를 추천중이에요!</FixButton> // fadeIn 애니메이션 적용
-                    ) : (
                         <FixButton onClick={handleAgainClick}>🔄 다른 루트를 추천받을래요</FixButton>
-                    )}
                     <Notice onClick={showAverageCostInfo} style={{ justifyContent: 'flex-end', cursor: 'pointer' }}>ⓘ 평균 제주 여행 경비</Notice>
                 </ButtonContainer>
             </ContentContainer>
