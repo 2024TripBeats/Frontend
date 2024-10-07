@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
   const [name, setName] = useState("");
   const [id, setId] = useState("");
   const [travelRecords, setTravelRecords] = useState([]); // 여행 기록을 저장하는 배열
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedName = localStorage.getItem("name");
@@ -42,6 +44,17 @@ const MyPage = () => {
         i === index ? { ...record, showDetails: !record.showDetails } : record
       )
     );
+  };
+
+  const handleDetailClick = (placeId) => {
+    if (placeId) {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/spots/${placeId}/detail-v2`)
+        .then((response) => response.json()) // Already parsed JSON
+        .then((data) => {
+          navigate(`/detail/${placeId}`, { state: { destination: data } });
+        })
+        .catch((error) => console.error('Error fetching destination details:', error));
+    }
   };
 
   return (
@@ -82,28 +95,28 @@ const MyPage = () => {
                     <Day>{day.dayNumber}일차</Day>
                     {day.places.map((place, placeIndex) => (
                       <React.Fragment key={place.placeId}>
-                        <TravelItemContainer>
-                          <CircleContainer>
-                            <Circle>{place.duration}분</Circle>
-                          </CircleContainer>
-                          <TravelDetails>
-                            <DestName>{place.placeName}</DestName>
-                            {place.price > 0 && (
-                              <PriceInfo>예상 경비 | {place.price.toLocaleString()}원</PriceInfo>
-                            )}
-                            {place.music_bool && (
-                              <MusicContainer>
-                                <img
-                                  style={{ width: '14px' }}
-                                  src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'}
-                                  alt='music-icon'
-                                />
-                                <MusicTitle>{place.musicName}</MusicTitle>
-                                <MusicSinger>{place.musicArtist}</MusicSinger>
-                              </MusicContainer>
-                            )}
-                          </TravelDetails>
-                        </TravelItemContainer>
+                          <TravelItemContainer onClick={() => handleDetailClick(place.placeId)}>
+                            <CircleContainer>
+                              <Circle>{place.duration}분</Circle>
+                            </CircleContainer>
+                            <TravelDetails>
+                              <DestName>{place.placeName}</DestName>
+                              {place.price > 0 && (
+                                <PriceInfo>예상 경비 | {place.price.toLocaleString()}원</PriceInfo>
+                              )}
+                              {place.music_bool && (
+                                <MusicContainer>
+                                  <img
+                                    style={{ width: '14px' }}
+                                    src={process.env.PUBLIC_URL + '/asset/icon/musicplay.png'}
+                                    alt='music-icon'
+                                  />
+                                  <MusicTitle>{place.musicName}</MusicTitle>
+                                  <MusicSinger>{place.musicArtist}</MusicSinger>
+                                </MusicContainer>
+                              )}
+                            </TravelDetails>
+                          </TravelItemContainer>
                         {placeIndex < day.places.length - 1 && (
                           <DistanceContainer>
                             <Line />
