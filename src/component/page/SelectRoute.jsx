@@ -515,5 +515,4 @@ const FixButton = styled.button`
   margin-top: 5px;
   margin-bottom: 10px;
   cursor: pointer;
-  animation: ${props => (props.$fadeIn ? fadeIn : fadeOut)} 1.5s ease-in-out infinite;
 `;
