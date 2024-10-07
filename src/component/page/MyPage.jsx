@@ -238,18 +238,6 @@ const TravelName = styled.div`
   font-family: 'Pretendard-Bold';
 `;
 
-const Location = styled.span`
-  color: #ff8a1d;
-  font-size: 14px;
-  margin-right: 5px;
-`;
-
-const TravelDate = styled.div`
-  font-size: 13px;
-  color: #727272;
-  font-family: 'Pretendard-Regular';
-`;
-
 const MoreButton = styled.button`
   background-color: #e0e0e0;
   border: none;

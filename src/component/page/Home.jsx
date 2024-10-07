@@ -130,8 +130,7 @@ const AdContainer = styled.div`
   align-items: center;
   background-color: white;
   box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.1);
-  width: 350px;
-  height: 220px;
+  width: 85%;
   border-radius: 10px;
   box-sizing: border-box;
   position: relative;
