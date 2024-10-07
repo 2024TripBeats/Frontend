@@ -294,6 +294,7 @@ const TravelItemContainer = styled.div`
   width: 100%;
   gap: 10px;
   box-sizing: border-box;
+  cursor: pointer;
 `;
 
 const CircleContainer = styled.div`

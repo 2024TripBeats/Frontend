@@ -143,13 +143,21 @@ const RouteRecommend = () => {
     checkIfLoggedIn();
   }, [accessToken]);
   
-    // 플레이리스트 생성 후 새 창에서 열기
+    // 기기 타입을 감지하는 함수
+    const isMobileDevice = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      
+      // 모바일 기기를 식별하는 조건
+      return /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+    };
+
+    // 플레이리스트 생성 및 열기
     const createPlaylistAndOpenNewWindow = async () => {
       if (trackQueue.length === 0) {
         console.error('트랙 목록이 비어 있습니다.');
         return;
       }
-  
+
       try {
         // 사용자 정보 가져오기
         const userResponse = await fetch('https://api.spotify.com/v1/me', {
@@ -159,7 +167,7 @@ const RouteRecommend = () => {
         });
         const userData = await userResponse.json();
         const userId = userData.id;
-  
+
         // 플레이리스트 생성
         const createPlaylistResponse = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
           method: 'POST',
@@ -173,18 +181,15 @@ const RouteRecommend = () => {
             public: false
           })
         });
-        
-        // 트랙 배열 확인하기
-        console.log(trackQueue);
-  
+
         if (!createPlaylistResponse.ok) {
           console.error('플레이리스트 생성 중 오류 발생:', await createPlaylistResponse.text());
           return;
         }
-  
+
         const playlistData = await createPlaylistResponse.json();
         const playlistId = playlistData.id;
-  
+
         // 플레이리스트에 트랙 추가
         const addTracksResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
           method: 'POST',
@@ -196,15 +201,23 @@ const RouteRecommend = () => {
             uris: trackQueue
           })
         });
-  
+
         if (!addTracksResponse.ok) {
           console.error('트랙 추가 중 오류 발생:', await addTracksResponse.text());
           return;
         }
-  
-        // 새 창에서 플레이리스트 열기
-        const playlistUrl = `https://open.spotify.com/playlist/${playlistId}`;
-        window.open(playlistUrl, '_blank');
+
+        // PC와 모바일에서 다른 동작
+        if (isMobileDevice()) {
+          // 모바일일 경우 Spotify 앱을 여는 딥링크 사용
+          const playlistUrl = `spotify:playlist:${playlistId}`;
+          window.location.href = playlistUrl;
+        } else {
+          // PC일 경우 새 창에서 플레이리스트 열기
+          const playlistUrl = `https://open.spotify.com/playlist/${playlistId}`;
+          window.open(playlistUrl, '_blank');
+        }
+
       } catch (error) {
         console.error('플레이리스트 생성 중 오류 발생:', error);
       }
@@ -333,13 +346,13 @@ const RouteRecommend = () => {
                   {day.places.map((place, index) => (
                     <React.Fragment key={`${place.placeId}-${index}`}>
                         <Circle onClick={() => handleCircleClick(day.dayNumber, place)} isSelected={place.placeId === currentPlace?.placeId}>
-                            {place.duration !== null && (
-                                <VisitTime isSelected={place.placeId === currentPlace?.placeId}>
-                                    {place.duration}분
-                                </VisitTime>
-                            )}
-                            <div>{place.placeName}</div>
-                            {place.price > 0 && <PriceTag>{place.price.toLocaleString()}원</PriceTag>}
+                          {place.category !== '숙소' && place.duration !== null && (
+                            <VisitTime isSelected={place.placeId === currentPlace?.placeId}>
+                              {place.duration}분
+                            </VisitTime>
+                          )}
+                          <div>{place.placeName}</div>
+                          {place.price > 0 && <PriceTag>{place.price.toLocaleString()}원</PriceTag>}
                         </Circle>
                         {index < day.places.length - 1 && (
                           <Line>{day.travelSegments[index]?.distance.toFixed(2)}km</Line>

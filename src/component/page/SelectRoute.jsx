@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useNavigate } from 'react-router-dom';
 
 const SelectRoute = () => {
@@ -9,6 +9,8 @@ const SelectRoute = () => {
     const [id, setId] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [flightPrice, setFlightPrice] = useState(0);
+    const [isRecommending, setIsRecommending] = useState(false); // 추천 중 상태 추가
+
 
     const navigate = useNavigate();
 
@@ -77,35 +79,31 @@ const SelectRoute = () => {
     // 코스 재추천 받기
     const handleAgainClick = async () => {
         try {
-            // localStorage에서 데이터를 가져와 JSON.parse()로 변환
+            setIsRecommending(true); // 추천 중으로 상태 설정
+
             const storedSurveyData = JSON.parse(localStorage.getItem('surveyData'));
-            console.log(storedSurveyData);  // 객체로 제대로 불러와졌는지 확인
-    
-            // 서버에 POST 요청을 보내서 새로운 추천 데이터 요청
+
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/recommend/getAllRecommendation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(storedSurveyData),  // 저장된 설문 데이터를 다시 서버로 보냄
+                body: JSON.stringify(storedSurveyData),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-    
-            // 서버로부터 받은 새로운 추천 데이터를 로컬스토리지에 저장
+
             const result = await response.json();
-            console.log('Success:', result); 
-    
-            // 새로운 추천 데이터를 다시 로컬스토리지에 저장
             localStorage.setItem('travelRecommendations', JSON.stringify(result));
             localStorage.setItem('surveyResponseReceived', 'true');
-    
-            // 새로운 추천 데이터로 페이지 이동
+
+            setIsRecommending(false); // 추천 완료 후 상태 해제
             navigate('/travelsurveyend');
         } catch (error) {
             console.error('Error:', error);
+            setIsRecommending(false); // 오류가 발생해도 상태 해제
         }
     };
 
@@ -198,7 +196,16 @@ const SelectRoute = () => {
                 <ButtonContainer>
                     <Notice>다른 여행코스를 추천받고 싶다면</Notice>
                     <Notice>아래 버튼을 눌러주세요!</Notice>
-                    <FixButton onClick={handleAgainClick}>🔄 다른 루트를 추천받을래요</FixButton>
+                    
+                    {isRecommending ? ( // 추천 중일 때는 이모티콘 애니메이션 표시
+                        <EmojiWrapper>
+                            <Emoji>✈️</Emoji>
+                            <Emoji>🚞</Emoji>
+                            <Emoji>🗽</Emoji>
+                        </EmojiWrapper>
+                    ) : ( // 추천 중이 아니면 버튼 표시
+                        <FixButton onClick={handleAgainClick}>🔄 다른 루트를 추천받을래요</FixButton>
+                    )}
                     <Notice onClick={showAverageCostInfo} style={{ justifyContent: 'flex-end', cursor: 'pointer' }}>ⓘ 평균 제주 여행 경비</Notice>
                 </ButtonContainer>
             </ContentContainer>
@@ -230,6 +237,22 @@ const SelectRoute = () => {
 };
 
 export default SelectRoute;
+
+const fadeInOut = keyframes`
+  0%, 20%, 80%, 100% { opacity: 0; }
+  30%, 70% { opacity: 1; }
+`;
+
+const EmojiWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Emoji = styled.div`
+  font-size: 40px;
+  animation: ${fadeInOut} 1.5s linear infinite;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -482,6 +505,7 @@ const Notice = styled.div`
   color: #252a2f;
 `;
 
+
 const FixButton = styled.button`
   padding: 10px 60px;
   background-color: #Fafafa;
@@ -494,4 +518,8 @@ const FixButton = styled.button`
   margin-top: 5px;
   margin-bottom: 10px;
   cursor: pointer;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 `;
