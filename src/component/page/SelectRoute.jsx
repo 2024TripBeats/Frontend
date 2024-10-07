@@ -197,12 +197,9 @@ const SelectRoute = () => {
                     <Notice>다른 여행코스를 추천받고 싶다면</Notice>
                     <Notice>아래 버튼을 눌러주세요!</Notice>
                     
-                    {isRecommending ? ( // 추천 중일 때는 이모티콘 애니메이션 표시
-                        <EmojiWrapper>
-                            <Emoji>🔄 </Emoji>
-                            <FixButton style={{backgroundColor: "#FF8a1D"}}>다른 루트를 추천중이에요!</FixButton>
-                        </EmojiWrapper>
-                    ) : ( // 추천 중이 아니면 버튼 표시
+                     {isRecommending ? (
+                        <FixButton $fadeIn>🔄 다른 루트를 추천중이에요!</FixButton> // fadeIn 애니메이션 적용
+                    ) : (
                         <FixButton onClick={handleAgainClick}>🔄 다른 루트를 추천받을래요</FixButton>
                     )}
                     <Notice onClick={showAverageCostInfo} style={{ justifyContent: 'flex-end', cursor: 'pointer' }}>ⓘ 평균 제주 여행 경비</Notice>
@@ -240,17 +237,6 @@ export default SelectRoute;
 const fadeInOut = keyframes`
   0%, 20%, 80%, 100% { opacity: 0; }
   30%, 70% { opacity: 1; }
-`;
-
-const EmojiWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Emoji = styled.div`
-  font-size: 40px;
-  animation: ${fadeInOut} 1.5s linear infinite;
 `;
 
 const Container = styled.div`
@@ -517,8 +503,5 @@ const FixButton = styled.button`
   margin-top: 5px;
   margin-bottom: 10px;
   cursor: pointer;
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
+  animation: ${props => (props.$fadeIn ? fadeIn : fadeOut)} 1.5s ease-in-out infinite;
 `;
