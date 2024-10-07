@@ -199,9 +199,8 @@ const SelectRoute = () => {
                     
                     {isRecommending ? ( // 추천 중일 때는 이모티콘 애니메이션 표시
                         <EmojiWrapper>
-                            <Emoji>✈️</Emoji>
-                            <Emoji>🚞</Emoji>
-                            <Emoji>🗽</Emoji>
+                            <Emoji>🔄 </Emoji>
+                            <FixButton style={{backgroundColor: "#FF8a1D"}}>다른 루트를 추천중이에요!</FixButton>
                         </EmojiWrapper>
                     ) : ( // 추천 중이 아니면 버튼 표시
                         <FixButton onClick={handleAgainClick}>🔄 다른 루트를 추천받을래요</FixButton>
