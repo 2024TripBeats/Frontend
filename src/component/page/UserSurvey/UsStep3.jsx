@@ -11,7 +11,7 @@ const UsStep3 = () => {
     activityLevel: usersurveyData.activityLevel || null,
     Scene: usersurveyData.Scene || null,
   });
-  const [selectedLikert, setSelectedLikert] = useState(usersurveyData.openness);
+  const [selectedLikert, setSelectedLikert] = useState(usersurveyData.openness || null);
   const [isButtonActive, setIsButtonActive] = useState(false);
 
   const handleSurveyClick = (key, value) => {
@@ -27,6 +27,8 @@ const UsStep3 = () => {
     const likertSelected = selectedLikert !== null;
     setIsButtonActive(allSurveysSelected && likertSelected);
   }, [selectedSurveyButtons, selectedLikert]);
+
+  console.log(selectedLikert, selectedSurveyButtons)
 
   const handleButtonClick = () => {
     setUserSurveyData(prevData => ({
